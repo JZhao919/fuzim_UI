@@ -1,29 +1,30 @@
 <template>
   <div class="login-container">
     <el-form class="login-form" autoComplete="on" :model="loginForm" :rules="loginRules" ref="loginForm" label-position="left">
-      <h3 class="title">vue-element-admin</h3>
+      <h3 class="title">夫子庙游船物联网系统</h3>
       <el-form-item prop="username">
         <span class="svg-container svg-container_login">
           <svg-icon icon-class="user" />
         </span>
-        <el-input name="username" type="text" v-model="loginForm.username" autoComplete="on" placeholder="username" />
+        <el-input name="username" type="text" v-model="loginForm.username" autoComplete="on" placeholder="输入用户名"></el-input>
       </el-form-item>
       <el-form-item prop="password">
         <span class="svg-container">
           <svg-icon icon-class="password"></svg-icon>
         </span>
         <el-input name="password" :type="pwdType" @keyup.enter.native="handleLogin" v-model="loginForm.password" autoComplete="on"
-          placeholder="password"></el-input>
-          <span class="show-pwd" @click="showPwd"><svg-icon icon-class="eye" /></span>
+          placeholder="输入密码">
+        </el-input>
+        <span class="show-pwd" @click="showPwd"><svg-icon icon-class="eye" /></span>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" style="width:100%;" :loading="loading" @click.native.prevent="handleLogin">
-          Sign in
+          登录
         </el-button>
       </el-form-item>
       <div class="tips">
         <span style="margin-right:20px;">username: admin</span>
-        <span> password: admin</span>
+        <span style="margin-left:20px;">password: admin</span>
       </div>
     </el-form>
   </div>
@@ -59,11 +60,11 @@ export default {
         password: [{ required: true, trigger: 'blur', validator: validatePass }]
       },
       loading: false,
-      pwdType: 'password'
+      pwdType: 'password'// 密码输入框类型
     }
   },
   methods: {
-    showPwd() {
+    showPwd() { // 控制密码输入框类型是否显示
       if (this.pwdType === 'password') {
         this.pwdType = ''
       } else {
@@ -76,7 +77,7 @@ export default {
           this.loading = true
           this.$store.dispatch('Login', this.loginForm).then(() => {
             this.loading = false
-            this.$router.push({ path: '/' })
+            this.$router.push({ path: '/' })//  登录成功之后重定向到首页
           }).catch(() => {
             this.loading = false
           })

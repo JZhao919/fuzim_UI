@@ -63,7 +63,7 @@ module.exports = {
      * then assetsPublicPath should be set to "/bar/".
      * In most cases please use '/' !!!
      */
-    assetsPublicPath: '/vueAdmin-template/', // If you are deployed on the root path, please use '/'
+    assetsPublicPath: '/fuzim_UI/', // If you are deployed on the root path, please use '/'
 
     /**
      * Source Maps
