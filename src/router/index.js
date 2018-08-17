@@ -22,39 +22,74 @@ import Layout from '../views/layout/Layout'
   }
 **/
 export const constantRouterMap = [
-  { path: '/login', component: () => import('@/views/login/index'), hidden: false },
+  { path: '/login', component: () => import('@/views/login/index'), hidden: true },
   { path: '/404', component: () => import('@/views/404'), hidden: true },
 
   {
     path: '/',
     component: Layout,
     redirect: '/dashboard',
-    name: 'Dashboard',
-    hidden: true,
+    hidden: false,
     children: [{
+      name: 'Dashboard',
       path: 'dashboard',
-      component: () => import('@/views/dashboard/index')
+      component: () => import('@/views/dashboard/index'),
+      meta: { title: '首页', icon: 'example' }
     }]
   },
 
   {
-    path: '/example',
+    path: '/detail',
     component: Layout,
-    redirect: '/example/table',
-    name: 'Example',
-    meta: { title: 'Example', icon: 'example' },
+    hidden: false,
     children: [
       {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index'),
-        meta: { title: 'Table', icon: 'table' }
-      },
+        name: 'Detail',
+        path: 'index',
+        component: () => import('@/views/detail/index'),
+        meta: { title: 'Detail', icon: 'example' }
+      }
+    ]
+  },
+
+  {
+    path: '/map',
+    component: Layout,
+    hidden: false,
+    children: [
       {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: { title: 'Tree', icon: 'tree' }
+        name: 'Map',
+        path: 'index',
+        component: () => import('@/views/map/index'),
+        meta: { title: 'Map', icon: 'example' }
+      }
+    ]
+  },
+
+  {
+    path: '/Track',
+    component: Layout,
+    hidden: false,
+    children: [
+      {
+        name: 'Track',
+        path: 'index',
+        component: () => import('@/views/track/index'),
+        meta: { title: 'Track', icon: 'example' }
+      }
+    ]
+  },
+
+  {
+    path: '/Video',
+    component: Layout,
+    hidden: false,
+    children: [
+      {
+        name: 'Video',
+        path: 'index',
+        component: () => import('@/views/video/index'),
+        meta: { title: 'Video', icon: 'example' }
       }
     ]
   },
