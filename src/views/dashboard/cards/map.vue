@@ -25,9 +25,11 @@ export default {
       batteryStatus: ""
     }
   },
+  watch: {
+    'shipInfo.shipId': 'addMarker'
+  },
   mounted() {
     this.initmap()
-    this.addMarker()
   },
   methods: {
     // 地图初始化函数

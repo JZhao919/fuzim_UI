@@ -2,12 +2,12 @@
   <div id="motor-card">
     <div class="motor-title">{{shipInfo.shipId}}号船电机信息</div>
     <div id="motor-info" class="motor-content">
-      <div><span>电机电流1</span><span>{{shipInfo.motorCurrent1}}</span></div>
-      <div><span>电机电流2</span><span>{{shipInfo.motorCurrent2}}</span></div>
-      <div><span>电机电压1</span><span>{{shipInfo.motorVoltage1}}</span></div>
-      <div><span>电机电压2</span><span>{{shipInfo.motorVoltage2}}</span></div>
-      <div><span>电机转速1</span><span>{{shipInfo.motorSpeed1}}</span></div>
-      <div><span>电机转速2</span><span>{{shipInfo.motorSpeed2}}</span></div>
+      <div><span>电机电流1：</span><span>{{shipInfo.motorCurrent1}}</span></div>
+      <div><span>电机电流2：</span><span>{{shipInfo.motorCurrent2}}</span></div>
+      <div><span>电机电压1：</span><span>{{shipInfo.motorVoltage1}}</span></div>
+      <div><span>电机电压2：</span><span>{{shipInfo.motorVoltage2}}</span></div>
+      <div><span>电机转速1：</span><span>{{shipInfo.motorSpeed1}}</span></div>
+      <div><span>电机转速2：</span><span>{{shipInfo.motorSpeed2}}</span></div>
     </div>
   </div>
 </template>

@@ -4,7 +4,11 @@
     <el-collapse-item title="选择船只" name="1">
       <div class="coll-shipdef">
         <el-scrollbar noresize style="height:100%">
-          <el-button v-for="shipdef in 100" :key=shipdef type="text" plain size="mini">{{shipdef+"号船"}}</el-button>
+          <el-button v-for="shipdef in allshipDefInfo" :key="shipdef.shipId"
+          type="text" plain size="mini" 
+          @click.native="submit(shipdef.shipId)">
+          {{shipdef.shipName}}
+          </el-button>
         </el-scrollbar>
       </div>
     </el-collapse-item>
@@ -42,6 +46,7 @@
 
 <script>
 import { defCard, statusCard, warnCard, GPSCard, batteryCard, motorCard, radarCard, mapCard } from './cards'
+import { getAllShipDefInfo, getOneShipInfo } from '@/api/shipinfo'
 export default {
   name: 'dashboard',
   components: {
@@ -54,6 +59,9 @@ export default {
     radarCard,
     mapCard
   },
+  mounted() {
+    this.getInfo()
+  },
   data() {
     return {
       shipDefInfo: {
@@ -61,13 +69,8 @@ export default {
         shipName: '',
         shipNote: '',
         shipStatus: ''
-      },
-      allshipDefInfo: [{
-        shipId: 0,
-        shipName: '',
-        shipNote: '',
-        shipStatus: ''
-      }], // 所有船只基本信息
+      }, // 当前船只的基本信息
+      allshipDefInfo: [], // 所有船只基本信息
       shipAllInfo: {
         // 状态信息
         shipId: 0,
@@ -124,6 +127,68 @@ export default {
         motorVoltage2: 0,
         motorSpeed2: 0
       } // 当前船只的所有信息
+    }
+  },
+  methods: {
+    notification(code, string) {
+      switch (code) {
+        case 0:
+          this.$notify.error({
+            title: '错误！',
+            message: string
+          })
+          break
+        case 1:
+          this.$notify({
+            title: '成功！',
+            message: string,
+            type: 'success'
+          })
+          break
+        case 2:
+          this.$notify({
+            title: '注意！',
+            message: string,
+            type: 'warning'
+          })
+          break
+        default:
+      }
+    },
+    getInfo() {
+      getAllShipDefInfo().then(response => {
+        const data = response.data
+        if (data !== []) {
+          this.allshipDefInfo = data
+          return
+        } else {
+          this.notification(2, '数据库中没有船只信息！')
+          return
+        }
+      })
+      return
+    },
+    submit(shipId) {
+      for (let i = 0; i < this.allshipDefInfo.length; i++) {
+        ((n) => {
+          if (this.allshipDefInfo[n].shipId === shipId) {
+            this.shipDefInfo = this.allshipDefInfo[n]
+            this.break
+          }
+        })(i)
+      }
+      getOneShipInfo(shipId).then(response => {
+        const data = response.data
+        if (data !== '') {
+          this.shipAllInfo = data
+          this.notification(1, '成功获取该船当前数据！')
+          return
+        } else {
+          this.notification(2, '该船当前没有数据！')
+          return
+        }
+      })
+      return
     }
   }
 }
