@@ -28,7 +28,7 @@
 
 <script>
 // eslint-disable-next-line
-import { initMap, makeTrail, dateToStr } from './track.js'
+import { initMap, makeTrail1, makeTrail2, dateToStr } from './track.js'
 
 export default {
   name: 'trail',
@@ -88,10 +88,17 @@ export default {
       }
       if (this.endDT === null) {
         this.notification(2, '将获取' + this.startTime + '后的轨迹数据！')
-        makeTrail(this.shipId, this.beginDT)
+        console.log(this.startTime)
+        makeTrail1(this.shipId, this.startTime)
+        this.shipId = null
+        this.beginDT = null
       } else {
         this.notification(1, '将获取' + this.startTime + '与' + this.endTime + '之间的轨迹数据！')
-        makeTrail(this.shipId, this.beginDT, this.endDT)
+        makeTrail2(this.shipId, this.startTime, this.endTime)
+        console.log(this.startTime, this.endTime)
+        this.shipId = null
+        this.beginDT = null
+        this.endDT = null
       }
       return
     }

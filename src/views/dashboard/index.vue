@@ -3,7 +3,7 @@
   <el-collapse id="db-coll">
     <el-collapse-item title="选择船只" name="1">
       <div class="coll-shipdef">
-        <el-scrollbar noresize style="height:100%">
+        <el-scrollbar id="sd-scrollbar" noresize style="height:100%">
           <el-button v-for="shipdef in allshipDefInfo" :key="shipdef.shipId"
           type="text" plain size="mini" 
           @click.native="submit(shipdef.shipId)">
@@ -225,8 +225,8 @@ export default {
   padding: 2px 2px;
   color: #1570f8b6;
 }
-#coll-shipdef .el-button+.el-button{
-  margin-right: 3px;
+#sd-scrollbar .el-button+.el-button{
+  margin: 0 10px 0 0;
 }
 </style>
 <style scoped>

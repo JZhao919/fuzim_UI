@@ -8,10 +8,14 @@
 
 <script>
 import myplayer from './myPlayer'
+import { getAllShipDefInfo } from '@/api/shipinfo'
 export default {
   name: 'fz-video',
   components: {
     myplayer
+  },
+  mounted() {
+    this.iniavideo()
   },
   data() {
     return {
@@ -20,37 +24,37 @@ export default {
         shipName: 'AAA',
         shipNote: '',
         shipStatus: '0',
-        url: 'http://hls.open.ys7.com/openlive/fcd217df57fe4caea308203e110605bf.hd.m3u8',
-        urlHD: 'http://hls.open.ys7.com/openlive/fcd217df57fe4caea308203e110605bf.hd.m3u8',
-        pic: 'http://static.smartisanos.cn/pr/img/video/video_03_cc87ce5bdb.jpg'
-      },
-      {
-        shipId: 0,
-        shipName: 'BBB',
-        shipNote: '',
-        shipStatus: '1',
-        url: 'http://hls.open.ys7.com/openlive/fcd217df57fe4caea308203e110605bf.hd.m3u8',
-        urlHD: 'http://hls.open.ys7.com/openlive/fcd217df57fe4caea308203e110605bf.hd.m3u8',
-        pic: 'http://static.smartisanos.cn/pr/img/video/video_03_cc87ce5bdb.jpg'
-      },
-      {
-        shipId: 0,
-        shipName: 'CCC',
-        shipNote: '',
-        shipStatus: '1',
-        url: 'http://hls.open.ys7.com/openlive/fcd217df57fe4caea308203e110605bf.hd.m3u8',
-        urlHD: 'http://hls.open.ys7.com/openlive/fcd217df57fe4caea308203e110605bf.hd.m3u8',
-        pic: 'http://static.smartisanos.cn/pr/img/video/video_03_cc87ce5bdb.jpg'
-      },
-      {
-        shipId: 0,
-        shipName: 'DDD',
-        shipNote: '',
-        shipStatus: '0',
-        url: 'http://hls.open.ys7.com/openlive/fcd217df57fe4caea308203e110605bf.hd.m3u8',
-        urlHD: 'http://hls.open.ys7.com/openlive/fcd217df57fe4caea308203e110605bf.hd.m3u8',
-        pic: 'http://static.smartisanos.cn/pr/img/video/video_03_cc87ce5bdb.jpg'
+        url: '',
+        urlHD: '',
+        pic: ''
       }]
+    }
+  },
+  methods: {
+    iniavideo() {
+      getAllShipDefInfo().then(response => {
+        console.log(response)
+        if (response.data && response.data.length !== 0) {
+          this.shipDefInfos = response.data
+          console.log(this.shipDefInfos)
+          this.$notify({
+            title: '成功！',
+            message: '成功获取所有船只的视频连接！',
+            type: 'success'
+          })
+        } else {
+          this.$notify({
+            title: '警告！',
+            message: '船只的信息为空！',
+            type: 'warning'
+          })
+        }
+      }).catch(errer => {
+        this.$notify.error({
+          title: '错误',
+          message: errer
+        })
+      })
     }
   }
 }

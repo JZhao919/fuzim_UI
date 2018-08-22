@@ -39,7 +39,7 @@ export default {
       },
       contextmenu: [{
         text: 'GitHub',
-        link: 'https://github.com/MoePlayer/vue-dplayer'
+        link: 'http://www.acostek.net/'
       }],
       player: null
     }
@@ -58,7 +58,6 @@ export default {
     width: 100%;
   }
   #p-video #v-title{
-    margin-left: 2px;
     width: 100%;
     background-color: bisque;
     text-align: center;

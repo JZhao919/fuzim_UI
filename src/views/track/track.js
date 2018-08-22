@@ -22,65 +22,67 @@ export function initMap() {
  * @param number startTime
  * @return Promise Array.<AMap.LngLat> gps
  */
-function getlngLats(shipId, startTime, endTime) {
+function getlngLats1(shipId, startTime) {
   const gps = [] // 处理后的坐标组
-  const params = arguments.length
   return new Promise((resolve, rejects) => {
-    if (params < 3) {
-      getAllGPSByIdTime(shipId, startTime).then(response => {
-        const data = response.data // 返回的坐标数据
-        const gpslength = data.length
-        if (data !== null && gpslength !== 0) {
-          if (gpslength > 40) {
-            const num = gpslength / 40
-            for (let i = 0; i < gpslength; i += num) {
-              ((i) => {
-                gps.push(new AMap.LngLat(data[i].longitude / 100, data[i].latitude / 100))
-              })(i)
-            }
-          } else {
-            for (let i = 0; i < gpslength; i++) {
-              ((i) => {
-                gps.push(new AMap.LngLat(data[i].longitude / 100, data[i].latitude / 100))
-              })(i)
-            }
+    getAllGPSByIdTime(shipId, startTime).then(response => {
+      const data = response.data // 返回的坐标数据
+      const gpslength = data.length
+      if (data !== null && gpslength !== 0) {
+        if (gpslength > 40) {
+          const num = gpslength / 40
+          for (let i = 0; i < gpslength; i += num) {
+            ((i) => {
+              gps.push(new AMap.LngLat(data[i].longitude / 100, data[i].latitude / 100))
+            })(i)
           }
-          resolve(gps)
         } else {
-          console.log('获取数据为空')
-          rejects('获取数据为空')
-        }
-      }).catch(errer => {
-        rejects(errer)
-      })
-    } else {
-      getAllGPSByIdTimeBetween(shipId, startTime, endTime).then(response => {
-        const data = response.data // 返回的坐标数据
-        const gpslength = data.length
-        if (data !== null && gpslength !== 0) {
-          if (gpslength > 40) {
-            const num = gpslength / 40
-            for (let i = 0; i < gpslength; i += num) {
-              ((i) => {
-                gps.push(new AMap.LngLat(data[i].longitude / 100, data[i].latitude / 100))
-              })(i)
-            }
-          } else {
-            for (let i = 0; i < gpslength; i++) {
-              ((i) => {
-                gps.push(new AMap.LngLat(data[i].longitude / 100, data[i].latitude / 100))
-              })(i)
-            }
+          for (let i = 0; i < gpslength; i++) {
+            ((i) => {
+              gps.push(new AMap.LngLat(data[i].longitude / 100, data[i].latitude / 100))
+            })(i)
           }
-          resolve(gps)
-        } else {
-          console.log('获取数据为空')
-          rejects('获取数据为空')
         }
-      }).catch(errer => {
-        rejects(errer)
-      })
-    }
+        resolve(gps)
+      } else {
+        console.log('获取数据为空')
+        rejects('获取数据为空')
+      }
+    }).catch(errer => {
+      rejects(errer)
+    })
+  })
+}
+
+function getlngLats2(shipId, startTime, endTime) {
+  const gps = [] // 处理后的坐标组
+  return new Promise((resolve, rejects) => {
+    getAllGPSByIdTimeBetween(shipId, startTime, endTime).then(response => {
+      const data = response.data // 返回的坐标数据
+      const gpslength = data.length
+      if (data !== null && gpslength !== 0) {
+        if (gpslength > 40) {
+          const num = gpslength / 40
+          for (let i = 0; i < gpslength; i += num) {
+            ((i) => {
+              gps.push(new AMap.LngLat(data[i].longitude / 100, data[i].latitude / 100))
+            })(i)
+          }
+        } else {
+          for (let i = 0; i < gpslength; i++) {
+            ((i) => {
+              gps.push(new AMap.LngLat(data[i].longitude / 100, data[i].latitude / 100))
+            })(i)
+          }
+        }
+        resolve(gps)
+      } else {
+        console.log('获取数据为空')
+        rejects('获取数据为空')
+      }
+    }).catch(errer => {
+      rejects(errer)
+    })
   })
 }
 
@@ -159,8 +161,18 @@ function trailMaker(lngLats) {
  * @param number shipId 船号
  * @param number startTime 开始时间
  */
-export function makeTrail(shipId, startTime, endTime) {
-  getlngLats(shipId, startTime, endTime).then(response => {
+export function makeTrail1(shipId, startTime) {
+  getlngLats1(shipId, startTime).then(response => {
+    lngLatsTrans(response).then(response => {
+      trailMaker(response)
+    }).catch(errer => console.log(errer))
+  }).catch(errer => {
+    console.log(errer)
+  })
+}
+
+export function makeTrail2(shipId, startTime, endTime) {
+  getlngLats2(shipId, startTime, endTime).then(response => {
     lngLatsTrans(response).then(response => {
       trailMaker(response)
     }).catch(errer => console.log(errer))
