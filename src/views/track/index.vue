@@ -28,7 +28,7 @@
 
 <script>
 // eslint-disable-next-line
-import { initMap, trailMaker, dateToStr } from './track.js'
+import { initMap, makeTrail, dateToStr } from './track.js'
 
 export default {
   name: 'trail',
@@ -39,22 +39,7 @@ export default {
     return {
       shipId: null, // 选择的船只编号
       beginDT: null, // 开始时间
-      endDT: null, // 结束时间
-      gpsInfos: [
-        {
-          "gpsTrackTure": 108.5,
-          "gpsLondir": "E",
-          "createTime": 20180114133458,
-          "gpsVardir": "E",
-          "latitude": 3201.26643,
-          "gpsMagvar": 0,
-          "gpsModeInd": "A",
-          "speed": 0.604,
-          "gpsLatdir": "N",
-          "shipId": 1,
-          "longitude": 11841.85207
-        }
-      ] // 该船的全部GPS信息
+      endDT: null // 结束时间
     }
   },
   computed: {
@@ -103,11 +88,12 @@ export default {
       }
       if (this.endDT === null) {
         this.notification(2, '将获取' + this.startTime + '后的轨迹数据！')
+        makeTrail(this.shipId, this.beginDT)
       } else {
         this.notification(1, '将获取' + this.startTime + '与' + this.endTime + '之间的轨迹数据！')
+        makeTrail(this.shipId, this.beginDT, this.endDT)
       }
-      console.log(this.shipId + "||" + this.startTime + "||" + this.endTime)
-      // trailMaker()
+      return
     }
   }
 }
