@@ -1,7 +1,7 @@
 <template>
    <div id="p-video">
-     <div id="v-title" ><span>{{shipName}}的实时视频</span><span v-if="shipStatus === '1'">||运行中</span><span v-else>||未运行</span></div>
-    <my-player ref="player" @play="play" :video="video" :contextmenu="contextmenu"></my-player>
+    <div id="v-title" ><span>{{shipName}}的实时视频</span><span v-if="shipStatus === '1'">||运行中</span><span v-else>||未运行</span></div>
+    <playerHls ref="player" @play="play" :video="video" :contextmenu="contextmenu"></playerHls>
   </div>
 </template>
 
@@ -10,7 +10,7 @@ import playerHls from './playerHls'
 export default {
   name: 'myPlayer',
   components: {
-    'my-player': playerHls
+    playerHls
   },
   props: {
     shipVideoInfo: {
@@ -38,8 +38,8 @@ export default {
         pic: this.shipVideoInfo.pic
       },
       contextmenu: [{
-        text: 'GitHub',
-        link: 'http://www.acostek.net/'
+        text: '夫子庙秦淮风光带',
+        link: 'https://baike.baidu.com/item/%E5%A4%AB%E5%AD%90%E5%BA%99%E7%A7%A6%E6%B7%AE%E9%A3%8E%E5%85%89%E5%B8%A6/10475554?fr=aladdin'
       }],
       player: null
     }

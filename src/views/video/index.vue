@@ -1,7 +1,7 @@
 <template>
   <el-row id="fz-video">
     <el-col v-for="vd in shipDefInfos" :key="vd.shipId" :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
-      <myplayer :shipVideoInfo="vd"></myplayer>
+      <myplayer ref="player" :shipVideoInfo="vd"></myplayer>
     </el-col>
   </el-row>
 </template>
@@ -16,6 +16,7 @@ export default {
   },
   mounted() {
     this.iniavideo()
+    this.player = this.$refs.player.myplayer
   },
   data() {
     return {
@@ -27,16 +28,15 @@ export default {
         url: '',
         urlHD: '',
         pic: ''
-      }]
+      }],
+      player: null
     }
   },
   methods: {
     iniavideo() {
       getAllShipDefInfo().then(response => {
-        console.log(response)
         if (response.data && response.data.length !== 0) {
           this.shipDefInfos = response.data
-          console.log(this.shipDefInfos)
           this.$notify({
             title: '成功！',
             message: '成功获取所有船只的视频连接！',

@@ -33,7 +33,8 @@ export const constantRouterMap = [
     hidden: false,
     children: [{
       path: 'dashboard',
-      component: () => import('@/views/dashboard/index')
+      component: () => import('@/views/dashboard/index'),
+      meta: { title: '首页', icon: 'example' }
     }]
   },
 
@@ -46,7 +47,7 @@ export const constantRouterMap = [
         name: 'Detail',
         path: 'index',
         component: () => import('@/views/detail/index'),
-        meta: { title: 'Detail', icon: 'example' }
+        meta: { title: 'Detail', icon: 'tree' }
       }
     ]
   },
@@ -60,7 +61,7 @@ export const constantRouterMap = [
         name: 'Map',
         path: 'index',
         component: () => import('@/views/mapmake/index'),
-        meta: { title: 'Map', icon: 'example' }
+        meta: { title: 'Map', icon: 'table' }
       }
     ]
   },
@@ -74,7 +75,7 @@ export const constantRouterMap = [
         name: 'Track',
         path: 'index',
         component: () => import('@/views/track/index'),
-        meta: { title: 'Track', icon: 'example' }
+        meta: { title: 'Track', icon: 'nested' }
       }
     ]
   },
@@ -88,7 +89,7 @@ export const constantRouterMap = [
         name: 'Video',
         path: 'index',
         component: () => import('@/views/video/index'),
-        meta: { title: 'Video', icon: 'example' }
+        meta: { title: 'Video', icon: 'eye' }
       }
     ]
   },
