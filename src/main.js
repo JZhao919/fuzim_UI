@@ -16,7 +16,15 @@ import '@/icons' // icon
 import '@/permission' // permission control
 // import './mock' // simulation data
 
+import * as filters from './filters' // global filters
+
 Vue.use(ElementUI, { locale })
+
+// register global utility filters.
+Object.keys(filters).forEach(key => {
+  Vue.filter(key, filters[key])
+})
+
 Vue.config.productionTip = false
 
 // 之所以把Hls挂载window对象上，是因为当DPlayer.video.type='hls'时，new DPlayer()对象会用到此对象。

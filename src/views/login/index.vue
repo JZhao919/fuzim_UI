@@ -23,8 +23,10 @@
         </el-button>
       </el-form-item>
       <div class="tips">
-        <span style="margin-right:20px;">username: admin</span>
-        <span style="margin-left:20px;">password: admin</span>
+        <span style="margin-right:20px;">username: huangxu</span>
+        <span style="margin-left:20px;">password: acostek123#Pass</span><br/>
+        <span style="margin-right:20px;">username: zhangkai</span>
+        <span style="margin-left:20px;">password: acostek456$Pass</span>
       </div>
     </el-form>
   </div>
@@ -52,8 +54,8 @@ export default {
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: 'admin'
+        username: 'huangxu',
+        password: 'acostek123#Pass'
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -75,7 +77,7 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$store.dispatch('Login', this.loginForm).then(() => {
+          this.$store.dispatch('LoginByUsername', this.loginForm).then(() => {
             this.loading = false
             this.$router.push({ path: '/' })//  登录成功之后重定向到首页
           }).catch(() => {

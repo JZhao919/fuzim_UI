@@ -8,6 +8,7 @@ import { getToken } from '@/utils/auth' // 验权
 NProgress.configure({ showSpinner: false })// NProgress Configuration
 
 const whiteList = ['/login'] // 不重定向白名单
+
 router.beforeEach((to, from, next) => {
   NProgress.start()
   if (getToken()) {
@@ -18,12 +19,12 @@ router.beforeEach((to, from, next) => {
     } else {
       if (store.getters.roles.length === 0) { // 判断当前用户是否已拉取完user_info信息
         store.dispatch('GetUserInfo').then(res => { // 拉取用户信息
-          next()
-          // const roles = res.data.role // note: roles must be a array! such as: ['editor','develop']
-          // store.dispatch('GenerateRoutes', { roles }).then(() => { // 根据roles权限生成可访问的路由表
-          //   router.addRoutes(store.getters.addRouters) // 动态添加可访问路由表
-          //   next({ ...to, replace: true }) // hack方法 确保addRoutes已完成 ,set the replace: true so the navigation will not leave a history record
-          // })
+          const roles = []
+          roles[0] = res.data.role // note: roles must be a array! such as: ['editor','develop']
+          store.dispatch('GenerateRoutes', { roles }).then(() => { // 根据roles权限生成可访问的路由表
+            router.addRoutes(store.getters.addRouters) // 动态添加可访问路由表
+            next({ ...to, replace: true }) // hack方法 确保addRoutes已完成 ,set the replace: true so the navigation will not leave a history record
+          })
         }).catch((err) => {
           store.dispatch('FedLogOut').then(() => {
             Message.error(err || 'Verification failed, please login again')
@@ -35,6 +36,7 @@ router.beforeEach((to, from, next) => {
       }
     }
   } else {
+    /* has no token*/
     if (whiteList.indexOf(to.path) !== -1) { // 在免登录白名单，直接进入
       next()
     } else {
