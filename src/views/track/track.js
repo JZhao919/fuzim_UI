@@ -28,7 +28,7 @@ function getlngLats1(shipId, startTime) {
     getAllGPSByIdTime(shipId, startTime).then(response => {
       const data = response.data // 返回的坐标数据
       const gpslength = data.length
-      if (data !== null && gpslength !== 0) {
+      if (data && data !== null && gpslength > 0) {
         if (gpslength > 40) {
           const num = gpslength / 40
           for (let i = 0; i < gpslength; i += num) {
@@ -44,6 +44,7 @@ function getlngLats1(shipId, startTime) {
           }
         }
         resolve(gps)
+        return
       } else {
         console.log('获取数据为空')
         rejects('获取数据为空')
@@ -60,7 +61,7 @@ function getlngLats2(shipId, startTime, endTime) {
     getAllGPSByIdTimeBetween(shipId, startTime, endTime).then(response => {
       const data = response.data // 返回的坐标数据
       const gpslength = data.length
-      if (data !== null && gpslength !== 0) {
+      if (data && data !== null && gpslength > 0) {
         if (gpslength > 40) {
           const num = gpslength / 40
           for (let i = 0; i < gpslength; i += num) {
@@ -76,6 +77,7 @@ function getlngLats2(shipId, startTime, endTime) {
           }
         }
         resolve(gps)
+        return
       } else {
         console.log('获取数据为空')
         rejects('获取数据为空')

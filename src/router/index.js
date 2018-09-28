@@ -129,7 +129,7 @@ export const constantRouterMap = [
 
 export default new Router({
   // mode: 'history', //后端支持可开
-  // scrollBehavior: () => ({ y: 0 }),
+  scrollBehavior: () => ({ y: 0 }),
   routes: constantRouterMap
 })
 
@@ -140,14 +140,14 @@ export const asyncRouterMap = [
     redirect: '/theme/index',
     hidden: false,
     meta: {
-      roles: ['ROLE_ADMIN']
+      roles: ["ROLE_ADMIN"]
     },
     children: [
       {
         name: 'theme',
         path: 'index',
         component: () => import('@/views/theme/index'),
-        meta: { title: 'theme', icon: 'example' }
+        meta: { title: 'theme', icon: 'example', roles: ["ROLE_ADMIN"] }
       }
     ]
   },

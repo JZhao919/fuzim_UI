@@ -1,6 +1,8 @@
 import AMap from 'AMap'
 let fzmap // 全局地图变量
 
+// 刷新页面清楚标记点
+
 // 地图初始化函数
 export function initmap() {
   fzmap = new AMap.Map('fz-map', {
@@ -71,7 +73,6 @@ function addMarker(shipinfo, lnglat) {
   lclickIFWDC.push("<br/>电池警报：" + shipinfo.batteryStatus)
   marker.content = createInfoWindow(lclickIFWDT, lclickIFWDC) // 构造信息窗体
   marker.on('click', markerClick) // 设置标注点击事件
-  // marker.emit('click',{target:marker});  // 默认打开一个标注事件
   var leftClickInfoWD = new AMap.InfoWindow({
     isCustom: true, // 使用自定义窗体
     closeWhenClickMap: true,

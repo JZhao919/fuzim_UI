@@ -60,18 +60,20 @@ export default {
     mapCard
   },
   mounted() {
+    this.shipAllInfo = this.shipNoneInfo
     this.getInfo()
   },
   data() {
     return {
+      shipId: 0, // 当前船只的编号
       shipDefInfo: {
         shipId: 0,
         shipName: '',
         shipNote: '',
         shipStatus: ''
-      }, // 当前船只的基本信息
-      allshipDefInfo: [], // 所有船只基本信息
-      shipAllInfo: {
+      }, // 当前船只的定义信息
+      allshipDefInfo: [], // 所有船只定义信息
+      shipNoneInfo: {
         // 状态信息
         shipId: 0,
         ioTimes: 0,
@@ -126,6 +128,8 @@ export default {
         motorCurrent2: 0,
         motorVoltage2: 0,
         motorSpeed2: 0
+      }, // 默认船只信息
+      shipAllInfo: {
       } // 当前船只的所有信息
     }
   },
@@ -158,17 +162,19 @@ export default {
     getInfo() {
       getAllShipDefInfo().then(response => {
         const data = response.data
-        if (data !== []) {
-          this.allshipDefInfo = data
+        if (data === [] || !data || data === null || data === "") {
+          this.notification(2, '数据库中没有船只信息！')
+          this.shipAllInfo = {}
           return
         } else {
-          this.notification(2, '数据库中没有船只信息！')
+          this.allshipDefInfo = data
           return
         }
       })
       return
     },
     submit(shipId) {
+      this.shipId = shipId
       for (let i = 0; i < this.allshipDefInfo.length; i++) {
         ((n) => {
           if (this.allshipDefInfo[n].shipId === shipId) {
@@ -179,12 +185,13 @@ export default {
       }
       getOneShipInfo(shipId).then(response => {
         const data = response.data
-        if (data !== '') {
-          this.shipAllInfo = data
-          this.notification(1, '成功获取该船当前数据！')
+        if (data === [] || !data || data === null || data.length <= 0) {
+          this.notification(2, '该船当前没有详细数据！')
+          this.shipAllInfo = this.shipNoneInfo
           return
         } else {
-          this.notification(2, '该船当前没有数据！')
+          this.shipAllInfo = data
+          this.notification(1, '成功获取该船当前数据！')
           return
         }
       })

@@ -53,16 +53,16 @@ const user = {
     },
 
     // 获取用户信息
-    GetUserInfo({ commit, state }) {
+    GetUserInfo({ commit }) {
       return new Promise((resolve, reject) => {
-        getUserInfo(state.token).then(response => {
+        getUserInfo().then(response => {
           const data = response.data
-          if (data.role && data.roles !== '') { // 验证返回的roles是否是一个非空数组
+          if (data.role && data.role !== "") { // 验证返回的roles是否是一个非空数组
             var roles = []
-            roles[0] = data.role + ''
+            roles[0] = data.role
             commit('SET_ROLES', roles)
           } else {
-            reject('getInfo: roles must be a non-null string !')
+            reject('getInfo: 用户权限为空 !')
           }
           commit('SET_USERNAME', data.username)
           commit('SET_CNAME', data.cname)

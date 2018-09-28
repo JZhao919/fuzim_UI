@@ -2,9 +2,7 @@
 <template>
   <el-row>
     <el-col :span="24">
-      <el-card id="fz-map" class="fz-box">
-        
-      </el-card>
+      <el-card id="fz-map" class="fz-box"></el-card>
     </el-col>
   </el-row>
 </template>
@@ -16,64 +14,62 @@ export default {
   name: 'mapmake',
   data() {
     return {
-      allShipInfo: [
-        {
-          // 状态信息
-          'shipId': 1,
-          'ioTimes': 1,
-          'runStatus': '1',
-          'startRunTime': 20180114123456,
-          'endRunTime': 20180114133456,
-          'runTime': 3600,
-          'wait': '0',
-          'speed': 0.604,
-          // 警告信息
-          "overSpeed": "0",
-          "collide": "0",
-          "ultrasonicValue": "1000|999",
-          "leakage": "0",
-          "overSmog": "0",
-          "overFire": "0",
-          "overMotor": "0",
-          "batteryStatus": "0",
-          // GPS信息
-          "gpsTime": 20180114133458,
-          "gpsLondir": "E",
-          "longitude": 11843.85207,
-          "gpsLatdir": "N",
-          "latitude": 3202.26643,
-          "gpsVardir": "E",
-          "gpsMagvar": 0.0,
-          "gpsTrackTure": 108.5,
-          "gpsModeInd": "A",
-          // 电池信息
-          "batterySOC": "0",
-          "batteryTotalVolt": "0",
-          "batteryTotalCurr": "0",
-          "batteryTotalRP": "0",
-          "batteryTotalRN": "0",
-          "batteryMaxVoltSN": "0",
-          "batteryMaxVolt": "0",
-          "batteryMinVoltSN": "0",
-          "batteryMinVolt": "0",
-          "batteryMaxTEMPSN": "0",
-          "batteryMaxTEMP": "0",
-          "batteryMinTEMPSN": "0",
-          "batteryMinTEMP": "0",
-          // 电机与雷达
-          "radarRange": "20",
-          "radarAzimuth": "30",
-          "radarVerl": "2",
-          "radarSNR": "60",
-          "motorCurrent1": 5,
-          "motorVoltage1": 24,
-          "motorSpeed1": 3000,
-          "motorCurrent2": 5,
-          "motorVoltage2": 24,
-          "motorSpeed2": 3000,
-          "hardware": "note01"
-        }
-      ] // 所有船只全部信息
+      allShipInfo: [{
+        // 状态信息
+        shipId: 0,
+        ioTimes: 0,
+        runStatus: '',
+        startRunTime: 0,
+        endRunTime: 0,
+        runTime: 0,
+        wait: '',
+        speed: 0,
+        // 警告信息
+        overSpeed: "",
+        collide: "",
+        ultrasonicValue: "0|0",
+        leakage: "",
+        overSmog: "",
+        overFire: "",
+        overMotor: "",
+        batteryStatus: "",
+        // GPS信息
+        gpsTime: 0,
+        gpsLondir: "",
+        longitude: 0,
+        gpsLatdir: "",
+        latitude: 0,
+        gpsVardir: "",
+        gpsMagvar: 0.0,
+        gpsTrackTure: 0,
+        gpsModeInd: "",
+        // 电池信息
+        batterySOC: "",
+        batteryTotalVolt: "",
+        batteryTotalCurr: "",
+        batteryTotalRP: "",
+        batteryTotalRN: "",
+        batteryMaxVoltSN: "",
+        batteryMaxVolt: "",
+        batteryMinVoltSN: "",
+        batteryMinVolt: "",
+        batteryMaxTEMPSN: "",
+        batteryMaxTEMP: "",
+        batteryMinTEMPSN: "",
+        batteryMinTEMP: "",
+        // 电机与雷达
+        radarRange: "",
+        radarAzimuth: "",
+        radarVerl: "",
+        radarSNR: "",
+        hardware: "空",
+        motorCurrent1: 0,
+        motorVoltage1: 0,
+        motorSpeed1: 0,
+        motorCurrent2: 0,
+        motorVoltage2: 0,
+        motorSpeed2: 0
+      }] // 所有船只全部信息
     }
   },
   mounted() {
@@ -82,26 +78,26 @@ export default {
   },
   methods: {
     // 消息通知函数
-    notification(index) {
-      switch (index) {
+    notification(code, string) {
+      switch (code) {
+        case 0:
+          this.$notify.error({
+            title: '错误！',
+            message: string
+          })
+          break
         case 1:
           this.$notify({
             title: '成功！',
-            message: '成功获取远程数据！',
+            message: string,
             type: 'success'
           })
           break
         case 2:
-          this.$notify.error({
-            title: '成功！',
-            message: '服务器数据量为空！',
+          this.$notify({
+            title: '注意！',
+            message: string,
             type: 'warning'
-          })
-          break
-        case 3:
-          this.$notify.error({
-            title: '超时错误！',
-            message: '获取远程数据失败！'
           })
           break
         default:
@@ -112,14 +108,15 @@ export default {
       const _this = this
       getAllShipInfo().then(response => {
         const data = this.allShipInfo = response.data
-        if (data && data.length > 0) {
-          _this.notification(1)
-          transcode(_this.allShipInfo)
+        if (data === [] || !data || data === null || data.length <= 0) {
+          _this.notification(2, "数据库中没有船只数据！")
         } else {
-          _this.notification(2)
+          _this.notification(1, "成功获取所有船只数据！")
+          _this.allShipInfo = data
+          transcode(_this.allShipInfo)
         }
       }).catch(errer => {
-        _this.notification(3)
+        _this.notification(0, errer)
       })
     }
   }
