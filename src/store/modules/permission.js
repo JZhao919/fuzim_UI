@@ -13,23 +13,23 @@ function hasPermission(roles, route) {
   }
 }
 
-/**
- * 递归过滤异步路由表，返回符合用户角色权限的路由表
- * @param asyncRouterMap
- * @param roles
- */
-function filterAsyncRouter(asyncRouterMap, roles) {
-  const accessedRouters = asyncRouterMap.filter(route => {
-    if (hasPermission(roles, route)) {
-      if (route.children && route.children.length) {
-        route.children = filterAsyncRouter(route.children, roles)
-      }
-      return true
-    }
-    return false
-  })
-  return accessedRouters
-}
+// /**
+//  * 递归过滤异步路由表，返回符合用户角色权限的路由表
+//  * @param asyncRouterMap
+//  * @param roles
+//  */
+// function filterAsyncRouter(asyncRouterMap, roles) {
+//   const accessedRouters = asyncRouterMap.filter(route => {
+//     if (hasPermission(roles, route)) {
+//       if (route.children && route.children.length) {
+//         route.children = filterAsyncRouter(route.children, roles)
+//       }
+//       return true
+//     }
+//     return false
+//   })
+//   return accessedRouters
+// }
 
 const permission = {
   state: {
@@ -46,12 +46,23 @@ const permission = {
     GenerateRoutes({ commit }, data) {
       return new Promise(resolve => {
         const { roles } = data
-        let accessedRouters
-        if (roles.indexOf('ROLE_ADMIN') >= 0) {
-          accessedRouters = asyncRouterMap
-        } else {
-          accessedRouters = filterAsyncRouter(asyncRouterMap, roles)
-        }
+        const accessedRouters = asyncRouterMap.filter(v => {
+          if (roles.indexOf("ROLE_ADMIN") >= 0) return true
+          if (hasPermission(roles, v)) {
+            if (v.children && v.children.length > 0) {
+              v.children = v.children.filter(child => {
+                if (hasPermission(roles, child)) {
+                  return child
+                }
+                return false
+              })
+              return v
+            } else {
+              return v
+            }
+          }
+          return false
+        })
         commit('SET_ROUTERS', accessedRouters)
         resolve()
       })

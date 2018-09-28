@@ -14,7 +14,6 @@ import store from './store'
 
 import '@/icons' // icon
 import '@/permission' // permission control
-// import './mock' // simulation data
 
 import * as filters from './filters' // global filters
 

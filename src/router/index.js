@@ -40,28 +40,29 @@ export const constantRouterMap = [
   },
 
   {
-    path: '/',
+    path: '',
     component: Layout,
     redirect: 'dashboard',
-    name: 'Dashboard',
     hidden: false,
     children: [{
+      name: 'dashboard',
       path: 'dashboard',
       component: () => import('@/views/dashboard/index'),
-      meta: { title: '首页', icon: 'example', noCache: true }
+      meta: { title: '首页', icon: 'dashboard', noCache: true }
     }]
   },
 
   {
     path: '/detail',
     component: Layout,
+    redirect: 'detail/index',
     hidden: false,
     children: [
       {
-        name: 'Detail',
+        name: 'detail',
         path: 'index',
         component: () => import('@/views/detail/index'),
-        meta: { title: 'Detail', icon: 'tree' }
+        meta: { title: '详细数据', icon: 'tree' }
       }
     ]
   },
@@ -69,44 +70,61 @@ export const constantRouterMap = [
   {
     path: '/map',
     component: Layout,
+    redirect: '/map/index',
     hidden: false,
     children: [
       {
-        name: 'Map',
+        name: 'map',
         path: 'index',
         component: () => import('@/views/mapmake/index'),
-        meta: { title: 'Map', icon: 'table' }
+        meta: { title: '地图标注', icon: 'table' }
       }
     ]
   },
 
   {
-    path: '/Track',
+    path: '/track',
     component: Layout,
+    redirect: '/track/index',
     hidden: false,
     children: [
       {
-        name: 'Track',
+        name: 'track',
         path: 'index',
         component: () => import('@/views/track/index'),
-        meta: { title: 'Track', icon: 'nested' }
+        meta: { title: '轨迹回放', icon: 'nested' }
       }
     ]
   },
 
   {
-    path: '/Video',
+    path: '/video',
     component: Layout,
+    redirect: '/video/index',
     hidden: false,
     children: [
       {
-        name: 'Video',
+        name: 'video',
         path: 'index',
         component: () => import('@/views/video/index'),
-        meta: { title: 'Video', icon: 'eye' }
+        meta: { title: '视频预览', icon: 'eye' }
       }
     ]
   }
+  // {
+  //   path: '/Theme',
+  //   component: Layout,
+  //   hidden: false,
+  //   children: [
+  //     {
+  //       name: 'Theme',
+  //       path: 'index',
+  //       component: () => import('@/views/theme/index'),
+  //       meta: { title: 'theme', icon: 'example' }
+  //     }
+  //   ]
+  // },
+  // { path: '*', redirect: '/404', hidden: true }
 ]
 
 export default new Router({
@@ -119,16 +137,17 @@ export const asyncRouterMap = [
   {
     path: '/theme',
     component: Layout,
+    redirect: '/theme/index',
     hidden: false,
     meta: {
-      role: ['ROLE_ADMIN']
+      roles: ['ROLE_ADMIN']
     },
     children: [
       {
-        name: 'Theme',
+        name: 'theme',
         path: 'index',
         component: () => import('@/views/theme/index'),
-        meta: { title: 'theme', icon: 'example', role: ['ROLE_ADMIN'] }
+        meta: { title: 'theme', icon: 'example' }
       }
     ]
   },
