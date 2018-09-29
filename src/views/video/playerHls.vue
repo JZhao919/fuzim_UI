@@ -2,6 +2,7 @@
   <div class="mydplayer"></div>
 </template>
 <script>
+window.Hls = require('hls.js')
 require('../../../node_modules/dplayer/dist/DPlayer.min.css')
 import DPlayer from 'dplayer'
 export default {
@@ -35,7 +36,11 @@ export default {
       default: 'auto'
     },
     contextmenu: {
-      type: Array
+      type: Array,
+      default: [{
+        text: '夫子庙秦淮风光带',
+        link: 'https://baike.baidu.com/item/%E5%A4%AB%E5%AD%90%E5%BA%99%E7%A7%A6%E6%B7%AE%E9%A3%8E%E5%85%89%E5%B8%A6/10475554?fr=aladdin'
+      }]
     },
     logo: {
       type: String
@@ -76,8 +81,7 @@ export default {
           url: this.video.urlHD,
           type: this.video.type
         }],
-        defaultQuality: 0,
-        pic: this.video.pic
+        defaultQuality: 0
       }
     })
     player.on('play', () => {
@@ -104,5 +108,6 @@ export default {
 <style scoped>
   .mydplayer{
     width: 100%;
+    margin-bottom: 1px;
   }
 </style>
