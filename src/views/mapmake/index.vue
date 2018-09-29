@@ -133,7 +133,7 @@ export default {
     margin: 2px;
     border: solid 2px #f7f7f7;
     padding: 0px;
-    height: 710px;
+    height: 907px;
     text-align: center;
     font-size: 80%;
     color: #606266

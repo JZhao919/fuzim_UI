@@ -23,7 +23,7 @@ export function transcode(allShipInfo) {
     console.log("船只数:" + num)
     for (var i = 0; i < num; i++) {
       (function(i) {
-        let lngLat = new AMap.LngLat(allShipInfo[i].longitude / 100, allShipInfo[i].latitude / 100) // 创建高德坐标对象
+        let lngLat = new AMap.LngLat(allShipInfo[i].longitude, allShipInfo[i].latitude) // 创建高德坐标对象
         // 转换坐标
         AMap.convertFrom(lngLat, 'gps', function(status, result) {
           if (result.info === 'ok') {

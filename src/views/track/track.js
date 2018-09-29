@@ -33,13 +33,13 @@ function getlngLats1(shipId, startTime) {
           const num = gpslength / 40
           for (let i = 0; i < gpslength; i += num) {
             ((i) => {
-              gps.push(new AMap.LngLat(data[i].longitude / 100, data[i].latitude / 100))
+              gps.push(new AMap.LngLat(data[i].longitude, data[i].latitude))
             })(i)
           }
         } else {
           for (let i = 0; i < gpslength; i++) {
             ((i) => {
-              gps.push(new AMap.LngLat(data[i].longitude / 100, data[i].latitude / 100))
+              gps.push(new AMap.LngLat(data[i].longitude, data[i].latitude))
             })(i)
           }
         }
@@ -66,13 +66,13 @@ function getlngLats2(shipId, startTime, endTime) {
           const num = gpslength / 40
           for (let i = 0; i < gpslength; i += num) {
             ((i) => {
-              gps.push(new AMap.LngLat(data[i].longitude / 100, data[i].latitude / 100))
+              gps.push(new AMap.LngLat(data[i].longitude, data[i].latitude))
             })(i)
           }
         } else {
           for (let i = 0; i < gpslength; i++) {
             ((i) => {
-              gps.push(new AMap.LngLat(data[i].longitude / 100, data[i].latitude / 100))
+              gps.push(new AMap.LngLat(data[i].longitude, data[i].latitude))
             })(i)
           }
         }

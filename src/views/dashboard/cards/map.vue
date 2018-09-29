@@ -45,7 +45,7 @@ export default {
     // 坐标标注函数
     addMarker() {
       const shipInfo = this.shipInfo
-      let lngLat = new AMap.LngLat(shipInfo.longitude / 100, shipInfo.latitude / 100) // 创建高德坐标对象
+      let lngLat = new AMap.LngLat(shipInfo.longitude, shipInfo.latitude) // 创建高德坐标对象
       // 转换坐标
       AMap.convertFrom(lngLat, 'gps', (status, result) => {
         if (result.info === 'ok') {

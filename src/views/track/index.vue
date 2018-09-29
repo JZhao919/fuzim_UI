@@ -117,12 +117,9 @@ export default {
 }
 </style>
 <style  scoped>
-#fz-trail{
-
-}
 #trailmap{
   width: 100%;
-  height: 700px;
+  height: 880px;
 }
 
 </style>

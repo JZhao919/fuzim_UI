@@ -2,7 +2,7 @@
 <div id="fz-detail">
   <el-tabs v-model="activeName" type="border-card" tab-position="top">
     <el-tab-pane label="全部" name="all">
-      <el-table border size="mini" fit style="width:100%" 
+      <el-table max-height=907 border size="mini" fit style="width:100%" 
       :data="allShipInfo"
       :default-sort="defaultSort"
       :row-class-name="tableRowClassName"
@@ -26,7 +26,7 @@
       </el-table>
     </el-tab-pane>
     <el-tab-pane label="状态信息" name="status" lazy>
-      <el-table border size="mini" fit style="width:100%" 
+      <el-table max-height=907 border size="mini" fit style="width:100%" 
       :data="allShipInfo"
       :default-sort="defaultSort"
       :row-class-name="tableRowClassName"
@@ -42,7 +42,7 @@
         
       </el-table>
     </el-tab-pane>
-    <el-tab-pane label="警告信息" name="warning" lazy>
+    <el-tab-pane max-height=907 label="警告信息" name="warning" lazy>
       <el-table border size="mini" fit style="width:100%" 
       :data="allShipInfo"
       :default-sort="defaultSort"
@@ -59,7 +59,7 @@
         <el-table-column label="电池" prop="batteryStatus" align="center" sortable></el-table-column>
       </el-table>
     </el-tab-pane>
-    <el-tab-pane label="GPS信息" name="GPS" lazy>
+    <el-tab-pane max-height=907 label="GPS信息" name="GPS" lazy>
       <el-table border size="mini" fit style="width:100%" 
       :data="allShipInfo"
       :default-sort="defaultSort"
@@ -77,7 +77,7 @@
         <el-table-column label="模式" prop="gpsModeInd" align="center"></el-table-column> 
       </el-table>
     </el-tab-pane>
-    <el-tab-pane label="电池信息" name="battery" lazy>
+    <el-tab-pane max-height=907 label="电池信息" name="battery" lazy>
       <el-table border size="mini" fit style="width:100%" 
       :data="allShipInfo"
       :default-sort="defaultSort"
@@ -99,7 +99,7 @@
         <el-table-column label="最低温度" prop="batteryMinTEMP" align="center" sortable></el-table-column>
       </el-table>
     </el-tab-pane>
-    <el-tab-pane label="电机和雷达" name="motor" lazy>
+    <el-tab-pane max-height=907 label="电机和雷达" name="motor" lazy>
       <el-table border size="mini" fit style="width:100%" 
       :data="allShipInfo"
       :default-sort="defaultSort"

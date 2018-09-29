@@ -239,14 +239,13 @@ export default {
 <style scoped>
   #dashboard{
     border: 0;
-    background-color: #eff0f4;
     padding: 10px;
   }
   #db-coll{
     position: absolute;
     z-index: 2;
     margin: 10px 0px 0px 10px;
-    width: 35%;
+    width: 40%;
     height: auto;
     background-color: #37445817;
   }
