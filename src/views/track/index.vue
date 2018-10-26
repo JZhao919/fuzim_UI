@@ -3,7 +3,7 @@
     <el-row>
       <el-col :xs="12" :sm="12" :md="6">
         <el-date-picker type="datetime" clearable size="mini" placeholder="选择开始日期时间" format="yyyyMMddHHmmss"
-          v-model="beginDT" default-time="9:00:00">
+          v-model="begDT" default-time="9:00:00">
         </el-date-picker>
       </el-col>
       <el-col :xs="12" :sm="12" :md="6">
@@ -28,7 +28,7 @@
 
 <script>
 // eslint-disable-next-line
-import { initMap, makeTrail1, makeTrail2, dateToStr } from './track.js'
+import { initMap, makeTrail1, makeTrail2, dateToInt } from './track.js'
 
 export default {
   name: 'trail',
@@ -38,16 +38,8 @@ export default {
   data() {
     return {
       shipId: null, // 选择的船只编号
-      beginDT: null, // 开始时间
-      endDT: null // 结束时间
-    }
-  },
-  computed: {
-    startTime: function() {
-      return Number(dateToStr(this.beginDT))
-    },
-    endTime: function() {
-      return Number(dateToStr(this.endDT))
+      begDT: null, // 开始日期时间
+      endDT: null // 结束日期时间
     }
   },
   methods: {
@@ -82,22 +74,26 @@ export default {
         this.notification(0, '请务必选择一条船！')
         return
       }
-      if (this.beginDT === null) {
+      if (this.begDT === null) {
         this.notification(0, '请务必设置轨迹的开始时间！')
         return
       }
       if (this.endDT === null) {
-        this.notification(2, '将获取' + this.startTime + '后的轨迹数据！')
-        console.log(this.startTime)
-        makeTrail1(this.shipId, this.startTime)
+        const startTime = dateToInt(this.begDT)
+        // console.log(startTime)
+        this.notification(2, '将获取' + startTime + '后的轨迹数据！')
+        makeTrail1(this.shipId, startTime)
         this.shipId = null
         this.beginDT = null
       } else {
-        this.notification(1, '将获取' + this.startTime + '与' + this.endTime + '之间的轨迹数据！')
-        makeTrail2(this.shipId, this.startTime, this.endTime)
-        console.log(this.startTime, this.endTime)
+        const startTime = dateToInt(this.begDT)
+        const endTime = dateToInt(this.endDT)
+        // console.log(startTime)
+        // console.log(endTime)
+        this.notification(1, '将获取' + startTime + '与' + endTime + '之间的轨迹数据！')
+        makeTrail2(this.shipId, startTime, endTime)
         this.shipId = null
-        this.beginDT = null
+        this.begDT = null
         this.endDT = null
       }
       return

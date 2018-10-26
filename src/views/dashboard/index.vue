@@ -1,46 +1,46 @@
 <template>
 <div id="dashboard">
-  <el-collapse id="db-coll">
-    <el-collapse-item title="选择船只" name="1">
-      <div class="coll-shipdef">
-        <el-scrollbar id="sd-scrollbar" noresize style="height:100%">
-          <el-button v-for="shipdef in allshipDefInfo" :key="shipdef.shipId"
-          type="text" plain size="mini" 
-          @click.native="submit(shipdef.shipId)">
-          {{shipdef.shipName}}
-          </el-button>
-        </el-scrollbar>
-      </div>
-    </el-collapse-item>
-  </el-collapse>
-  <div id="db-info">
-    <el-row>
-      <el-col :xs="24" :sm="24" :md="16" :lg="12">
-        <mapCard :shipInfo="shipAllInfo"></mapCard>
-      </el-col>
-      <el-col :xs="24" :sm="12" :md="8" :lg="6">   
-        <defCard :shipInfo="shipDefInfo"></defCard>
-      </el-col>
-      <el-col :xs="24" :sm="12" :md="8" :lg="6">
-        <statusCard :shipInfo="shipAllInfo"></statusCard>
-      </el-col>
-      <el-col :xs="24" :sm="12" :md="8" :lg="4">
-        <warnCard :shipInfo="shipAllInfo"></warnCard>
-      </el-col>
-      <el-col :xs="24" :sm="12" :md="8" :lg="5">
-        <GPSCard :shipInfo="shipAllInfo"></GPSCard>
-      </el-col>
-      <el-col :xs="24" :sm="12" :md="8" :lg="5">
-        <batteryCard :shipInfo="shipAllInfo"></batteryCard>
-      </el-col>
-      <el-col :xs="24" :sm="12" :md="8" :lg="5">
-        <motorCard :shipInfo="shipAllInfo"></motorCard>
-      </el-col>
-      <el-col :xs="24" :sm="12" :md="8" :lg="5">
-        <radarCard :shipInfo="shipAllInfo"></radarCard>
-      </el-col>
-    </el-row>
-  </div>
+  <el-row id="shiplist">
+    <el-collapse id="spl-coll">
+      <el-collapse-item title="点击打开船只选择列表" name="1">
+        <div id="splcollcontent">
+          <el-scrollbar noresize style="height:100%">
+            <el-button v-for="shipdef in allshipDefInfo" :key="shipdef.shipId"
+            type="text" plain size="mini" 
+            @click.native="submit(shipdef.shipId)">
+            {{shipdef.shipName}}
+            </el-button>
+          </el-scrollbar>
+        </div>
+      </el-collapse-item>
+    </el-collapse>
+  </el-row>
+  <el-row>
+    <el-col :xs="24" :sm="24" :md="16" :lg="12">
+      <mapCard :shipInfo="shipAllInfo"></mapCard>
+    </el-col>
+    <el-col :xs="24" :sm="12" :md="8" :lg="6">   
+      <defCard :shipInfo="shipDefInfo"></defCard>
+    </el-col>
+    <el-col :xs="24" :sm="12" :md="8" :lg="6">
+      <statusCard :shipInfo="shipAllInfo"></statusCard>
+    </el-col>
+    <el-col :xs="24" :sm="12" :md="8" :lg="4">
+      <warnCard :shipInfo="shipAllInfo"></warnCard>
+    </el-col>
+    <el-col :xs="24" :sm="12" :md="8" :lg="5">
+      <GPSCard :shipInfo="shipAllInfo"></GPSCard>
+    </el-col>
+    <el-col :xs="24" :sm="12" :md="8" :lg="5">
+      <batteryCard :shipInfo="shipAllInfo"></batteryCard>
+    </el-col>
+    <el-col :xs="24" :sm="12" :md="8" :lg="5">
+      <motorCard :shipInfo="shipAllInfo"></motorCard>
+    </el-col>
+    <el-col :xs="24" :sm="12" :md="8" :lg="5">
+      <radarCard :shipInfo="shipAllInfo"></radarCard>
+    </el-col>
+  </el-row>
 </div>
 </template>
 
@@ -128,7 +128,7 @@ export default {
         motorCurrent2: 0,
         motorVoltage2: 0,
         motorSpeed2: 0
-      }, // 默认船只信息
+      }, // 默认船只的所有信息
       shipAllInfo: {
       } // 当前船只的所有信息
     }
@@ -201,55 +201,59 @@ export default {
 }
 </script>
 <style>
-#db-coll .el-collapse-item__header{
-  background-color: #37445817;
+#dashboard {
   border: 0;
-  padding-left: 10px; 
+  padding: 5px;
+}
+#shiplist {
+  padding:10px;
+  width: 100%;
+  height: auto;
+}
+#spl-coll {
+  width: 100%;
+  height: auto;
+  background-color: #ffffff;
+}
+#spl-coll .el-collapse-item__header{
+  border: 0;
+  padding:0;
+  background-color: #eeeff1;
+  width: 100%;
   height: 30px;
+  text-align: center;
   font-size: 13px;
-  text-align: left;
-  color: #000000;
   line-height: 30px;
 }
-#db-coll .el-collapse-item__arrow{
+#spl-coll .el-collapse-item__arrow{
   line-height: 30px;
 }
-#db-coll .el-collapse-item__wrap {
+#spl-coll .el-collapse-item__wrap {
   border: 0;
-  background-color: #ffffff88;
+  background-color: #ffffff;
 }
-#db-coll .el-collapse-item__content {
+#spl-coll .el-collapse-item__content {
   border: 0;
   padding: 0;
   font-size: 13px;
   color: #ffffff;
 }
-#coll-shipdef .el-scrollbar__wrap{
-  overflow-x:auto;
+
+#splcollcontent {
+  height: 200px;
 }
-#coll-shipdef .el-button--mini{
-  margin: 3px;
-  padding: 2px 2px;
-  color: #1570f8b6;
+#splcollcontent .el-scrollbar__wrap{
+  overflow-x:hidden;
+  overflow-y: auto;
 }
-#sd-scrollbar .el-button+.el-button{
-  margin: 0 10px 0 0;
+#splcollcontent .el-button--mini{
+  margin: 4px;
+  padding: 4px;
+  font-size: 13px;
+  border-radius: 1px;
 }
-</style>
-<style scoped>
-  #dashboard{
-    border: 0;
-    padding: 10px;
-  }
-  #db-coll{
-    position: absolute;
-    z-index: 2;
-    margin: 10px 0px 0px 10px;
-    width: 40%;
-    height: auto;
-    background-color: #37445817;
-  }
-  #db-coll .coll-shipdef{
-    height: 300px;
-  }
+#splcollcontent .el-button--text{
+  color: #000000;
+  background: 0 0;
+}
 </style>

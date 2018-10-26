@@ -39,7 +39,7 @@ export default {
 }
 #GPS-card .GPS-title{
   padding: 6px 10px;
-  background-color: #37445817;
+  background-color: #eeeff1;
   height: 30px;
   text-align: center;
   font-size: 13px;
