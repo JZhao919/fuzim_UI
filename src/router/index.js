@@ -134,23 +134,6 @@ export default new Router({
 })
 
 export const asyncRouterMap = [
-  {
-    path: '/theme',
-    component: Layout,
-    redirect: '/theme/index',
-    hidden: false,
-    meta: {
-      roles: ["ROLE_ADMIN"]
-    },
-    children: [
-      {
-        name: 'theme',
-        path: 'index',
-        component: () => import('@/views/theme/index'),
-        meta: { title: 'theme', icon: 'example', roles: ["ROLE_ADMIN"] }
-      }
-    ]
-  },
 
   { path: '*', redirect: '/404', hidden: true }
 ]
