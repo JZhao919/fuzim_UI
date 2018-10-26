@@ -29,24 +29,24 @@ function getlngLats1(shipId, startTime) {
       const data = response.data // 返回的坐标数据
       const gpslength = data.length
       if (data && data !== null && gpslength > 0) {
-        if (gpslength > 40) {
-          const num = gpslength / 40
-          for (let i = 0; i < gpslength; i += num) {
-            ((i) => {
+        if (gpslength > 70) {
+          const jump = parseInt(gpslength / 70)
+          for (let i = 0; i < gpslength; i += jump) {
+            if (data[i].longitude && data[i].longitude !== 0 && data[i].latitude && data[i].latitude !== 0) {
               gps.push(new AMap.LngLat(data[i].longitude, data[i].latitude))
-            })(i)
+            }
           }
         } else {
           for (let i = 0; i < gpslength; i++) {
-            ((i) => {
+            if (data[i].longitude && data[i].longitude !== 0 && data[i].latitude && data[i].latitude !== 0) {
               gps.push(new AMap.LngLat(data[i].longitude, data[i].latitude))
-            })(i)
+            }
           }
         }
+        console.log(gps)
         resolve(gps)
         return
       } else {
-        console.log('获取数据为空')
         rejects('获取数据为空')
       }
     }).catch(errer => {
@@ -62,24 +62,24 @@ function getlngLats2(shipId, startTime, endTime) {
       const data = response.data // 返回的坐标数据
       const gpslength = data.length
       if (data && data !== null && gpslength > 0) {
-        if (gpslength > 40) {
-          const num = gpslength / 40
-          for (let i = 0; i < gpslength; i += num) {
-            ((i) => {
+        if (gpslength > 70) {
+          const jump = parseInt(gpslength / 70)
+          for (let i = 0; i < gpslength; i += jump) {
+            if (data[i].longitude && data[i].longitude !== 0 && data[i].latitude && data[i].latitude !== 0) {
               gps.push(new AMap.LngLat(data[i].longitude, data[i].latitude))
-            })(i)
+            }
           }
         } else {
           for (let i = 0; i < gpslength; i++) {
-            ((i) => {
+            if (data[i].longitude && data[i].longitude !== 0 && data[i].latitude && data[i].latitude !== 0) {
               gps.push(new AMap.LngLat(data[i].longitude, data[i].latitude))
-            })(i)
+            }
           }
         }
+        console.log(gps)
         resolve(gps)
         return
       } else {
-        console.log('获取数据为空')
         rejects('获取数据为空')
       }
     }).catch(errer => {
@@ -133,10 +133,10 @@ function trailMaker(lngLats) {
       getHoverTitle: function(pathData, pathIndex, pointIndex) {
         // 返回鼠标悬停时显示的信息
         if (pointIndex >= 0) {
-          return pathData.name + '，点：' + pointIndex + '/' + pathData.path.length // 鼠标悬停在某个轨迹节点上
+          return pathData.name + '，当前点：' + pointIndex + '/' + pathData.path.length // 鼠标悬停在某个轨迹节点上
         }
         // 鼠标悬停在节点之间的连线上
-        return pathData.name + '，点数量' + pathData.path.length
+        return pathData.name + '，点数量：' + pathData.path.length + '，播放速度：300km/h'
       },
       renderOptions: { // 轨迹线的样式
         renderAllPointsIfNumberBelow: 100 // 绘制路线节点，如不需要可设置为-1
@@ -146,14 +146,14 @@ function trailMaker(lngLats) {
     // 设置数据构建一条简单的轨迹
     pathSimplifierIns.setData([
       {
-        name: '运行轨迹',
+        name: '船只的运行轨迹',
         path: lngLats
       }
     ])
     // 创建一个巡航器，关联第1条轨迹（轨迹1）
     var navg1 = pathSimplifierIns.createPathNavigator(0, {
       loop: true, // 循环播放
-      speed: 250 // 巡航速度，单位千米/小时
+      speed: 300 // 巡航速度，单位千米/小时
     })
     navg1.start()
   }
@@ -186,9 +186,9 @@ export function makeTrail2(shipId, startTime, endTime) {
 /**
  * 时间格式化函数
  * @param {Date} datetime
- * @return String datetime yyyyMMddHHmmss
+ * @return Int datetime yyyyMMddHHmmss
  */
-export function dateToStr(datetime) {
+export function dateToInt(datetime) {
   datetime = new Date(datetime)
   var year = datetime.getFullYear()
   var month = datetime.getMonth() + 1 // js从0开始取
@@ -196,21 +196,12 @@ export function dateToStr(datetime) {
   var hour = datetime.getHours()
   var minutes = datetime.getMinutes()
   var second = datetime.getSeconds()
-  if (month < 10) {
-    month = "0" + month
-  }
-  if (date < 10) {
-    date = "0" + date
-  }
-  if (hour < 10) {
-    hour = "0" + hour
-  }
-  if (minutes < 10) {
-    minutes = "0" + minutes
-  }
-  if (second < 10) {
-    second = "0" + second
-  }
-  var time = year + month + date + hour + minutes + second // 20090612171805
-  return time
+  year = String(year)
+  String(month).length < 2 ? month = '0' + month : month
+  String(date).length < 2 ? date = '0' + date : date
+  String(hour).length < 2 ? hour = '0' + hour : hour
+  String(minutes).length < 2 ? minutes = '0' + minutes : minutes
+  String(second).length < 2 ? second = '0' + second : second
+  var time = year + month + date + hour + minutes + second // '20090612171805'
+  return parseInt(time)
 }
