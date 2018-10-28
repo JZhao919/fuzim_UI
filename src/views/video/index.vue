@@ -1,28 +1,33 @@
 <template>
-<div id="fz-video">
-  <el-row class="fz-video">
-    <el-col v-for="vd in runShipAllV" :key="vd.shipId" :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
-      <myplayer ref="runShipAllV" :shipVideoInfo="vd"></myplayer>
-    </el-col>
+<div id="v-video">
+  <el-row id="v-shiplist">
+    <el-collapse id="v-splcoll">
+      <el-collapse-item title="点击打开船只选择列表" name="1">
+        <div id="v-splcollcontent">
+          <el-scrollbar noresize style="height:100%">
+            <el-button v-for="shipdef in allshipDefInfo" :key="shipdef.shipId"
+            type="text" plain size="mini" 
+            @click.native="submit(shipdef.shipId)">
+            {{shipdef.shipName}}
+            </el-button>
+          </el-scrollbar>
+        </div>
+      </el-collapse-item>
+    </el-collapse>
   </el-row>
-  <el-row class="fz-video">
-    <el-col v-for="vd in runShipTwoV" :key="vd.shipId" :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
-      <myplayer ref="runShipTwoV" :shipVideoInfo="vd"></myplayer>
+  <el-row>
+    <el-col :xs="24" :sm="24" :md="24" :lg="16" :xl="16">
+      <!-- 主要播放区 -->
+      <myplayer ref="mainVideo" :videoInfo="shipHeadCamca"></myplayer>
     </el-col>
-  </el-row>
-  <el-row class="fz-video">
-    <el-col v-for="vd in runShipOneV" :key="vd.shipId" :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
-      <myplayer ref="runShipOneV" :shipVideoInfo="vd"></myplayer>
-    </el-col>
-  </el-row>
-  <el-row class="fz-video">
-    <el-col v-for="vd in runShipNoV" :key="vd.shipId" :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
-      <myplayer ref="runShipNoV" :shipVideoInfo="vd"></myplayer>
-    </el-col>
-  </el-row>
-  <el-row class="fz-video">
-    <el-col v-for="vd in norunShipV" :key="vd.shipId" :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
-      <myplayer ref="norunShipV" :shipVideoInfo="vd"></myplayer>
+    <el-col :xs="24" :sm="24" :md="24" :lg="8" :xl="8">
+      <!-- 次级选择播放区 -->
+      <el-col :xs="24" :sm="12" :md="12" :lg="24" :xl="24">
+        <myplayer ref="select1Video" :videoInfo="shipBinCamca"></myplayer>
+      </el-col>
+      <el-col :xs="24" :sm="12" :md="12" :lg="24" :xl="24">
+        <myplayer ref="select2Video" :videoInfo="shipTailCamca"></myplayer>
+      </el-col>
     </el-col>
   </el-row>
 </div>
@@ -32,110 +37,171 @@
 import myplayer from './myPlayer'
 import { getAllShipDefInfo } from '@/api/shipinfo'
 export default {
-  name: 'fz-video',
+  name: 'v-video',
   components: {
     myplayer
   },
   mounted() {
-    this.iniavideo()
+    this.init()
   },
   data() {
     return {
-      shipDefInfos: [{
+      allshipDefInfo: [], // 所有船只定义信息
+      shipDefInfo: {
         shipId: 0,
-        shipName: 'AAA',
+        shipName: '',
+        shipStatus: '',
         shipNote: '',
-        shipStatus: "0",
         shipCamheadUrl: "",
         shipCamheadUrlHD: "",
         shipCamcabinUrl: "",
         shipCamcabinUrlHD: "",
         shipCamtailUrl: "",
         shipCamtailUrlHD: ""
-      }],
-      runShipAllV: [], // 运行中且所有视频都存在
-      runShipOneV: [], // 运行中且只有一个视频存在
-      runShipTwoV: [], // 运行中且只有两个视频存在
-      runShipNoV: [], // 运行中且所有视频都不存在
-      norunShipV: [] // 未运行
+      } // 当前船只的定义信息
+    }
+  },
+  computed: {
+    shipHeadCamca: function() {
+      return {
+        shipName: this.shipDefInfo.shipName,
+        camcaLoca: "头部",
+        shipStatus: this.shipDefInfo.shipStatus,
+        shipUrl: this.shipDefInfo.shipCamheadUrl,
+        shipUrlHD: this.shipDefInfo.shipCamheadUrlHD
+      }
+    },
+    shipBinCamca: function() {
+      return {
+        shipName: this.shipDefInfo.shipName,
+        camcaLoca: "中部",
+        shipStatus: this.shipDefInfo.shipStatus,
+        shipUrl: this.shipDefInfo.shipCamcabinUrl,
+        shipUrlHD: this.shipDefInfo.shipCamcabinUrlHD
+      }
+    },
+    shipTailCamca: function() {
+      return {
+        shipName: this.shipDefInfo.shipName,
+        camcaLoca: "尾部",
+        shipStatus: this.shipDefInfo.shipStatus,
+        shipUrl: this.shipDefInfo.shipCamtailUrl,
+        shipUrlHD: this.shipDefInfo.shipCamtailUrlHD
+      }
     }
   },
   methods: {
-    init() {
-      if (this.runShipAllV.length > 0) {
-        this.$refs.runShipAllV.init()
-      }
-      if (this.runShipAllV.length > 0) {
-        this.$refs.runShipTwoV.init()
-      }
-      if (this.runShipAllV.length > 0) {
-        this.$refs.runShipOneV.init()
-      }
-      if (this.runShipAllV.length > 0) {
-        this.$refs.runShipNoV.init()
-      }
-      if (this.runShipAllV.length > 0) {
-        this.$refs.norunShipV.init()
-      }
-    },
-    iniavideo() {
-      getAllShipDefInfo().then(response => {
-        if (response.data && response.data.length > 0) {
-          this.dealInfo(response.data)
+    notification(code, string) {
+      switch (code) {
+        case 0:
+          this.$notify.error({
+            title: '错误！',
+            message: string
+          })
+          break
+        case 1:
           this.$notify({
             title: '成功！',
-            message: '成功获取所有船只的视频信息！',
+            message: string,
             type: 'success'
           })
-        } else {
+          break
+        case 2:
           this.$notify({
-            title: '警告！',
-            message: '船只的信息为空！',
+            title: '注意！',
+            message: string,
             type: 'warning'
           })
-        }
-      }).catch(errer => {
-        this.$notify.error({
-          title: '错误',
-          message: "获取信息失败：" + errer
-        })
-      })
-    },
-    dealInfo(shipDefInfos) {
-      for (let i = 0; i < shipDefInfos.length; i++) {
-        ((n) => {
-          const SpDIf = shipDefInfos[n]
-          if (SpDIf.shipStatus === "1") {
-            if ((SpDIf.shipCamheadUrl && SpDIf.shipCamheadUrl !== "") &&
-            (SpDIf.shipCamcabinUrl && SpDIf.shipCamcabinUrl !== "") && (SpDIf.shipCamtailUrl && SpDIf.shipCamtailUrl !== "")) {
-              this.runShipAllV.push(SpDIf) // 运行中且所有视频都存在
-            } else if ((!SpDIf.shipCamheadUrl || SpDIf.shipCamheadUrl === "") &&
-            (!SpDIf.shipCamcabinUrl || SpDIf.shipCamcabinUrl === "") && (!SpDIf.shipCamtailUrl || SpDIf.shipCamtailUrl === "")) {
-              this.runShipNoV.push(SpDIf) // 运行中且所有视频都不存在
-            } else if ((SpDIf.shipCamheadUrl && SpDIf.shipCamheadUrl !== "") &&
-            (SpDIf.shipCamcabinUrl && SpDIf.shipCamcabinUrl !== "") && (!SpDIf.shipCamtailUrl || SpDIf.shipCamtailUrl === "")) {
-              this.runShipTwoV.push(SpDIf) // 运行中且独没有尾视频
-            } else if ((SpDIf.shipCamheadUrl && SpDIf.shipCamheadUrl !== "") &&
-            (!SpDIf.shipCamcabinUrl || SpDIf.shipCamcabinUrl === "") && (SpDIf.shipCamtailUrl && SpDIf.shipCamtailUrl !== "")) {
-              this.runShipTwoV.push(SpDIf) // 运行中且独没有中视频
-            } else if ((!SpDIf.shipCamheadUrl || SpDIf.shipCamheadUrl === "") &&
-            (SpDIf.shipCamcabinUrl && SpDIf.shipCamcabinUrl !== "") && (SpDIf.shipCamtailUrl && SpDIf.shipCamtailUrl !== "")) {
-              this.runShipTwoV.push(SpDIf) // 运行中且独没有头视频
-            } else {
-              this.runShipOneV.push(SpDIf) // 运行中且只有一个视频存在
-            }
-          } else {
-            this.norunShipV.push(SpDIf) // 未运行
-          }
-        })(i)
+          break
+        default:
       }
+    },
+    init() {
+      getAllShipDefInfo().then(response => {
+        const data = response.data
+        if (data === [] || !data || data === null || data === "") {
+          this.notification(2, '数据库中没有船只信息！')
+        } else {
+          this.allshipDefInfo = data
+        }
+      })
+      console.log(this.shipDefInfo)
+      return
+    },
+    submit(shipId) {
+      for (let i = 0; i < this.allshipDefInfo.length; i++) {
+        if (this.allshipDefInfo[i].shipId === shipId) {
+          this.shipDefInfo = this.allshipDefInfo[i]
+          console.log(this.shipDefInfo)
+          break
+        }
+      }
+      this.$refs.mainVideo
+      this.$refs.select1Video
+      this.$refs.select2Video
+      return
     }
   }
 }
 </script>
+<style>
+#v-video {
+  border: 0;
+  padding: 5px;
+}
+#v-shiplist {
+  padding:10px;
+  width: 100%;
+  height: auto;
+}
+#v-splcoll {
+  width: 100%;
+  height: auto;
+  background-color: #ffffff;
+}
+#v-splcoll .el-collapse-item__header{
+  border: 0;
+  padding:0;
+  background-color: #eeeff1;
+  width: 100%;
+  height: 30px;
+  text-align: center;
+  font-size: 13px;
+  line-height: 30px;
+}
+#v-splcoll .el-collapse-item__arrow{
+  line-height: 30px;
+}
+#v-splcoll .el-collapse-item__wrap {
+  border: 0;
+  background-color: #ffffff;
+}
+#v-splcoll .el-collapse-item__content {
+  border: 0;
+  padding: 0;
+  font-size: 13px;
+  color: #ffffff;
+}
+
+#v-splcollcontent {
+  height: 200px;
+}
+#v-splcollcontent .el-scrollbar__wrap{
+  overflow-x:hidden;
+  overflow-y: auto;
+}
+#v-splcollcontent .el-button--mini{
+  margin: 4px;
+  padding: 4px;
+  font-size: 13px;
+  border-radius: 1px;
+}
+#v-splcollcontent .el-button--text{
+  color: #000000;
+  background: 0 0;
+}
+</style>
 
 <style scoped>
-.fz-video{
-  padding: 0 2px;
-}
+
 </style>
