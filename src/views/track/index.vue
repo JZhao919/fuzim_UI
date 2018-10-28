@@ -1,6 +1,6 @@
 <template>
   <div id="fz-trail">
-    <el-row>
+    <el-row id="DateTime">
       <el-col :xs="12" :sm="12" :md="6">
         <el-date-picker type="datetime" clearable size="mini" placeholder="选择开始日期时间" format="yyyyMMddHHmmss"
           v-model="begDT" default-time="9:00:00">
@@ -102,6 +102,16 @@ export default {
 }
 </script>
 <style>
+#fz-trail {
+  margin: 0;
+  border: 1px;
+  padding: 5px;
+  width: 100%;
+  height: auto;
+}
+#fz-trail #DateTime {
+  margin-bottom: 4px;
+}
 #fz-trail .el-date-editor.el-input{
   width: 100%;
 }
@@ -111,11 +121,9 @@ export default {
 #fz-trail #shipnum{
   width: 100%;
 }
-</style>
-<style  scoped>
 #trailmap{
   width: 100%;
-  height: 880px;
+  height: 54rem;
+  border-radius: 5px;
 }
-
 </style>

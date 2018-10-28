@@ -1,7 +1,7 @@
 <template>
    <div id="p-video">
-    <div id="v-title" ><span>{{videoInfo.shipName}}的{{videoInfo.camcaLoca}}实时视频</span><span v-if="videoInfo.shipStatus === '1'">||运行中</span><span v-else>||未运行</span></div>
-    <playerHls ref="player" @play="play" :video="video" :contextmenu="contextmenu"></playerHls>
+    <div id="v-title" ><span>{{shipName}}{{videoInfo.camcaLoca}}实时视频</span><span v-if="shipStatus === '1'">||运行中</span><span v-else>||未运行</span></div>
+    <playerHls  id="select2player" ref="myPlayer" @play="play" :video="video" :contextmenu="contextmenu"></playerHls>
   </div>
 </template>
 
@@ -13,20 +13,22 @@ export default {
     playerHls
   },
   props: {
+    shipName: {
+      type: String,
+      default: ""
+    },
+    shipStatus: {
+      type: String,
+      default: "0"
+    },
     videoInfo: {
-      shipName: "",
       camcaLoca: "",
-      shipStatus: '0',
       shipUrl: "",
       shipUrlHD: ""
     }
   },
-  mounted() {
-    this.init()
-  },
   data() {
     return {
-      autoplay: false,
       player: null,
       contextmenu: [{
         text: '夫子庙秦淮风光带',
@@ -49,12 +51,20 @@ export default {
       }
     }
   },
+  mounted() {
+    this.init()
+  },
   methods: {
     init() {
-      this.player = this.$refs.player.dp
+      this.player = this.$refs.myPlayer.dp // 获取新播放器句柄
+    },
+    reinit() {
+      this.player.destroy()
+      this.$refs.myPlayer.init() // 重新初始化播放器
+      this.player = this.$refs.myPlayer.dp // 获取新播放器句柄
     },
     play() {
-      console.log('play callback')
+      console.log('select2player callback')
     }
   }
 }
@@ -62,13 +72,18 @@ export default {
 
 <style scoped>
   #p-video{
-    padding: 0 4px 8px 4px;
+    margin: 0;
+    padding: 5px;
     width: 100%;
+    height: auto;
   }
   #p-video #v-title{
     width: 100%;
-    background-color: bisque;
+    height: 30px;
+    background-color: #eeeff1;
+    color: #303133;
     text-align: center;
     font-size: 13px;
-  } 
+    line-height: 32px;
+  }
 </style>

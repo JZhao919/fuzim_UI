@@ -4,7 +4,7 @@
     <breadcrumb></breadcrumb>
     <el-dropdown class="avatar-container" trigger="click">
       <div class="avatar-wrapper">
-        <img class="user-avatar" :src="'https://i.loli.net/2018/10/26/5bd31d0c7bf96.png?imageView2/1/w/80/h/80'">
+        <img class="user-avatar" :src="'https://i.loli.net/2018/10/28/5bd5a911391c3.png'">
         <i class="el-icon-caret-bottom"></i>
       </div>
       <el-dropdown-menu class="user-dropdown" slot="dropdown">

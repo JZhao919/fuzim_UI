@@ -5,6 +5,7 @@
 window.Hls = require('hls.js')
 require('../../../node_modules/dplayer/dist/DPlayer.min.css')
 import DPlayer from 'dplayer'
+var player
 export default {
   props: {
     autoplay: {
@@ -59,55 +60,73 @@ export default {
     }
   },
   mounted() {
-    const player = this.dp = new DPlayer({
-      element: this.$el,
-      autoplay: this.autoplay,
-      theme: this.theme,
-      loop: this.loop,
-      lang: this.lang,
-      screenshot: this.screenshot,
-      hotkey: this.hotkey,
-      preload: this.preload,
-      contextmenu: this.contextmenu,
-      logo: this.logo,
-      mutex: true,
-      video: {
-        quality: [{
-          name: 'SD',
-          url: this.video.url,
-          type: this.video.type
-        }, {
-          name: 'HD',
-          url: this.video.urlHD,
-          type: this.video.type
-        }],
-        defaultQuality: 0
+    this.init()
+  },
+  methods: {
+    init() {
+      if (player) {
+        player = null
       }
-    })
-    player.on('play', () => {
-      this.$emit('play')
-    })
-    player.on('pause', () => {
-      this.$emit('pause')
-    })
-    player.on('canplay', () => {
-      this.$emit('canplay')
-    })
-    player.on('playing', () => {
-      this.$emit('playing')
-    })
-    player.on('ended', () => {
-      this.$emit('ended')
-    })
-    player.on('error', () => {
-      this.$emit('error')
-    })
+      player = this.dp = new DPlayer({
+        element: this.$el,
+        live: true,
+        autoplay: this.autoplay,
+        theme: this.theme,
+        loop: this.loop,
+        lang: this.lang,
+        screenshot: this.screenshot,
+        hotkey: this.hotkey,
+        preload: this.preload,
+        contextmenu: this.contextmenu,
+        logo: this.logo,
+        mutex: true,
+        video: {
+          quality: [{
+            name: 'SD',
+            url: this.video.url,
+            type: this.video.type
+          }, {
+            name: 'HD',
+            url: this.video.urlHD,
+            type: this.video.type
+          }],
+          defaultQuality: 0
+        }
+      })
+      player.on('play', () => {
+        this.$emit('play')
+      })
+      player.on('pause', () => {
+        this.$emit('pause')
+      })
+      player.on('canplay', () => {
+        this.$emit('canplay')
+      })
+      player.on('playing', () => {
+        this.$emit('playing')
+      })
+      player.on('ended', () => {
+        this.$emit('ended')
+      })
+      player.on('error', () => {
+        this.$emit('error')
+      })
+    },
+    destroy() {
+      if (player) {
+        player.destroy() // 销毁播放器
+        player = null
+      }
+    }
   }
 }
 </script>
 <style scoped>
   .mydplayer{
     width: 100%;
-    margin-bottom: 1px;
+    height: auto;
+    margin: 0;
+    border: 0;
+    padding: 0;
   }
 </style>

@@ -63,7 +63,7 @@ export default {
   text-align: left;
   font-size: 13px;
   line-height: 20px;
-  color: black;
+  color: #303133;
 }
 .battery-content div{
   margin: 5px 0;

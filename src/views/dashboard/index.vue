@@ -5,8 +5,8 @@
       <el-collapse-item title="点击打开船只选择列表" name="1">
         <div id="splcollcontent">
           <el-scrollbar noresize style="height:100%">
-            <el-button v-for="shipdef in allshipDefInfo" :key="shipdef.shipId"
-            type="text" plain size="mini" 
+            <el-button v-for="shipdef in allshipDefInfo" :key="shipdef.shipId" :class="{ shipListRun: shipdef.shipStatus=='1' }"
+            type="text" plain size="mini"
             @click.native="submit(shipdef.shipId)">
             {{shipdef.shipName}}
             </el-button>
@@ -204,6 +204,7 @@ export default {
 #dashboard {
   border: 0;
   padding: 5px;
+  color: #303133;
 }
 #shiplist {
   padding:10px;
@@ -253,7 +254,10 @@ export default {
   border-radius: 1px;
 }
 #splcollcontent .el-button--text{
-  color: #000000;
+  color: #303133;
   background: 0 0;
+}
+#splcollcontent .shipListRun {
+  color: #00ff0d;
 }
 </style>
