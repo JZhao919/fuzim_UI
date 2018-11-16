@@ -95,7 +95,7 @@ export default {
 #map-card .map-content{
   padding: 10px;
   background-color: #ffffff;
-  height: 350px;
+  height: 440px;
   text-align: left;
   font-size: 13px;
   line-height: 20px;

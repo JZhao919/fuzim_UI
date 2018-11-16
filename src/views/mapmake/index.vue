@@ -105,18 +105,32 @@ export default {
     },
     // 获取远程数据并标点
     getAndMake() {
-      const _this = this
       getAllShipInfo().then(response => {
         const data = this.allShipInfo = response.data
         if (data === [] || !data || data === null || data.length <= 0) {
-          _this.notification(2, "数据库中没有船只数据！")
+          this.notification(2, "数据库中没有船只数据！")
         } else {
-          _this.notification(1, "成功获取所有船只数据！")
-          _this.allShipInfo = data
-          transcode(_this.allShipInfo)
+          this.notification(1, "成功获取所有船只数据！")
+          this.allShipInfo = data
+          transcode(this.allShipInfo)
         }
-      }).catch(errer => {
-        _this.notification(0, errer)
+      })
+      // if (window.Timer) {
+      //   clearInterval(window.Timer)
+      //   window.Timer = null
+      // }
+      // window.Timer = setInterval(this.loopGetAllShipInfo, 15000)
+    },
+    loopGetAllShipInfo() {
+      getAllShipInfo().then(response => {
+        const data = this.allShipInfo = response.data
+        if (data === [] || !data || data === null || data.length <= 0) {
+          return
+        } else {
+          this.allShipInfo = data
+          initmap()
+          transcode(this.allShipInfo)
+        }
       })
     }
   }

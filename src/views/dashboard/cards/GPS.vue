@@ -1,15 +1,18 @@
 <template>
-  <div id="GPS-card">
-    <div class="GPS-title">{{shipInfo.shipId}}号船GPS信息</div>
-    <div id="GPS-info" class="GPS-content">
-      <div><span>GPS时间：</span><span>{{shipInfo.gpsTime}}</span></div>
-      <div><span>GPS经度：</span><span>{{shipInfo.gpsLondir}}：{{shipInfo.longitude}}</span></div>
-      <div><span>GPS纬度：</span><span>{{shipInfo.gpsLatdir}}：{{shipInfo.latitude}}</span></div>
-      <div><span>地磁偏角：</span><span>{{shipInfo.gpsVardir}}：{{shipInfo.gpsMagvar}}</span></div>
-      <div><span>航向角：</span><span>{{shipInfo.gpsTrackTure}}</span></div>
-      <div><span>工作模式：</span><span>{{shipInfo.gpsModeInd}}</span></div>
-    </div>
-  </div>
+<div id="GPScard">
+  <el-collapse>
+    <el-collapse-item title="船只GPS信息" name="1">
+      <div id="GPScardcontent">
+        <div>GPS时间：<span>{{shipInfo.gpsTime}}</span></div>
+        <div>GPS经度：<span>{{shipInfo.gpsLondir}}：{{shipInfo.longitude}}</span></div>
+        <div>GPS纬度：<span>{{shipInfo.gpsLatdir}}：{{shipInfo.latitude}}</span></div>
+        <div>地磁偏角：<span>{{shipInfo.gpsVardir}}：{{shipInfo.gpsMagvar}}</span></div>
+        <div>地航向角：<span>{{shipInfo.gpsTrackTure}}</span></div>
+        <div>工作模式：<span>{{shipInfo.gpsModeInd}}</span></div>
+      </div>
+    </el-collapse-item>
+  </el-collapse>
+</div>
 </template>
 
 <script>
@@ -31,31 +34,40 @@ export default {
   }
 }
 </script>
-<style scoped>
-#GPS-card{
+<style>
+#GPScard {
   margin-bottom: 10px;
   padding: 10px;
   width: 100%;
+  height: auto;
+  background-color: #ffffff;
 }
-#GPS-card .GPS-title{
-  padding: 6px 10px;
+#GPScard .el-collapse-item__header{
+  border: 0;
+  padding:0;
   background-color: #eeeff1;
+  width: 100%;
   height: 30px;
   text-align: center;
   font-size: 13px;
-  line-height: 20px;
+  line-height: 30px;
 }
-#GPS-card .GPS-content{
-  padding: 10px;
+#GPScard .el-collapse-item__arrow {
+  line-height: 30px;
+}
+#GPScard .el-collapse-item__wrap {
+  border:0;
   background-color: #ffffff;
-  height: 350px;
-  text-align: left;
-  font-size: 13px;
-  line-height: 20px;
-  color: #303133;
 }
-.GPS-content div{
-  margin: 5px 0;
-  padding: 0px 10px;
+#GPScard .el-collapse-item__content {
+  border: 0;
+  padding: 1rem;
+  height: 340px;
+  font-size: 13px;
+  text-align: left;
+}
+
+#GPScardcontent div {
+  padding: 0.5rem 0 0 1rem;
 }
 </style>

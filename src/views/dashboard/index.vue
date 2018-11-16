@@ -16,28 +16,30 @@
     </el-collapse>
   </el-row>
   <el-row>
-    <el-col :xs="24" :sm="24" :md="16" :lg="12">
+    <el-col :xs="24" :sm="16" :md="18" :lg="18">
       <mapCard :shipInfo="shipAllInfo"></mapCard>
     </el-col>
-    <el-col :xs="24" :sm="12" :md="8" :lg="6">   
+    <el-col :xs="24" :sm="8" :md="6" :lg="6">
       <defCard :shipInfo="shipDefInfo"></defCard>
     </el-col>
-    <el-col :xs="24" :sm="12" :md="8" :lg="6">
+  </el-row>
+  <el-row>
+    <el-col :xs="24" :sm="12" :md="8" :lg="8">
       <statusCard :shipInfo="shipAllInfo"></statusCard>
     </el-col>
-    <el-col :xs="24" :sm="12" :md="8" :lg="4">
+    <el-col :xs="24" :sm="12" :md="8" :lg="8">
       <warnCard :shipInfo="shipAllInfo"></warnCard>
     </el-col>
-    <el-col :xs="24" :sm="12" :md="8" :lg="5">
+    <el-col :xs="24" :sm="12" :md="8" :lg="8">
       <GPSCard :shipInfo="shipAllInfo"></GPSCard>
     </el-col>
-    <el-col :xs="24" :sm="12" :md="8" :lg="5">
+    <el-col :xs="24" :sm="12" :md="8" :lg="8">
       <batteryCard :shipInfo="shipAllInfo"></batteryCard>
     </el-col>
-    <el-col :xs="24" :sm="12" :md="8" :lg="5">
+    <el-col :xs="24" :sm="12" :md="8" :lg="8">
       <motorCard :shipInfo="shipAllInfo"></motorCard>
     </el-col>
-    <el-col :xs="24" :sm="12" :md="8" :lg="5">
+    <el-col :xs="24" :sm="12" :md="8" :lg="8">
       <radarCard :shipInfo="shipAllInfo"></radarCard>
     </el-col>
   </el-row>
@@ -188,14 +190,34 @@ export default {
         if (data === [] || !data || data === null || data.length <= 0) {
           this.notification(2, '该船当前没有详细数据！')
           this.shipAllInfo = this.shipNoneInfo
-          return
         } else {
           this.shipAllInfo = data
           this.notification(1, '成功获取该船当前数据！')
-          return
         }
       })
+      if (window.Timer) {
+        clearInterval(window.Timer)
+        window.Timer = null
+      }
+      window.Timer = setInterval(this.loopGetOneShipInfo, 10000)
       return
+    },
+    loopGetOneShipInfo() {
+      if (this.shipId !== 0) {
+        getOneShipInfo(this.shipId).then(response => {
+          const data = response.data
+          if (data === [] || !data || data === null || data.length <= 0) {
+            this.shipAllInfo = this.shipNoneInfo
+            return
+          } else {
+            this.shipAllInfo = data
+            console.log(this.shipId)
+            return
+          }
+        })
+      } else {
+        return
+      }
     }
   }
 }

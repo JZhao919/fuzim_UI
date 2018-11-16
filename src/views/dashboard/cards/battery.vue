@@ -1,7 +1,8 @@
 <template>
-  <div id="battery-card">
-    <div class="battery-title">{{shipInfo.shipId}}号船电池信息</div>
-    <div id="battery-info" class="battery-content">
+<div id="batterycard">
+  <el-collapse>
+    <el-collapse-item title="船只电池信息" name="1">
+      <div id="batterycardcontent">
         <div><span>集总SOC：</span><span>{{shipInfo.batterySOC}}</span></div>
         <div><span>总电压值：</span><span>{{shipInfo.batteryTotalVolt}}</span></div>
         <div><span>总电流值：</span><span>{{shipInfo.batteryTotalCurr}}</span></div>
@@ -15,8 +16,10 @@
         <div><span>高温度值：</span><span>{{shipInfo.batteryMaxTEMP}}</span></div>
         <div><span>低温度序号：</span><span>{{shipInfo.batteryMinTEMPSN}}</span></div>
         <div><span>低温度值：</span><span>{{shipInfo.batteryMinTEMP}}</span></div>
-    </div>
-  </div>
+      </div>
+    </el-collapse-item>
+  </el-collapse>
+</div>
 </template>
 
 <script>
@@ -42,31 +45,40 @@ export default {
   }
 }
 </script>
-<style scoped>
-#battery-card{
+<style>
+#batterycard {
   margin-bottom: 10px;
   padding: 10px;
   width: 100%;
+  height: auto;
+  background-color: #ffffff;
 }
-#battery-card .battery-title{
-  padding: 6px 10px;
+#batterycard .el-collapse-item__header{
+  border: 0;
+  padding:0;
   background-color: #eeeff1;
+  width: 100%;
   height: 30px;
   text-align: center;
   font-size: 13px;
-  line-height: 20px;
+  line-height: 30px;
 }
-#battery-card .battery-content{
-  padding: 10px;
+#batterycard .el-collapse-item__arrow {
+  line-height: 30px;
+}
+#batterycard .el-collapse-item__wrap {
+  border:0;
   background-color: #ffffff;
-  height: 350px;
-  text-align: left;
-  font-size: 13px;
-  line-height: 20px;
-  color: #303133;
 }
-.battery-content div{
-  margin: 5px 0;
-  padding: 0px 10px;
+#batterycard .el-collapse-item__content {
+  border: 0;
+  padding: 1rem;
+  height: 340px;
+  font-size: 13px;
+  text-align: left;
+}
+
+#batterycardcontent div {
+  padding: 2px 0 0 1rem;
 }
 </style>

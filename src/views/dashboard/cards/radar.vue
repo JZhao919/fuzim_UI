@@ -1,14 +1,17 @@
 <template>
-  <div id="radar-card">
-    <div class="radar-title">{{shipInfo.shipId}}号船雷达信息</div>
-    <div id="radar-info" class="radar-content">
+<div id="radarcard">
+<el-collapse>
+  <el-collapse-item title="船只雷达信息" name="1">
+    <div id="radarcardcontent">
       <div><span>雷达距离：</span><span>{{shipInfo.radarRange}}</span></div>
       <div><span>雷达速度：</span><span>{{shipInfo.radarAzimuth}}</span></div>
       <div><span>雷达方位角：</span><span>{{shipInfo.radarVerl}}</span></div>
       <div><span>雷达信噪比：</span><span>{{shipInfo.radarSNR}}</span></div>
       <div><span>硬件保留：</span><span>{{shipInfo.hardware}}</span></div>
     </div>
-  </div>
+  </el-collapse-item>
+</el-collapse>
+</div>
 </template>
 
 <script>
@@ -26,31 +29,40 @@ export default {
   }
 }
 </script>
-<style scoped>
-#radar-card{
+<style>
+#radarcard {
   margin-bottom: 10px;
   padding: 10px;
   width: 100%;
+  height: auto;
+  background-color: #ffffff;
 }
-#radar-card .radar-title{
-  padding: 6px 10px;
+#radarcard .el-collapse-item__header{
+  border: 0;
+  padding:0;
   background-color: #eeeff1;
+  width: 100%;
   height: 30px;
   text-align: center;
   font-size: 13px;
-  line-height: 20px;
+  line-height: 30px;
 }
-#radar-card .radar-content{
-  padding: 10px;
+#radarcard .el-collapse-item__arrow {
+  line-height: 30px;
+}
+#radarcard .el-collapse-item__wrap {
+  border:0;
   background-color: #ffffff;
-  height: 350px;
-  text-align: left;
-  font-size: 13px;
-  line-height: 20px;
-  color: #303133;
 }
-.radar-content div{
-  margin: 5px 0;
-  padding: 0px 10px;
+#radarcard .el-collapse-item__content {
+  border: 0;
+  padding: 1rem;
+  height: 340px;
+  font-size: 13px;
+  text-align: left;
+}
+
+#radarcardcontent div {
+  padding: 0.5rem 0 0 1rem;
 }
 </style>

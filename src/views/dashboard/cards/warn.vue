@@ -1,19 +1,21 @@
 <template>
-  <div id="warn-card">
-    <div class="warn-title">{{shipInfo.shipId}}号船警告信息</div>
-    <div id="warn-info" class="warn-content">
-      <div>是否超速：<span v-if="shipInfo.overSpeed === '1'" key="wait">是</span><span v-else key="nwait">否</span></div>
-      <div>碰撞危险：<span v-if="shipInfo.collide === '1'" key="wait">有</span><span v-else key="nwait">无</span></div>
-      <div>超声距离：<span>{{shipInfo.ultrasonicValue}}</span></div>
-      <div>漏水危险：<span v-if="shipInfo.leakage === '1'" key="wait">有</span><span v-else key="nwait">无</span></div>
-      <div>烟雾危险：<span v-if="shipInfo.overSmog === '1'" key="wait">有</span><span v-else key="nwait">无</span></div>
-      <div>火光危险：<span v-if="shipInfo.overFire === '1'" key="wait">有</span><span v-else key="nwait">无</span></div>
-      <div>电机危险：<span v-if="shipInfo.overMotor === '1'" key="wait">是</span><span v-else key="nwait">否</span></div>
-      <div>电池危险：<span v-if="shipInfo.batteryStatus === '1'" key="wait">是</span><span v-else key="nwait">否</span></div>
-    </div>
-  </div>
+<div id="warncard">
+  <el-collapse>
+    <el-collapse-item title="船只警告信息" name="1">
+      <div id="warncardcontent">
+        <div>是否超速：<span v-if="shipInfo.overSpeed === '1'" key="wait">是</span><span v-else key="nwait">否</span></div>
+        <div>碰撞危险：<span v-if="shipInfo.collide === '1'" key="wait">有</span><span v-else key="nwait">无</span></div>
+        <div>超声距离：<span>{{shipInfo.ultrasonicValue}}</span></div>
+        <div>漏水危险：<span v-if="shipInfo.leakage === '1'" key="wait">有</span><span v-else key="nwait">无</span></div>
+        <div>烟雾危险：<span v-if="shipInfo.overSmog === '1'" key="wait">有</span><span v-else key="nwait">无</span></div>
+        <div>火光危险：<span v-if="shipInfo.overFire === '1'" key="wait">有</span><span v-else key="nwait">无</span></div>
+        <div>电机危险：<span v-if="shipInfo.overMotor === '1'" key="wait">是</span><span v-else key="nwait">否</span></div>
+        <div>电池危险：<span v-if="shipInfo.batteryStatus === '1'" key="wait">是</span><span v-else key="nwait">否</span></div>
+      </div>
+    </el-collapse-item>
+  </el-collapse>
+</div>
 </template>
-
 <script>
 export default {
   name: 'warn-card',
@@ -32,31 +34,41 @@ export default {
   }
 }
 </script>
-<style scoped>
-#warn-card{
+<style>
+#warncard {
   margin-bottom: 10px;
   padding: 10px;
   width: 100%;
+  height: auto;
+  background-color: #ffffff;
 }
-#warn-card .warn-title{
-  padding: 6px 10px;
+#warncard .el-collapse-item__header{
+  border: 0;
+  padding:0;
   background-color: #eeeff1;
+  width: 100%;
   height: 30px;
   text-align: center;
   font-size: 13px;
-  line-height: 20px;
+  line-height: 30px;
 }
-#warn-card .warn-content{
-  padding: 10px;
+#warncard .el-collapse-item__arrow {
+  line-height: 30px;
+}
+#warncard .el-collapse-item__wrap {
+  border:0;
   background-color: #ffffff;
-  height: 350px;
-  text-align: left;
+}
+#warncard .el-collapse-item__content {
+  border: 0;
+  padding: 1rem;
+  height: 340px;
   font-size: 13px;
-  line-height: 20px;
-  color: #303133;
+  text-align: left;
 }
-.warn-content div{
-  margin: 5px 0;
-  padding: 0px 10px;
+
+#warncardcontent div {
+  padding: 0.5rem 0 0 1rem;
 }
+
 </style>

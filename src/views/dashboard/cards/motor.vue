@@ -1,15 +1,18 @@
 <template>
-  <div id="motor-card">
-    <div class="motor-title">{{shipInfo.shipId}}号船电机信息</div>
-    <div id="motor-info" class="motor-content">
-      <div><span>电机电流1：</span><span>{{shipInfo.motorCurrent1}}</span></div>
-      <div><span>电机电流2：</span><span>{{shipInfo.motorCurrent2}}</span></div>
-      <div><span>电机电压1：</span><span>{{shipInfo.motorVoltage1}}</span></div>
-      <div><span>电机电压2：</span><span>{{shipInfo.motorVoltage2}}</span></div>
-      <div><span>电机转速1：</span><span>{{shipInfo.motorSpeed1}}</span></div>
-      <div><span>电机转速2：</span><span>{{shipInfo.motorSpeed2}}</span></div>
+<div id="motorcard">
+<el-collapse>
+  <el-collapse-item title="船只电机信息" name="1">
+    <div id="motorcardcontent">
+      <div>电机电流1：<span>{{shipInfo.motorCurrent1}}</span></div>
+      <div>电机电流2：<span>{{shipInfo.motorCurrent2}}</span></div>
+      <div>电机电压1：<span>{{shipInfo.motorVoltage1}}</span></div>
+      <div>电机电压2：<span>{{shipInfo.motorVoltage2}}</span></div>
+      <div>电机转速1：<span>{{shipInfo.motorSpeed1}}</span></div>
+      <div>电机转速2：<span>{{shipInfo.motorSpeed2}}</span></div>
     </div>
-  </div>
+  </el-collapse-item>
+</el-collapse>
+</div>
 </template>
 
 <script>
@@ -28,31 +31,40 @@ export default {
   }
 }
 </script>
-<style scoped>
-#motor-card{
+<style>
+#motorcard {
   margin-bottom: 10px;
   padding: 10px;
   width: 100%;
+  height: auto;
+  background-color: #ffffff;
 }
-#motor-card .motor-title{
-  padding: 6px 10px;
+#motorcard .el-collapse-item__header{
+  border: 0;
+  padding:0;
   background-color: #eeeff1;
+  width: 100%;
   height: 30px;
   text-align: center;
   font-size: 13px;
-  line-height: 20px;
+  line-height: 30px;
 }
-#motor-card .motor-content{
-  padding: 10px;
+#motorcard .el-collapse-item__arrow {
+  line-height: 30px;
+}
+#motorcard .el-collapse-item__wrap {
+  border:0;
   background-color: #ffffff;
-  height: 350px;
-  text-align: left;
-  font-size: 13px;
-  line-height: 20px;
-  color: #303133;
 }
-.motor-content div{
-  margin: 5px 0;
-  padding: 0px 10px;
+#motorcard .el-collapse-item__content {
+  border: 0;
+  padding: 1rem;
+  height: 340px;
+  font-size: 13px;
+  text-align: left;
+}
+
+#motorcardcontent div {
+  padding: 0.5rem 0 0 1rem;
 }
 </style>

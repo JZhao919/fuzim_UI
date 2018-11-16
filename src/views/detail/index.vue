@@ -231,24 +231,37 @@ export default {
     },
     // 数据获取函数
     getAndMake() {
-      const _this = this
       getAllShipInfo().then(response => {
         const data = response.data
         if (data === [] || !data || data === null || data.length <= 0) {
-          _this.notification(2, "数据库中没有船只数据！")
+          this.notification(2, "数据库中没有船只数据！")
+        } else {
+          this.allShipInfo = data
+          this.notification(1, "成功获取所有船只数据！")
+        }
+      })
+      if (window.Timer) {
+        clearInterval(window.Timer)
+        window.Timer = null
+      }
+      window.Timer = setInterval(this.loopGetAllShipInfo, 10000)
+      return
+    },
+    loopGetAllShipInfo() {
+      getAllShipInfo().then(response => {
+        const data = response.data
+        if (data === [] || !data || data === null || data.length <= 0) {
           return
         } else {
-          _this.allShipInfo = data
-          _this.notification(1, "成功获取所有船只数据！")
+          this.allShipInfo = data
+          console.log('*')
+          return
         }
-      }).catch(errer => {
-        _this.notification(0, errer)
       })
     }
   }
 }
 </script>
-
 <style>
 #fz-detail{
   margin: 0;
