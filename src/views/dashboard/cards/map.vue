@@ -5,7 +5,7 @@
   </div>
 </template>
 <script>
-import AMap from 'AMap'
+import { Map, LngLat, Marker, convertFrom, Scale } from 'AMap'
 let dashmap // 全局首页地图变量
 var dashmarker // 全局首页标记点变量
 export default {
@@ -19,7 +19,7 @@ export default {
     }
   },
   watch: {
-    'shipInfo': 'dashaddMarker'
+    'shipInfo': 'dashtrancode'
   },
   mounted() {
     this.initmap()
@@ -27,50 +27,52 @@ export default {
   methods: {
     // 地图初始化函数
     initmap() {
-      dashmap = new AMap.Map('dashmap', {
+      dashmap = new Map('dashmap', {
         center: [118.789582, 32.019405],
         zoom: 16
       })
       dashmap.plugin(['AMap.Scale'], function() {
-        dashmap.addControl(new AMap.Scale())
+        dashmap.addControl(new Scale())
       })
     },
-    // 坐标标注函数
-    dashaddMarker() {
-      const shipInfo = this.shipInfo
-      let lngLat = new AMap.LngLat(shipInfo.longitude, shipInfo.latitude) // 创建高德坐标对象
+    // 转换坐标函数
+    dashtrancode() {
+      let lngLat = new LngLat(this.shipInfo.longitude, this.shipInfo.latitude) // 创建高德坐标对象
       // 转换坐标
-      AMap.convertFrom(lngLat, 'gps', (status, result) => {
+      convertFrom(lngLat, 'gps', (status, result) => {
         if (result.info === 'ok') {
           lngLat = result.locations[0] // Array.<LngLat>
-          let iconUrl
-          switch (shipInfo.runStatus) {
-            case '0':
-              iconUrl = '/static/img/ship_b.png'
-              break
-            case '1':
-              iconUrl = '/static/img/ship_g.png'
-              break
-            case '2':
-              iconUrl = '/static/img/ship_r.png'
-              break
-            default:
-              iconUrl = '/static/img/ship_w.png'
-              break
-          }
-          if (dashmarker) {
-            dashmarker.setMap(null)
-            dashmarker = null
-          } // 清除标记点
-          dashmarker = new AMap.Marker({
-            icon: iconUrl, // 标注图标类型 <静态文件>
-            position: lngLat, // 位置坐标
-            map: dashmap
-          })
-          return
+          this.dashaddMarker(lngLat)
         } else {
           console.log("转换地图坐标失败")
         }
+      })
+    },
+    // 坐标标注函数
+    dashaddMarker(lngLat) {
+      let iconUrl
+      switch (this.shipInfo.runStatus) {
+        case '0':
+          iconUrl = '/static/img/ship_b.png'
+          break
+        case '1':
+          iconUrl = '/static/img/ship_g.png'
+          break
+        case '2':
+          iconUrl = '/static/img/ship_r.png'
+          break
+        default:
+          iconUrl = '/static/img/ship_w.png'
+          break
+      }
+      if (dashmarker) {
+        dashmarker.setMap(null)
+        dashmarker = null
+      } // 清除标记点
+      dashmarker = new Marker({
+        icon: iconUrl, // 标注图标类型 <静态文件>
+        position: lngLat, // 位置坐标
+        map: dashmap
       })
     }
   }
