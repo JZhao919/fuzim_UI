@@ -3,14 +3,14 @@
   <el-collapse>
     <el-collapse-item title="船只警告信息" name="1">
       <div id="warncardcontent">
-        <div>是否超速：<span v-if="shipInfo.overSpeed === '1'" key="wait">是</span><span v-else key="nwait">否</span></div>
-        <div>碰撞危险：<span v-if="shipInfo.collide === '1'" key="wait">有</span><span v-else key="nwait">无</span></div>
+        <div>是否超速：<span v-if="shipInfo.overSpeed === '1'" key="wait" class="waring">是</span><span v-else key="nwait">否</span></div>
+        <div>碰撞危险：<span v-if="shipInfo.collide === '1'" key="wait" class="waring">有</span><span v-else key="nwait">无</span></div>
         <div>超声距离：<span>{{shipInfo.ultrasonicValue}}</span></div>
-        <div>漏水危险：<span v-if="shipInfo.leakage === '1'" key="wait">有</span><span v-else key="nwait">无</span></div>
-        <div>烟雾危险：<span v-if="shipInfo.overSmog === '1'" key="wait">有</span><span v-else key="nwait">无</span></div>
-        <div>火光危险：<span v-if="shipInfo.overFire === '1'" key="wait">有</span><span v-else key="nwait">无</span></div>
-        <div>电机危险：<span v-if="shipInfo.overMotor === '1'" key="wait">是</span><span v-else key="nwait">否</span></div>
-        <div>电池危险：<span v-if="shipInfo.batteryStatus === '1'" key="wait">是</span><span v-else key="nwait">否</span></div>
+        <div>漏水危险：<span v-if="shipInfo.leakage === '1'" key="wait" class="waring">有</span><span v-else key="nwait">无</span></div>
+        <div>烟雾危险：<span v-if="shipInfo.overSmog === '1'" key="wait" class="waring">有</span><span v-else key="nwait">无</span></div>
+        <div>火光危险：<span v-if="shipInfo.overFire === '1'" key="wait" class="waring">有</span><span v-else key="nwait">无</span></div>
+        <div>电机危险：<span v-if="shipInfo.overMotor === '1'" key="wait" class="waring">是</span><span v-else key="nwait">否</span></div>
+        <div>电池危险：<span v-if="shipInfo.batteryStatus === '1'" key="wait" class="waring">是</span><span v-else key="nwait">否</span></div>
       </div>
     </el-collapse-item>
   </el-collapse>
@@ -21,7 +21,6 @@ export default {
   name: 'warn-card',
   props: {
     shipInfo: {
-      shipId: 0,
       overSpeed: "",
       collide: "",
       ultrasonicValue: "0|0",
@@ -70,5 +69,7 @@ export default {
 #warncardcontent div {
   padding: 0.5rem 0 0 1rem;
 }
-
+#warncardcontent .waring {
+  color: red;
+}
 </style>

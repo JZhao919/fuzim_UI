@@ -2,7 +2,6 @@
   <div class="mydplayer"></div>
 </template>
 <script>
-window.Hls = require('hls.js')
 require('../../../node_modules/dplayer/dist/DPlayer.min.css')
 import DPlayer from 'dplayer'
 var player

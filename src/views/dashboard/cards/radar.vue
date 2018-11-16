@@ -19,7 +19,6 @@ export default {
   name: 'radar-card',
   props: {
     shipInfo: {
-      shipId: 0,
       radarRange: "",
       radarAzimuth: "",
       radarVerl: "",

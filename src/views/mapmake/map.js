@@ -1,17 +1,17 @@
 import AMap from 'AMap'
-let fzmap // 全局地图变量
+let makemap // 全局地图变量
 
 // 刷新页面清楚标记点
 
 // 地图初始化函数
 export function initmap() {
-  fzmap = new AMap.Map('fz-map', {
+  makemap = new AMap.Map('makemap', {
     center: [118.789582, 32.019405],
     zoom: 19
   })
-  fzmap.plugin(['AMap.ToolBar', 'AMap.Scale'], function() {
-    fzmap.addControl(new AMap.ToolBar())
-    fzmap.addControl(new AMap.Scale())
+  makemap.plugin(['AMap.ToolBar', 'AMap.Scale'], function() {
+    makemap.addControl(new AMap.ToolBar())
+    makemap.addControl(new AMap.Scale())
   })
 }
 
@@ -39,22 +39,27 @@ export function transcode(allShipInfo) {
 
 // 点标注函数
 function addMarker(shipinfo, lnglat) {
-  var iconUrl
-  if (shipinfo.overSmog === '1' || shipinfo.overFire === '1' || shipinfo.leakage === '1' || shipinfo.overMotor === '1') {
-    iconUrl = '/static/img/ship_r.png'
-  } else if (shipinfo.collide === '1' || shipinfo.overSpeed === '1' || shipinfo.batteryStatus === '1') {
-    iconUrl = '/static/img/ship_y.png'
-  } else if (shipinfo.wait === '1') {
-    iconUrl = '/static/img/ship_b.png'
-  } else {
-    iconUrl = '/static/img/ship_w.png'
+  let iconUrl
+  switch (shipinfo.runStatus) {
+    case '0':
+      iconUrl = '/static/img/ship_b.png'
+      break
+    case '1':
+      iconUrl = '/static/img/ship_g.png'
+      break
+    case '2':
+      iconUrl = '/static/img/ship_r.png'
+      break
+    default:
+      iconUrl = '/static/img/ship_w.png'
+      break
   }
   var marker = new AMap.Marker({
     icon: iconUrl, // 标注图标类型 <静态文件>
     position: lnglat, // 位置坐标
     title: "该游船的船号：" + shipinfo.shipId + "\n当前GPS坐标：N:" + shipinfo.latitude + "|E:" + shipinfo.longitude +
     "\n当前地磁偏角：" + shipinfo.gpsVardir + ":" + shipinfo.gpsMagvar + "\n当前航向角度：" + shipinfo.gpsTrackTure, // 鼠标滑过提示
-    map: fzmap
+    map: makemap
   })
   marker.setLabel({
     offset: new AMap.Pixel(5, -22), // 修改label相对于maker的位置
@@ -80,7 +85,7 @@ function addMarker(shipinfo, lnglat) {
   })
   function markerClick(e) {
     leftClickInfoWD.setContent(e.target.content)
-    leftClickInfoWD.open(fzmap, e.target.getPosition())
+    leftClickInfoWD.open(makemap, e.target.getPosition())
   }
 }
 
@@ -109,5 +114,5 @@ function createInfoWindow(title, content) {
   return info
 }
 function closeInfoWindow() {
-  fzmap.clearInfoWindow() // 关闭信息窗体
+  makemap.clearInfoWindow() // 关闭信息窗体
 }

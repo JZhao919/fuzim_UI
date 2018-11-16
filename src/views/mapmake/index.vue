@@ -1,8 +1,7 @@
- /* eslint-disable */
 <template>
   <el-row>
     <el-col :span="24">
-      <el-card id="fz-map" class="fz-box"></el-card>
+      <el-card id="makemap"></el-card>
     </el-col>
   </el-row>
 </template>
@@ -137,8 +136,8 @@ export default {
 }
 </script>
 
-<style scoped>
-  .fz-box {
+<style>
+  #makemap{
     display: -webkit-flex;
     display: flex;
     flex-direction: column; /*主轴为纵轴*/

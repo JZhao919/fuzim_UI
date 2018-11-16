@@ -20,7 +20,6 @@ export default {
   name: 'motor-card',
   props: {
     shipInfo: {
-      shipId: 0,
       motorCurrent1: 0,
       motorVoltage1: 0,
       motorSpeed1: 0,

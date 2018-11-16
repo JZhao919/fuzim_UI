@@ -10,14 +10,6 @@
   </el-collapse-item>
 </el-collapse>
 </div>
-  <!-- <div id="def-card">
-    <div class="def-title">{{shipInfo.shipName}}号船基本信息</div>
-    <div class="def-content">
-      <div><span>船只名称：</span><span>{{shipInfo.shipName}}</span></div>
-      <div><span>使用情况：</span><span v-if="shipInfo.shipStatus === '1'" key="run">正在使用</span><span v-else key="nrun">不能使用</span></div>
-      <div><span>船只描述：</span>{{shipInfo.shipNote}}</div>
-    </div>
-  </div> -->
 </template>
 
 <script>
@@ -29,15 +21,6 @@ export default {
       shipName: '',
       shipNote: '',
       shipStatus: ''
-    },
-    shipAInfo: {
-      ioTimes: 0,
-      runStatus: '',
-      startRunTime: 0,
-      endRunTime: 0,
-      runTime: 0,
-      wait: '',
-      speed: 0
     }
   }
 }

@@ -4,8 +4,13 @@
   <el-collapse-item title="船只状态信息" name="1">
     <div id="statuscardcontent">
       <div>船只进出次数：<span>{{shipInfo.ioTimes}}</span></div>
-      <div>船只运行状态：<span v-if="shipInfo.runStatus === '1'" key="run">正在运行.</span><span v-else key="nrun">没有运行.</span></div>
-      <div>是否等待会船：<span v-if="shipInfo.wait === '1'" key="wait">等待会船.</span><span v-else key="nwait">不需会船.</span></div>
+      <div>船只运行状态：
+        <span v-if="shipInfo.runStatus === '1'" key="runing">正在运行.</span>
+        <span v-else-if="shipInfo.runStatus === '2'" key="runwait">正在等待.</span>
+        <span v-else key="norun">没有运行.</span></div>
+      <div>是否等待会船：
+        <span v-if="shipInfo.wait === '1'" key="waiting">等待会船.</span>
+        <span v-else key="nowait">不需会船.</span></div>
       <div>上次离岸时间：<span>{{shipInfo.startRunTime}}</span></div>
       <div>上次靠岸时间：<span>{{shipInfo.endRunTime}}</span></div>
       <div>船只运行时间：<span>{{shipInfo.runTime}}</span></div>
@@ -21,7 +26,6 @@ export default {
   name: 'status-card',
   props: {
     shipInfo: {
-      shipId: 0,
       ioTimes: 0,
       runStatus: '',
       startRunTime: 0,
