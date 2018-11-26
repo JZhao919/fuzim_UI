@@ -131,9 +131,10 @@ export default {
     return {
       activeName: 'all',
       defaultSort: { prop: 'shipId', order: 'ascending' },
-      allShipInfo: [{
+      allShipAllInfo: [{
         // 状态信息
         shipId: 0,
+        shipName: '',
         ioTimes: 0,
         runStatus: '',
         startRunTime: 0,
@@ -190,10 +191,15 @@ export default {
     }
   },
   mounted() {
-    this.getAndMake()
+    this.init()
+  },
+  destroyed() {
+    if (window.Timer) {
+      clearInterval(window.Timer)
+      window.Timer = null
+    }
   },
   methods: {
-    // 消息通知函数
     notification(code, string) {
       switch (code) {
         case 0:
@@ -218,7 +224,7 @@ export default {
           break
         default:
       }
-    },
+    }, // 消息通知函数
     // 动态上色函数
     tableRowClassName({ row, index }) {
       if (row.overSmog === '1' || row.overFire === '1' || row.leakage === '1' || row.overMotor === '1') {
@@ -230,21 +236,21 @@ export default {
       }
     },
     // 数据获取函数
-    getAndMake() {
+    init() {
       getAllShipInfo().then(response => {
         const data = response.data
         if (data === [] || !data || data === null || data.length <= 0) {
           this.notification(2, "数据库中没有船只数据！")
         } else {
-          this.allShipInfo = data
+          this.allShipAllInfo = data
           this.notification(1, "成功获取所有船只数据！")
+          if (window.Timer) {
+            clearInterval(window.Timer)
+            window.Timer = null
+          }
+          window.Timer = setInterval(this.loopGetAllShipInfo, 10000)
         }
       })
-      if (window.Timer) {
-        clearInterval(window.Timer)
-        window.Timer = null
-      }
-      window.Timer = setInterval(this.loopGetAllShipInfo, 10000)
       return
     },
     loopGetAllShipInfo() {

@@ -45,7 +45,6 @@
   </el-row>
 </div>
 </template>
-
 <script>
 import { defCard, statusCard, warnCard, GPSCard, batteryCard, motorCard, radarCard, mapCard } from './cards'
 import { getAllShipDefInfo, getOneShipInfo } from '@/api/shipinfo'
@@ -62,8 +61,13 @@ export default {
     mapCard
   },
   mounted() {
-    this.shipAllInfo = this.shipNoneInfo
-    this.getInfo()
+    this.init()
+  },
+  destroyed() {
+    if (window.Timer) {
+      clearInterval(window.Timer)
+      window.Timer = null
+    }
   },
   data() {
     return {
@@ -78,6 +82,7 @@ export default {
       shipNoneInfo: {
         // 状态信息
         shipId: 0,
+        shipName: '',
         ioTimes: 0,
         runStatus: '',
         startRunTime: 0,
@@ -132,6 +137,61 @@ export default {
         motorSpeed2: 0
       }, // 默认船只的所有信息
       shipAllInfo: {
+        // 状态信息
+        shipId: 0,
+        shipName: '',
+        ioTimes: 0,
+        runStatus: '',
+        startRunTime: 0,
+        endRunTime: 0,
+        runTime: 0,
+        wait: '',
+        speed: 0,
+        // 警告信息
+        overSpeed: "",
+        collide: "",
+        ultrasonicValue: "0|0",
+        leakage: "",
+        overSmog: "",
+        overFire: "",
+        overMotor: "",
+        batteryStatus: "",
+        // GPS信息
+        gpsTime: 0,
+        gpsLondir: "",
+        longitude: 0,
+        gpsLatdir: "",
+        latitude: 0,
+        gpsVardir: "",
+        gpsMagvar: 0.0,
+        gpsTrackTure: 0,
+        gpsModeInd: "",
+        // 电池信息
+        batterySOC: "",
+        batteryTotalVolt: "",
+        batteryTotalCurr: "",
+        batteryTotalRP: "",
+        batteryTotalRN: "",
+        batteryMaxVoltSN: "",
+        batteryMaxVolt: "",
+        batteryMinVoltSN: "",
+        batteryMinVolt: "",
+        batteryMaxTEMPSN: "",
+        batteryMaxTEMP: "",
+        batteryMinTEMPSN: "",
+        batteryMinTEMP: "",
+        // 电机与雷达
+        radarRange: "",
+        radarAzimuth: "",
+        radarVerl: "",
+        radarSNR: "",
+        hardware: "空",
+        motorCurrent1: 0,
+        motorVoltage1: 0,
+        motorSpeed1: 0,
+        motorCurrent2: 0,
+        motorVoltage2: 0,
+        motorSpeed2: 0
       } // 当前船只的所有信息
     }
   },
@@ -161,16 +221,15 @@ export default {
         default:
       }
     },
-    getInfo() {
+    init() {
+      this.shipAllInfo = this.shipNoneInfo
       getAllShipDefInfo().then(response => {
         const data = response.data
         if (data === [] || !data || data === null || data === "") {
           this.notification(2, '数据库中没有船只信息！')
-          this.shipAllInfo = {}
-          return
+          this.allshipDefInfo = {}
         } else {
           this.allshipDefInfo = data
-          return
         }
       })
       return
@@ -178,29 +237,27 @@ export default {
     submit(shipId) {
       this.shipId = shipId
       for (let i = 0; i < this.allshipDefInfo.length; i++) {
-        ((n) => {
-          if (this.allshipDefInfo[n].shipId === shipId) {
-            this.shipDefInfo = this.allshipDefInfo[n]
-            this.break
-          }
-        })(i)
+        if (this.allshipDefInfo[i].shipId === shipId) {
+          this.shipDefInfo = this.allshipDefInfo[i]
+          break
+        }
       }
       getOneShipInfo(shipId).then(response => {
         const data = response.data
         if (data === [] || !data || data === null || data.length <= 0) {
-          this.notification(2, '该船当前没有详细数据！')
           this.shipAllInfo = this.shipNoneInfo
+          this.notification(2, '该船当前没有详细数据！')
         } else {
           this.shipAllInfo = data
           this.notification(1, '成功获取该船当前数据！')
+          if (window.Timer) {
+            clearInterval(window.Timer)
+            window.Timer = null
+          }
+          window.Timer = setInterval(this.loopGetOneShipInfo, 10000)
+          return
         }
       })
-      if (window.Timer) {
-        clearInterval(window.Timer)
-        window.Timer = null
-      }
-      window.Timer = setInterval(this.loopGetOneShipInfo, 10000)
-      return
     },
     loopGetOneShipInfo() {
       if (this.shipId !== 0) {
@@ -208,13 +265,12 @@ export default {
           const data = response.data
           if (data === [] || !data || data === null || data.length <= 0) {
             this.shipAllInfo = this.shipNoneInfo
-            return
           } else {
             this.shipAllInfo = data
             console.log(this.shipId)
-            return
           }
         })
+        return
       } else {
         return
       }

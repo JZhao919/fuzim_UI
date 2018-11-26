@@ -13,9 +13,10 @@ export default {
   name: 'mapmake',
   data() {
     return {
-      allShipInfo: [{
+      allShipAllInfo: [{
         // 状态信息
         shipId: 0,
+        shipName: '',
         ioTimes: 0,
         runStatus: '',
         startRunTime: 0,
@@ -75,6 +76,12 @@ export default {
     initmap()
     this.getAndMake()
   },
+  destroyed() {
+    if (window.Timer) {
+      clearInterval(window.Timer)
+      window.Timer = null
+    }
+  },
   methods: {
     // 消息通知函数
     notification(code, string) {
@@ -105,13 +112,13 @@ export default {
     // 获取远程数据并标点
     getAndMake() {
       getAllShipInfo().then(response => {
-        const data = this.allShipInfo = response.data
+        const data = this.allShipAllInfo = response.data
         if (data === [] || !data || data === null || data.length <= 0) {
           this.notification(2, "数据库中没有船只数据！")
         } else {
           this.notification(1, "成功获取所有船只数据！")
-          this.allShipInfo = data
-          transcode(this.allShipInfo)
+          this.allShipAllInfo = data
+          transcode(this.allShipAllInfo)
         }
       })
       // if (window.Timer) {
@@ -122,13 +129,13 @@ export default {
     },
     loopGetAllShipInfo() {
       getAllShipInfo().then(response => {
-        const data = this.allShipInfo = response.data
+        const data = this.allShipAllInfo = response.data
         if (data === [] || !data || data === null || data.length <= 0) {
           return
         } else {
-          this.allShipInfo = data
+          this.allShipAllInfo = data
           initmap()
-          transcode(this.allShipInfo)
+          transcode(this.allShipAllInfo)
         }
       })
     }

@@ -21,20 +21,19 @@ export function transcode(allShipInfo) {
   var num = allShipInfo.length
   if (num !== 0) {
     console.log("船只数:" + num)
-    for (var i = 0; i < num; i++) {
-      (function(i) {
-        let lngLat = new AMap.LngLat(allShipInfo[i].longitude, allShipInfo[i].latitude) // 创建高德坐标对象
-        // 转换坐标
-        AMap.convertFrom(lngLat, 'gps', function(status, result) {
-          if (result.info === 'ok') {
-            lngLat = result.locations[0] // Array.<LngLat>
-            addMarker(allShipInfo[i], lngLat) // 坐标点标注
-          }
-        })
-      })(i)
+    for (let i = 0; i < num; i++) {
+      let lngLat = new AMap.LngLat(allShipInfo[i].longitude, allShipInfo[i].latitude) // 创建高德坐标对象
+      // 转换坐标
+      AMap.convertFrom(lngLat, 'gps', function(status, result) {
+        if (result.info === 'ok') {
+          lngLat = result.locations[0] // Array.<LngLat>
+          // console.log(lngLat)
+          addMarker(allShipInfo[i], lngLat) // 坐标点标注
+        }
+      })
     }
-    return
   }
+  return
 }
 
 // 点标注函数
@@ -62,8 +61,8 @@ function addMarker(shipinfo, lnglat) {
     map: makemap
   })
   marker.setLabel({
-    offset: new AMap.Pixel(5, -22), // 修改label相对于maker的位置
-    content: shipinfo.shipId
+    offset: new AMap.Pixel(-8, 10), // 修改label相对于maker的位置
+    content: shipinfo.shipName
   })
   // 实例化鼠标点击信息窗体
   var lclickIFWDT = []

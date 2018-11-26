@@ -43,14 +43,14 @@ function getlngLats1(shipId, startTime) {
             }
           }
         }
-        console.log(gps)
+        // console.log(gps)
         resolve(gps)
         return
       } else {
         rejects('获取数据为空')
       }
     }).catch(errer => {
-      rejects(errer)
+      rejects('获取数据为空')
     })
   })
 }
@@ -76,14 +76,14 @@ function getlngLats2(shipId, startTime, endTime) {
             }
           }
         }
-        console.log(gps)
+        // console.log(gps)
         resolve(gps)
         return
       } else {
         rejects('获取数据为空')
       }
     }).catch(errer => {
-      rejects(errer)
+      rejects('获取数据为空')
     })
   })
 }
@@ -109,13 +109,35 @@ function lngLatsTrans(gps) {
  * @param Array.<AMap.LngLat>||AMap.LngLat lngLats
  */
 function trailMaker(lngLats) {
-  AMapUI.load(['ui/misc/PathSimplifier', 'lib/$'], (PathSimplifier, $) => {
+  AMapUI.load(['ui/misc/PathSimplifier', 'lib/$', 'lib/utils'], function(PathSimplifier, $, utils) {
     if (!PathSimplifier.supportCanvas) {
       alert('当前环境不支持 Canvas！')
       return
     }
     initPage(PathSimplifier)
   })
+  // 轨迹线的样式
+  var defaultRenderOptions = {
+    renderAllPointsIfNumberBelow: 100, // 绘制路线节点，如不需要可设置为-1
+    pathNavigatorStyle: {
+      initRotateDegree: 0,
+      width: 16,
+      height: 16,
+      autoRotate: true,
+      lineJoin: "round",
+      content: "defaultPathNavigator",
+      fillStyle: "#fff000",
+      strokeStyle: "#ff0000",
+      lineWidth: 1,
+      pathLinePassedStyle: {
+        lineWidth: 2,
+        strokeStyle: "#ff0000",
+        borderWidth: 1,
+        borderStyle: "#ffc200",
+        dirArrowStyle: true
+      }
+    }
+  }
   function initPage(PathSimplifier) {
     // 创建组件实例
     if (pathSimplifierIns) {
@@ -138,9 +160,7 @@ function trailMaker(lngLats) {
         // 鼠标悬停在节点之间的连线上
         return pathData.name + '，点数量：' + pathData.path.length + '，播放速度：300km/h'
       },
-      renderOptions: { // 轨迹线的样式
-        renderAllPointsIfNumberBelow: 100 // 绘制路线节点，如不需要可设置为-1
-      }
+      renderOptions: defaultRenderOptions
     })
     // window.pathSimplifierIns = pathSimplifierIns;
     // 设置数据构建一条简单的轨迹
@@ -151,11 +171,11 @@ function trailMaker(lngLats) {
       }
     ])
     // 创建一个巡航器，关联第1条轨迹（轨迹1）
-    var navg1 = pathSimplifierIns.createPathNavigator(0, {
+    var navg = pathSimplifierIns.createPathNavigator(0, {
       loop: true, // 循环播放
       speed: 300 // 巡航速度，单位千米/小时
     })
-    navg1.start()
+    navg.start()
   }
 }
 /**
