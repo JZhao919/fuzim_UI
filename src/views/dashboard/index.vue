@@ -40,7 +40,19 @@
       <motorCard :shipInfo="shipAllInfo"></motorCard>
     </el-col>
     <el-col :xs="24" :sm="12" :md="8" :lg="8">
-      <radarCard :shipInfo="shipAllInfo"></radarCard>
+      <div id="radarcard">
+        <el-collapse>
+          <el-collapse-item title="船只雷达信息" name="1">
+            <div id="radarcardcontent">
+              <div><span>雷达距离：</span><span>{{shipAllInfo.radarRange}}</span></div>
+              <div><span>雷达速度：</span><span>{{shipAllInfo.radarAzimuth}}</span></div>
+              <div><span>雷达方位角：</span><span>{{shipAllInfo.radarVerl}}</span></div>
+              <div><span>雷达信噪比：</span><span>{{shipAllInfo.radarSNR}}</span></div>
+              <div><span>硬件保留：</span><span>{{shipAllInfo.hardware}}</span></div>
+            </div>
+          </el-collapse-item>
+        </el-collapse>
+      </div>
     </el-col>
   </el-row>
 </div>
