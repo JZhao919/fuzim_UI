@@ -64,7 +64,7 @@ export default {
       this.player = this.$refs.myPlayer.dp // 获取新播放器句柄
     },
     play() {
-      console.log('select1player callback')
+      console.log('binplayer callback')
     }
   }
 }
@@ -72,7 +72,8 @@ export default {
 
 <style scoped>
   #p-video{
-    margin-bottom: 16%;
+    border: 0;
+    margin-bottom: 10px;
     padding: 5px;
     width: 100%;
     height: auto;

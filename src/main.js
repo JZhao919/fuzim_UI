@@ -25,8 +25,8 @@ Vue.config.productionTip = false
 
 // 之所以把Hls挂载window对象上，是因为当DPlayer.video.type='hls'时，new DPlayer()对象会用到此对象。
 window.Hls = require('hls.js')
-
-window.Timer = window.setInterval
+// 共用定时器变量
+window.Timer = null
 
 new Vue({
   el: '#app',

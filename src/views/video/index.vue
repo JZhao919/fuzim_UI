@@ -7,7 +7,7 @@
           <el-scrollbar noresize style="height:100%">
             <el-button v-for="shipdef in allshipDefInfo" :key="shipdef.shipId"
             type="text" plain size="mini" 
-            @click.native="select(shipdef.shipId)" :class="{ shipListRun: shipdef.shipStatus==='1' }">
+            @click.native="select(shipdef.shipId)" :class="{ shipListRun: shipdef.shipStatus==='0' }">
             {{shipdef.shipName}} 
             </el-button>
           </el-scrollbar>
@@ -16,16 +16,14 @@
     </el-collapse>
   </el-row>
   <el-row>
-    <el-col :xs="24" :sm="24" :md="24" :lg="17" :xl="17"><!-- 主要播放区 -->
-      <mainPlayer ref="mainVideo" :shipName="shipDefInfo.shipName" :shipStatus="shipDefInfo.shipStatus" :videoInfo="mainVideoW"></mainPlayer>
+    <el-col :xs="24" :sm="24" :md="24" :lg="8" :xl="8">
+      <mainPlayer ref="mainVideo" :shipName="shipDefInfo.shipName" :shipStatus="shipDefInfo.shipStatus" :videoInfo="headVideo"></mainPlayer>
     </el-col>
-    <el-col :xs="24" :sm="24" :md="24" :lg="7" :xl="7">
-      <el-col :xs="12" :sm="12" :md="12" :lg="24" :xl="24">
-        <select1Player ref="selectVideo1" @click.native="change(1)" :shipName="shipDefInfo.shipName" :shipStatus="shipDefInfo.shipStatus" :videoInfo="selectVideoW1"></select1Player>
-      </el-col>
-      <el-col :xs="12" :sm="12" :md="12" :lg="24" :xl="24">
-        <select2Player ref="selectVideo2" @click.native="change(2)" :shipName="shipDefInfo.shipName" :shipStatus="shipDefInfo.shipStatus" :videoInfo="selectVideoW2"></select2Player>
-      </el-col>
+    <el-col :xs="24" :sm="24" :md="12" :lg="8" :xl="8">
+      <select1Player ref="selectVideo1" :shipName="shipDefInfo.shipName" :shipStatus="shipDefInfo.shipStatus" :videoInfo="binVideo"></select1Player>
+    </el-col>
+    <el-col :xs="24" :sm="24" :md="12" :lg="8" :xl="8">
+      <select2Player ref="selectVideo2" :shipName="shipDefInfo.shipName" :shipStatus="shipDefInfo.shipStatus" :videoInfo="tailVideo"></select2Player>
     </el-col>
   </el-row>
 </div>
@@ -60,10 +58,7 @@ export default {
         shipCamcabinUrlHD: "",
         shipCamtailUrl: "",
         shipCamtailUrlHD: ""
-      }, // 当前船只的定义信息
-      mainVideoW: {}, // 主显示窗口显示的视频
-      selectVideoW1: {}, // 次显示窗口1
-      selectVideoW2: {} // 次显示窗口2
+      } // 当前船只的定义信
     }
   },
   computed: {
@@ -90,13 +85,13 @@ export default {
     }
   },
   watch: {
-    mainVideoW: function() {
+    headVideo: function() {
       this.$refs.mainVideo.reinit()
     },
-    selectVideoW1: function() {
+    binVideo: function() {
       this.$refs.selectVideo1.reinit()
     },
-    selectVideoW2: function() {
+    tailVideo: function() {
       this.$refs.selectVideo2.reinit()
     }
   },
@@ -137,41 +132,12 @@ export default {
       })
       return
     },
-    initVideo() {
-      this.$refs.mainVideo.reinit()
-      this.$refs.selectVideo1.reinit()
-      this.$refs.selectVideo2.reinit()
-    },
     select(shipId) {
       for (let i = 0; i < this.allshipDefInfo.length; i++) {
         if (this.allshipDefInfo[i].shipId === shipId) {
           this.shipDefInfo = this.allshipDefInfo[i]
           break
         }
-      }
-      // 初始化播放
-      this.mainVideoW = this.headVideo
-      this.selectVideoW1 = this.binVideo
-      this.selectVideoW2 = this.tailVideo
-      this.initVideo()
-    },
-    change(code) {
-      console.log(code)
-      var temp = null
-      switch (code) {
-        case 1:
-          console.log(111111)
-          temp = this.selectVideoW1
-          this.selectVideoW1 = this.mainVideoW
-          this.mainVideoW = temp
-          break
-        case 2:
-          console.log(222222)
-          temp = this.selectVideoW2
-          this.selectVideoW2 = this.mainVideoW
-          this.mainVideoW = temp
-          break
-        default:
       }
     }
   }
@@ -235,7 +201,7 @@ export default {
   background: 0 0;
 }
 #v-splcollcontent .shipListRun {
-  color: #00ff0d;
+  color: #b6b6b6;
   background: 0 0;
 }
 </style>

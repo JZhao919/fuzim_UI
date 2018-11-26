@@ -3,11 +3,12 @@
   <el-tabs v-model="activeName" type="border-card" tab-position="top">
     <el-tab-pane label="全部" name="all">
       <el-table max-height='52rem' border size="mini" fit style="width:100%" 
-      :data="allShipInfo"
+      :data="allShipAllInfo"
       :default-sort="defaultSort"
       :row-class-name="tableRowClassName"
       >
         <el-table-column fixed label="船号" prop="shipId" align="center" sortable></el-table-column>
+        <el-table-column fixed label="名称" prop="shipName" align="center"></el-table-column>
         <el-table-column label="次数" prop="ioTimes" align="center" sortable></el-table-column>
         <el-table-column label="运行" prop="runStatus" align="center" sortable></el-table-column>
         <el-table-column label="运行时间" prop="runTime" align="center" show-overflow-tooltip></el-table-column>
@@ -27,11 +28,12 @@
     </el-tab-pane>
     <el-tab-pane label="状态信息" name="status" lazy>
       <el-table max-height='52rem' border size="mini" fit style="width:100%" 
-      :data="allShipInfo"
+      :data="allShipAllInfo"
       :default-sort="defaultSort"
       :row-class-name="tableRowClassName"
       >
         <el-table-column fixed label="船号" prop="shipId" align="center" sortable></el-table-column>
+        <el-table-column fixed label="名称" prop="shipName" align="center"></el-table-column>
         <el-table-column label="出行次数" prop="ioTimes" align="center" sortable></el-table-column>
         <el-table-column label="是否运行" prop="runStatus" align="center" sortable></el-table-column>
         <el-table-column label="会船等待" prop="wait" align="center" sortable></el-table-column>
@@ -44,11 +46,12 @@
     </el-tab-pane>
     <el-tab-pane max-height='52rem' label="警告信息" name="warning" lazy>
       <el-table border size="mini" fit style="width:100%" 
-      :data="allShipInfo"
+      :data="allShipAllInfo"
       :default-sort="defaultSort"
       :row-class-name="tableRowClassName"
       >
         <el-table-column fixed label="船号" prop="shipId" align="center" sortable></el-table-column>
+        <el-table-column fixed label="名称" prop="shipName" align="center"></el-table-column>
         <el-table-column label="超速" prop="overSpeed" align="center" sortable></el-table-column>
         <el-table-column label="撞船" prop="collide" align="center" sortable></el-table-column>
         <el-table-column label="最小船距" prop="ultrasonicValue" align="center" show-overflow-tooltip></el-table-column>
@@ -61,11 +64,12 @@
     </el-tab-pane>
     <el-tab-pane max-height='52rem' label="GPS信息" name="GPS" lazy>
       <el-table border size="mini" fit style="width:100%" 
-      :data="allShipInfo"
+      :data="allShipAllInfo"
       :default-sort="defaultSort"
       :row-class-name="tableRowClassName"
       >
         <el-table-column fixed label="船号" prop="shipId" align="center" sortable></el-table-column>
+        <el-table-column fixed label="名称" prop="shipName" align="center"></el-table-column>
         <el-table-column fixed label="时间" prop="gpsTime" align="center" show-overflow-tooltip></el-table-column>
         <el-table-column label="经度方向" prop="gpsLondir" align="center"></el-table-column>
         <el-table-column label="经度" prop="longitude" align="center" show-overflow-tooltip></el-table-column>
@@ -79,11 +83,12 @@
     </el-tab-pane>
     <el-tab-pane max-height='52rem' label="电池信息" name="battery" lazy>
       <el-table border size="mini" fit style="width:100%" 
-      :data="allShipInfo"
+      :data="allShipAllInfo"
       :default-sort="defaultSort"
       :row-class-name="tableRowClassName"
       >
         <el-table-column fixed label="船号" prop="shipId" align="center" sortable></el-table-column>
+        <el-table-column fixed label="名称" prop="shipName" align="center"></el-table-column>
         <el-table-column label="SOC" prop="batterySOC" align="center"></el-table-column>
         <el-table-column label="总电压" prop="batteryTotalVolt" align="center" sortable></el-table-column>
         <el-table-column label="总电流" prop="batteryTotalCurr" align="center" sortable></el-table-column>
@@ -101,11 +106,12 @@
     </el-tab-pane>
     <el-tab-pane max-height='52rem' label="电机和雷达" name="motor" lazy>
       <el-table border size="mini" fit style="width:100%" 
-      :data="allShipInfo"
+      :data="allShipAllInfo"
       :default-sort="defaultSort"
       :row-class-name="tableRowClassName"
       >
         <el-table-column fixed label="船号" prop="shipId" align="center" sortable></el-table-column>
+        <el-table-column fixed label="名称" prop="shipName" align="center"></el-table-column>
         <el-table-column label="电流1" prop="motorCurrent1" align="center" sortable></el-table-column>
         <el-table-column label="电压1" prop="motorVoltage1" align="center" sortable></el-table-column>
         <el-table-column label="转速1" prop="motorSpeed1" align="center" sortable></el-table-column>
@@ -120,13 +126,34 @@
       </el-table>
     </el-tab-pane>
   </el-tabs>
+  <p class="text">
+    <span>注释： 白色表示：该船只正常；</span>
+    <span style="background-color: #ff828277; color: #ff0000;">红色表示：可能有烟雾、着火、漏水、电机的危险；</span>
+    <span style="background-color: #fff78877; color: #b1a500;">黄色表示：可能有撞船、超速、电池的危险；</span>
+    <span style="background-color: #707df877; color: #0000ff;">蓝色表示：正在等待会船；</span>
+    <span style="background-color: #c7c7c777; color: #b8b8b8;">灰色表示：该船只没有运行。</span>
+  </p>
+  <p class="text">报警级别：
+      <span style="background-color: #c7c7c777; color: #b8b8b8;">灰色</span> >
+      <span style="background-color: #ff828277; color: #ff0000;">红色</span> > 
+      <span style="background-color: #fff78877; color: #b1a500;">黄色</span> > 
+      <span style="background-color: #707df877; color: #0000ff;">蓝色</span>
+  </p>
 </div>
 </template>
-
 <script>
 import { getAllShipInfo } from '@/api/shipinfo'
 export default {
   name: "detail",
+  mounted() {
+    this.init()
+  },
+  destroyed() {
+    if (window.Timer) {
+      clearInterval(window.Timer)
+      window.Timer = null
+    }
+  },
   data() {
     return {
       activeName: 'all',
@@ -190,15 +217,6 @@ export default {
       }] // 所有船只的全部信息
     }
   },
-  mounted() {
-    this.init()
-  },
-  destroyed() {
-    if (window.Timer) {
-      clearInterval(window.Timer)
-      window.Timer = null
-    }
-  },
   methods: {
     notification(code, string) {
       switch (code) {
@@ -225,16 +243,6 @@ export default {
         default:
       }
     }, // 消息通知函数
-    // 动态上色函数
-    tableRowClassName({ row, index }) {
-      if (row.overSmog === '1' || row.overFire === '1' || row.leakage === '1' || row.overMotor === '1') {
-        return 'warn3-row' // 烟雾火光漏水电机警告
-      } else if (row.collide === '1' || row.overSpeed === '1' || row.batteryStatus === '1') {
-        return 'warn2-row' // 撞船超速电池警告
-      } else if (row.wait === '1') {
-        return 'warn1-row' // 会船提醒
-      }
-    },
     // 数据获取函数
     init() {
       getAllShipInfo().then(response => {
@@ -259,11 +267,23 @@ export default {
         if (data === [] || !data || data === null || data.length <= 0) {
           return
         } else {
-          this.allShipInfo = data
+          this.allShipAllInfo = data
           console.log('*')
           return
         }
       })
+    },
+    // 动态上色函数
+    tableRowClassName({ row, index }) {
+      if (row.runStatus === '0') {
+        return 'norun-row' // 没有运行
+      } else if (row.overSmog === '1' || row.overFire === '1' || row.leakage === '1' || row.overMotor === '1') {
+        return 'warn3-row' // 烟雾火光漏水电机警告
+      } else if (row.collide === '1' || row.overSpeed === '1' || row.batteryStatus === '1') {
+        return 'warn2-row' // 撞船超速电池警告
+      } else if (row.wait === '1') {
+        return 'warn1-row' // 会船提醒
+      }
     }
   }
 }
@@ -279,16 +299,26 @@ export default {
   max-height: 54rem;
 }
 .el-table .warn3-row {
-    background-color: #ff9292ad;
+    background-color: #ff828277;
     color: #ff0000;
 }
 .el-table .warn2-row {
-    background-color: #f8f3aaad;
-    color: #ff0000;
+    background-color: #fff78877;
+    color: #b1a500;
 }
 .el-table .warn1-row {
-    background-color: #5897e9ad;
+    background-color: #707df877;
     color: #0000ff;
+}
+.el-table .norun-row {
+  background-color: #c7c7c777;
+  color: #b8b8b8;
+}
+#fz-detail .text {
+  padding:2px; 
+  color: #303133; 
+  font-size: 13px; 
+  text-align: left;
 }
 </style>
 

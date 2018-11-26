@@ -1,8 +1,0 @@
-export { default as defCard } from './shipdef.vue'
-export { default as statusCard } from './status.vue'
-export { default as warnCard } from './warn.vue'
-export { default as GPSCard } from './GPS.vue'
-export { default as batteryCard } from './battery.vue'
-export { default as motorCard } from './motor.vue'
-export { default as radarCard } from './radar.vue'
-export { default as mapCard } from './map.vue'

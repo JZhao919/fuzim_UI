@@ -74,7 +74,7 @@ export default {
   },
   mounted() {
     initmap()
-    this.getAndMake()
+    this.init()
   },
   destroyed() {
     if (window.Timer) {
@@ -83,7 +83,6 @@ export default {
     }
   },
   methods: {
-    // 消息通知函数
     notification(code, string) {
       switch (code) {
         case 0:
@@ -108,9 +107,9 @@ export default {
           break
         default:
       }
-    },
+    }, // 消息通知函数
     // 获取远程数据并标点
-    getAndMake() {
+    init() {
       getAllShipInfo().then(response => {
         const data = this.allShipAllInfo = response.data
         if (data === [] || !data || data === null || data.length <= 0) {

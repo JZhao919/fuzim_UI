@@ -1,25 +1,26 @@
 <template>
   <div id="map-card">
-    <div class="map-title">{{shipInfo.shipId}}号船位置</div>
+    <div class="map-title">{{shipName}}船位置</div>
     <div id="dashmap" class="map-content"></div>
   </div>
 </template>
 <script>
-import { Map, LngLat, Marker, convertFrom, Scale } from 'AMap'
+import AMap from 'AMap'
 let dashmap // 全局首页地图变量
 var dashmarker // 全局首页标记点变量
 export default {
   name: 'map-card',
   props: {
-    shipInfo: {
-      shipId: 0,
-      runStatus: '',
-      longitude: 0,
-      latitude: 0
-    }
+    shipName: '',
+    runStatus: '',
+    longitude: 0,
+    latitude: 0
   },
   watch: {
-    'shipInfo': 'dashtrancode'
+    'shipId': 'dashtrancode',
+    'runStatus': 'dashtrancode',
+    'longitude': 'dashtrancode',
+    'latitude': 'dashtrancode'
   },
   mounted() {
     this.initmap()
@@ -27,19 +28,19 @@ export default {
   methods: {
     // 地图初始化函数
     initmap() {
-      dashmap = new Map('dashmap', {
+      dashmap = new AMap.Map('dashmap', {
         center: [118.789582, 32.019405],
         zoom: 16
       })
       dashmap.plugin(['AMap.Scale'], function() {
-        dashmap.addControl(new Scale())
+        dashmap.addControl(new AMap.Scale())
       })
     },
     // 转换坐标函数
     dashtrancode() {
-      let lngLat = new LngLat(this.shipInfo.longitude, this.shipInfo.latitude) // 创建高德坐标对象
+      let lngLat = new AMap.LngLat(this.longitude, this.latitude) // 创建高德坐标对象
       // 转换坐标
-      convertFrom(lngLat, 'gps', (status, result) => {
+      AMap.convertFrom(lngLat, 'gps', (status, result) => {
         if (result.info === 'ok') {
           lngLat = result.locations[0] // Array.<LngLat>
           this.dashaddMarker(lngLat)
@@ -51,7 +52,7 @@ export default {
     // 坐标标注函数
     dashaddMarker(lngLat) {
       let iconUrl
-      switch (this.shipInfo.runStatus) {
+      switch (this.runStatus) {
         case '0':
           iconUrl = '/static/img/ship_b.png'
           break
@@ -69,7 +70,7 @@ export default {
         dashmarker.setMap(null)
         dashmarker = null
       } // 清除标记点
-      dashmarker = new Marker({
+      dashmarker = new AMap.Marker({
         icon: iconUrl, // 标注图标类型 <静态文件>
         position: lngLat, // 位置坐标
         map: dashmap
