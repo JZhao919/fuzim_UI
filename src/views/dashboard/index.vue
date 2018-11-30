@@ -41,9 +41,10 @@
           <div id="statuscardcontent">
             <div>船只进出次数：<span>{{shipAllInfo.ioTimes}}</span></div>
             <div>船只运行状态：
-              <span v-if="shipAllInfo.runStatus === '1'" key="runing" class="runing">正在运行.</span>
-              <span v-else-if="shipAllInfo.runStatus === '2'" key="runwait">正在等待.</span>
-              <span v-else key="norun">没有运行.</span></div>
+              <span v-if="shipAllInfo.runStatus === '0'" key="runing" class="runing">正在行驶</span>
+              <span v-else-if="shipAllInfo.runStatus === '1'" key="runwait">暂停行驶</span>
+              <span v-else-if="shipAllInfo.runStatus === '2'" key="noruning">停在码头</span>
+              <span v-else key="norun">...</span></div>
             <div>是否等待会船：
               <span v-if="shipAllInfo.wait === '1'" key="waiting" class="waiting">等待会船.</span>
               <span v-else key="nowait">不需会船.</span></div>

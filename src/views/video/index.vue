@@ -7,7 +7,7 @@
           <el-scrollbar noresize style="height:100%">
             <el-button v-for="shipdef in allshipDefInfo" :key="shipdef.shipId"
             type="text" plain size="mini" 
-            @click.native="select(shipdef.shipId)" :class="{ shipListRun: shipdef.shipStatus==='0' }">
+            @click.native="selectShip(shipdef.shipId)" :class="{ shipListRun: shipdef.shipStatus==='1' }">
             {{shipdef.shipName}} 
             </el-button>
           </el-scrollbar>
@@ -17,29 +17,25 @@
   </el-row>
   <el-row>
     <el-col :xs="24" :sm="24" :md="24" :lg="8" :xl="8">
-      <mainPlayer ref="mainVideo" :shipName="shipDefInfo.shipName" :shipStatus="shipDefInfo.shipStatus" :videoInfo="headVideo"></mainPlayer>
+      <myPlayer ref="headVideo" :shipName="shipDefInfo.shipName" :camcaLoca="'头部'" :video="headVideo"></myPlayer>
     </el-col>
     <el-col :xs="24" :sm="24" :md="12" :lg="8" :xl="8">
-      <select1Player ref="selectVideo1" :shipName="shipDefInfo.shipName" :shipStatus="shipDefInfo.shipStatus" :videoInfo="binVideo"></select1Player>
+      <myPlayer ref="binVideo" :shipName="shipDefInfo.shipName" :camcaLoca="'中部'" :video="binVideo"></myPlayer>
     </el-col>
     <el-col :xs="24" :sm="24" :md="12" :lg="8" :xl="8">
-      <select2Player ref="selectVideo2" :shipName="shipDefInfo.shipName" :shipStatus="shipDefInfo.shipStatus" :videoInfo="tailVideo"></select2Player>
+      <myPlayer ref="tailVideo" :shipName="shipDefInfo.shipName" :camcaLoca="'尾部'" :video="tailVideo"></myPlayer>
     </el-col>
   </el-row>
 </div>
 </template>
 
 <script>
-import mainPlayer from './mainPlayer'
-import select1Player from './select1Player'
-import select2Player from './select2Player'
+import myPlayer from './myPlayer'
 import { getAllShipDefInfo } from '@/api/shipinfo'
 export default {
   name: 'v-video',
   components: {
-    mainPlayer,
-    select1Player,
-    select2Player
+    myPlayer
   },
   mounted() {
     this.init()
@@ -48,51 +44,56 @@ export default {
     return {
       allshipDefInfo: [], // 所有船只定义信息
       shipDefInfo: {
-        shipId: 0,
-        shipName: 'X',
+        shipId: 2,
+        shipName: "永熙号",
         shipStatus: '0',
         shipNote: '',
-        shipCamheadUrl: "",
-        shipCamheadUrlHD: "",
-        shipCamcabinUrl: "",
-        shipCamcabinUrlHD: "",
-        shipCamtailUrl: "",
-        shipCamtailUrlHD: ""
-      } // 当前船只的定义信
+        shipCamheadUrl: "http://hls.open.ys7.com/openlive/af6cda72ed224f6386dfd92b6521f27b.m3u8",
+        shipCamheadUrlHD: "http://hls.open.ys7.com/openlive/af6cda72ed224f6386dfd92b6521f27b.hd.m3u8",
+        shipCamcabinUrl: "http://hls.open.ys7.com/openlive/ddf892f123154f7b971b43b872146502.m3u8",
+        shipCamcabinUrlHD: "http://hls.open.ys7.com/openlive/ddf892f123154f7b971b43b872146502.hd.m3u8",
+        shipCamtailUrl: "http://hls.open.ys7.com/openlive/d5db3d8ddd8c41f385a9e09580956c48.m3u8",
+        shipCamtailUrlHD: "http://hls.open.ys7.com/openlive/d5db3d8ddd8c41f385a9e09580956c48.hd.m3u8"
+      }, // 当前船只的定义信
+      shipNoneDefInfo: {
+        shipId: 0,
+        shipName: "X",
+        shipStatus: '0',
+        shipNote: '',
+        shipCamheadUrl: "http://hls.1.m3u8",
+        shipCamheadUrlHD: "http://hls.1.hd.m3u8",
+        shipCamcabinUrl: "http://hls.1.m3u8",
+        shipCamcabinUrlHD: "http://hls.1.hd.m3u8",
+        shipCamtailUrl: "http://hls.1.m3u8",
+        shipCamtailUrlHD: "http://hls.1.hd.m3u8"
+      } // 默认船只的定义信
     }
   },
   computed: {
     headVideo: function() {
       return {
-        camcaLoca: "头部",
-        shipUrl: this.shipDefInfo.shipCamheadUrl,
-        shipUrlHD: this.shipDefInfo.shipCamheadUrlHD
+        url: this.shipDefInfo.shipCamheadUrl,
+        urlHD: this.shipDefInfo.shipCamheadUrlHD
       }
     },
     binVideo: function() {
       return {
-        camcaLoca: "中部",
-        shipUrl: this.shipDefInfo.shipCamcabinUrl,
-        shipUrlHD: this.shipDefInfo.shipCamcabinUrlHD
+        url: this.shipDefInfo.shipCamcabinUrl,
+        urlHD: this.shipDefInfo.shipCamcabinUrlHD
       }
     },
     tailVideo: function() {
       return {
-        camcaLoca: "尾部",
-        shipUrl: this.shipDefInfo.shipCamtailUrl,
-        shipUrlHD: this.shipDefInfo.shipCamtailUrlHD
+        url: this.shipDefInfo.shipCamtailUrl,
+        urlHD: this.shipDefInfo.shipCamtailUrlHD
       }
     }
   },
   watch: {
     headVideo: function() {
-      this.$refs.mainVideo.reinit()
-    },
-    binVideo: function() {
-      this.$refs.selectVideo1.reinit()
-    },
-    tailVideo: function() {
-      this.$refs.selectVideo2.reinit()
+      this.$refs.headVideo.reinit()
+      this.$refs.binVideo.reinit()
+      this.$refs.tailVideo.reinit()
     }
   },
   methods: {
@@ -123,20 +124,25 @@ export default {
     },
     init() {
       getAllShipDefInfo().then(response => {
-        const data = response.data
-        if (data === [] || !data || data === null || data === "") {
-          this.notification(2, '数据库中没有船只信息！')
+        if (!response.data || response.data === null || response.data === [] || response.data === "") {
+          this.allshipDefInfo = [] // 所有船只定义信息置空
+          this.notification(0, "当前船只信息为空")
         } else {
-          this.allshipDefInfo = data
+          this.allshipDefInfo = response.data
         }
       })
-      return
     },
-    select(shipId) {
+    selectShip(shipId) {
       for (let i = 0; i < this.allshipDefInfo.length; i++) {
         if (this.allshipDefInfo[i].shipId === shipId) {
-          this.shipDefInfo = this.allshipDefInfo[i]
-          break
+          if (this.allshipDefInfo[i].shipCamheadUrl !== "" || this.allshipDefInfo[i].shipCamcabinUrl !== "" || this.allshipDefInfo[i].shipCamtailUrl !== "") {
+            this.shipDefInfo = this.allshipDefInfo[i]
+            break
+          } else {
+            this.notification(0, "当前船只没有视频")
+            this.shipDefInfo = this.shipNoneDefInfo // 当前船只视频信息置空
+            break
+          }
         }
       }
     }

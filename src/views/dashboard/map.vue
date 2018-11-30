@@ -54,13 +54,13 @@ export default {
       let iconUrl
       switch (this.runStatus) {
         case '0':
-          iconUrl = '/static/img/ship_b.png'
-          break
-        case '1':
           iconUrl = '/static/img/ship_g.png'
           break
-        case '2':
+        case '1':
           iconUrl = '/static/img/ship_r.png'
+          break
+        case '2':
+          iconUrl = '/static/img/ship_b.png'
           break
         default:
           iconUrl = '/static/img/ship_w.png'

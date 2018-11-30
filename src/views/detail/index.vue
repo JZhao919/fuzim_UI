@@ -131,10 +131,8 @@
     <span style="background-color: #ff828277; color: #ff0000;">红色表示：可能有烟雾、着火、漏水、电机的危险；</span>
     <span style="background-color: #fff78877; color: #b1a500;">黄色表示：可能有撞船、超速、电池的危险；</span>
     <span style="background-color: #707df877; color: #0000ff;">蓝色表示：正在等待会船；</span>
-    <span style="background-color: #c7c7c777; color: #b8b8b8;">灰色表示：该船只没有运行。</span>
   </p>
   <p class="text">报警级别：
-      <span style="background-color: #c7c7c777; color: #b8b8b8;">灰色</span> >
       <span style="background-color: #ff828277; color: #ff0000;">红色</span> > 
       <span style="background-color: #fff78877; color: #b1a500;">黄色</span> > 
       <span style="background-color: #707df877; color: #0000ff;">蓝色</span>
@@ -275,9 +273,7 @@ export default {
     },
     // 动态上色函数
     tableRowClassName({ row, index }) {
-      if (row.runStatus === '0') {
-        return 'norun-row' // 没有运行
-      } else if (row.overSmog === '1' || row.overFire === '1' || row.leakage === '1' || row.overMotor === '1') {
+      if (row.overSmog === '1' || row.overFire === '1' || row.leakage === '1' || row.overMotor === '1') {
         return 'warn3-row' // 烟雾火光漏水电机警告
       } else if (row.collide === '1' || row.overSpeed === '1' || row.batteryStatus === '1') {
         return 'warn2-row' // 撞船超速电池警告
@@ -309,10 +305,6 @@ export default {
 .el-table .warn1-row {
     background-color: #707df877;
     color: #0000ff;
-}
-.el-table .norun-row {
-  background-color: #c7c7c777;
-  color: #b8b8b8;
 }
 #fz-detail .text {
   padding:2px; 

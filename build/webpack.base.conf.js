@@ -99,7 +99,6 @@ module.exports = {
   },
   externals:{
     'AMap':'AMap',
-    'AMapUI': 'AMapUI',
-    'EZUIPlayer':'EZUIPlayer'
+    'AMapUI': 'AMapUI'
   }
 }
