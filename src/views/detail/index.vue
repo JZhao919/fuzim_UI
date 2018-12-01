@@ -263,7 +263,7 @@ export default {
         if (response.data === [] || !response.data || response.data === null || response.data.length <= 0) {
           return
         } else {
-          this.allShipAllInfo = data
+          this.allShipAllInfo = response.data
           console.log('*')
           return
         }

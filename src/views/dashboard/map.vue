@@ -1,6 +1,6 @@
 <template>
   <div id="map-card">
-    <div class="map-title">{{shipName}}船位置</div>
+    <div class="map-title">{{shipInfo.shipName}}船位置</div>
     <div id="dashmap" class="map-content"></div>
   </div>
 </template>
@@ -11,19 +11,18 @@ var dashmarker = null // 全局首页标记点变量
 export default {
   name: 'map-card',
   props: {
-    shipName: '',
-    runStatus: '',
-    longitude: 0,
-    latitude: 0
-  },
-  watch: {
-    'shipId': 'dashtrancode',
-    'runStatus': 'dashtrancode',
-    'longitude': 'dashtrancode',
-    'latitude': 'dashtrancode'
+    shipInfo: {
+      shipName: '',
+      runStatus: '',
+      longitude: 118.789582,
+      latitude: 32.019405
+    }
   },
   mounted() {
     this.initmap()
+  },
+  watch: {
+    'shipInfo': 'dashaddMarker'
   },
   methods: {
     // 地图初始化函数
@@ -36,23 +35,19 @@ export default {
         dashmap.addControl(new AMap.Scale())
       })
     },
-    // 转换坐标函数
-    dashtrancode() {
-      let lngLat = new AMap.LngLat(this.longitude, this.latitude) // 创建高德坐标对象
+    // 坐标标注函数
+    dashaddMarker() {
+      let lngLat = new AMap.LngLat(this.shipInfo.longitude, this.shipInfo.latitude) // 创建高德坐标对象
       // 转换坐标
       AMap.convertFrom(lngLat, 'gps', (status, result) => {
         if (result.info === 'ok') {
           lngLat = result.locations[0] // Array.<LngLat>
-          this.dashaddMarker(lngLat)
         } else {
           console.log("转换地图坐标失败")
         }
       })
-    },
-    // 坐标标注函数
-    dashaddMarker(lngLat) {
       let iconUrl
-      switch (this.runStatus) {
+      switch (this.shipInfo.runStatus) {
         case '0':
           iconUrl = '/static/img/ship_g.png'
           break
@@ -68,8 +63,8 @@ export default {
       }
       dashmap.setCenter(lngLat) // 移动地图中心点
       if (dashmarker !== null) {
-        dashmarker.setIcon()
-        dashmarker.setPosition()
+        dashmarker.setIcon(iconUrl)
+        dashmarker.setPosition(lngLat)
       } else {
         dashmarker = new AMap.Marker({
           icon: iconUrl, // 标注图标类型 <静态文件>

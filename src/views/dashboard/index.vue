@@ -17,7 +17,7 @@
 </el-row>
 <el-row>
   <el-col :xs="24" :sm="16" :md="18" :lg="18">
-    <mapCard :shipName="shipAllInfo.shipName" :runStatus="shipAllInfo.runStatus" :longitude="shipAllInfo.longitude" :latitude="shipAllInfo.latitude"></mapCard>
+    <mapCard :shipInfo="markerInfo"></mapCard>
   </el-col>
   <el-col :xs="24" :sm="8" :md="6" :lg="6">
     <div id="defcard">
@@ -167,6 +167,7 @@ export default {
   },
   data() {
     return {
+      shipId: null, // 当前选择的船只
       shipDefInfo: {
         shipId: 0,
         shipName: '',
@@ -290,6 +291,16 @@ export default {
       } // 当前船只的所有信息
     }
   },
+  computed: {
+    markerInfo: function() {
+      return {
+        shipName: this.shipAllInfo.shipName,
+        runStatus: this.shipAllInfo.runStatus,
+        longitude: this.shipAllInfo.longitude,
+        latitude: this.shipAllInfo.latitude
+      }
+    }
+  },
   methods: {
     notification(code, string) {
       switch (code) {
@@ -330,6 +341,7 @@ export default {
       return
     },
     submit(shipId) {
+      this.shipId = shipId
       for (let i = 0; i < this.allshipDefInfo.length; i++) {
         if (this.allshipDefInfo[i].shipId === shipId) {
           this.shipDefInfo = this.allshipDefInfo[i]
@@ -338,31 +350,31 @@ export default {
       }
       getOneShipInfo(shipId).then(response => {
         const data = response.data
-        if (data === [] || !data || data === null || data.length <= 0) {
+        if (!data || data === null || data.length <= 0) {
           this.shipAllInfo = this.shipNoneInfo
           this.notification(2, '该船当前没有详细数据！')
         } else {
           this.shipAllInfo = data
           this.notification(1, '成功获取该船当前数据！')
-          if (window.Timer) {
-            clearInterval(window.Timer)
-            window.Timer = null
-          }
-          window.Timer = setInterval(this.loopGetOneShipInfo(shipId), 10000)
         }
       })
+      if (window.Timer) {
+        clearInterval(window.Timer)
+        window.Timer = null
+      }
+      window.Timer = setInterval(this.loopGetOneShipInfo, 10000)
     },
-    loopGetOneShipInfo(shipId) {
-      if (shipId === null || !shipId) {
+    loopGetOneShipInfo() {
+      if (this.shipId === null || !this.shipId) {
         return
       } else {
         getOneShipInfo(this.shipId).then(response => {
           const data = response.data
-          if (data === [] || !data || data === null || data.length <= 0) {
+          if (!data || data === null || data.length <= 0) {
             this.shipAllInfo = this.shipNoneInfo
           } else {
             this.shipAllInfo = data
-            console.log(shipId)
+            console.log(this.shipId)
           }
         })
       }

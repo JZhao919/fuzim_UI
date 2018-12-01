@@ -9,7 +9,7 @@ export function initmap() {
   }
   makemap = new AMap.Map('makemap', {
     center: [118.789582, 32.019405],
-    zoom: 10
+    zoom: 15
   })
   makemap.plugin(['AMap.ToolBar', 'AMap.Scale'], function() {
     makemap.addControl(new AMap.ToolBar())

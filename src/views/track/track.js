@@ -8,7 +8,7 @@ let pathSimplifierIns // 全局简单轨迹线
 export function initMap() {
   trailmap = new AMap.Map('trailmap', {
     center: [118.789582, 32.019405],
-    zoom: 19
+    zoom: 16
   })
   trailmap.plugin(['AMap.ToolBar', 'AMap.Scale'], () => {
     trailmap.addControl(new AMap.ToolBar())
