@@ -5,9 +5,8 @@
     </el-col>
   </el-row>
 </template>
-
 <script>
-import { initmap, transcode } from './map.js'
+import { initmap, UpDataMarker } from './mapmake.js'
 import { getAllShipInfo } from '@/api/shipinfo'
 export default {
   name: 'mapmake',
@@ -16,9 +15,9 @@ export default {
       allShipAllInfo: [{
         // 状态信息
         shipId: 0,
-        shipName: '',
+        shipName: '123',
         ioTimes: 0,
-        runStatus: '',
+        runStatus: '0',
         startRunTime: 0,
         endRunTime: 0,
         runTime: 0,
@@ -36,9 +35,9 @@ export default {
         // GPS信息
         gpsTime: 0,
         gpsLondir: "",
-        longitude: 0,
+        longitude: 118.789582,
         gpsLatdir: "",
-        latitude: 0,
+        latitude: 32.019405,
         gpsVardir: "",
         gpsMagvar: 0.0,
         gpsTrackTure: 0,
@@ -82,6 +81,11 @@ export default {
       window.Timer = null
     }
   },
+  watch: {
+    allShipAllInfo: function() {
+      UpDataMarker(this.allShipAllInfo)
+    }
+  },
   methods: {
     notification(code, string) {
       switch (code) {
@@ -108,7 +112,7 @@ export default {
         default:
       }
     }, // 消息通知函数
-    // 获取远程数据并标点
+    // 获取远程数据
     init() {
       getAllShipInfo().then(response => {
         const data = this.allShipAllInfo = response.data
@@ -117,14 +121,13 @@ export default {
         } else {
           this.notification(1, "成功获取所有船只数据！")
           this.allShipAllInfo = data
-          transcode(this.allShipAllInfo)
+          if (window.Timer) {
+            clearInterval(window.Timer)
+            window.Timer = null
+          }
+          window.Timer = setInterval(this.loopGetAllShipInfo, 15000)
         }
       })
-      // if (window.Timer) {
-      //   clearInterval(window.Timer)
-      //   window.Timer = null
-      // }
-      // window.Timer = setInterval(this.loopGetAllShipInfo, 15000)
     },
     loopGetAllShipInfo() {
       getAllShipInfo().then(response => {
@@ -133,8 +136,7 @@ export default {
           return
         } else {
           this.allShipAllInfo = data
-          initmap()
-          transcode(this.allShipAllInfo)
+          console.log('ship')
         }
       })
     }
