@@ -6,8 +6,8 @@
 </template>
 <script>
 import AMap from 'AMap'
-let dashmap // 全局首页地图变量
-var dashmarker // 全局首页标记点变量
+let dashmap = null // 全局首页地图变量
+var dashmarker = null // 全局首页标记点变量
 export default {
   name: 'map-card',
   props: {
@@ -66,15 +66,17 @@ export default {
           iconUrl = '/static/img/ship_w.png'
           break
       }
-      if (dashmarker) {
-        dashmarker.setMap(null)
-        dashmarker = null
-      } // 清除标记点
-      dashmarker = new AMap.Marker({
-        icon: iconUrl, // 标注图标类型 <静态文件>
-        position: lngLat, // 位置坐标
-        map: dashmap
-      })
+      dashmap.setCenter(lngLat) // 移动地图中心点
+      if (dashmarker !== null) {
+        dashmarker.setIcon()
+        dashmarker.setPosition()
+      } else {
+        dashmarker = new AMap.Marker({
+          icon: iconUrl, // 标注图标类型 <静态文件>
+          position: lngLat, // 位置坐标
+          map: dashmap
+        })
+      }
     }
   }
 }

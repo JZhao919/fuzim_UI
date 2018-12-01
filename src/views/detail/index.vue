@@ -244,11 +244,10 @@ export default {
     // 数据获取函数
     init() {
       getAllShipInfo().then(response => {
-        const data = response.data
-        if (data === [] || !data || data === null || data.length <= 0) {
+        if (response.data === [] || !response.data || response.data === null || response.data.length <= 0) {
           this.notification(2, "数据库中没有船只数据！")
         } else {
-          this.allShipAllInfo = data
+          this.allShipAllInfo = response.data
           this.notification(1, "成功获取所有船只数据！")
           if (window.Timer) {
             clearInterval(window.Timer)
@@ -261,8 +260,7 @@ export default {
     },
     loopGetAllShipInfo() {
       getAllShipInfo().then(response => {
-        const data = response.data
-        if (data === [] || !data || data === null || data.length <= 0) {
+        if (response.data === [] || !response.data || response.data === null || response.data.length <= 0) {
           return
         } else {
           this.allShipAllInfo = data

@@ -136,7 +136,7 @@ export default {
           return
         } else {
           this.allShipAllInfo = data
-          console.log('ship')
+          console.log('mapMaker')
         }
       })
     }

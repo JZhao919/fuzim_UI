@@ -167,7 +167,6 @@ export default {
   },
   data() {
     return {
-      shipId: null, // 当前更新船只的编号
       shipDefInfo: {
         shipId: 0,
         shipName: '',
@@ -331,7 +330,6 @@ export default {
       return
     },
     submit(shipId) {
-      this.shipId = shipId
       for (let i = 0; i < this.allshipDefInfo.length; i++) {
         if (this.allshipDefInfo[i].shipId === shipId) {
           this.shipDefInfo = this.allshipDefInfo[i]
@@ -350,13 +348,12 @@ export default {
             clearInterval(window.Timer)
             window.Timer = null
           }
-          window.Timer = setInterval(this.loopGetOneShipInfo, 10000)
-          return
+          window.Timer = setInterval(this.loopGetOneShipInfo(shipId), 10000)
         }
       })
     },
-    loopGetOneShipInfo() {
-      if (this.shipId === null || !this.shipId) {
+    loopGetOneShipInfo(shipId) {
+      if (shipId === null || !shipId) {
         return
       } else {
         getOneShipInfo(this.shipId).then(response => {
@@ -365,10 +362,9 @@ export default {
             this.shipAllInfo = this.shipNoneInfo
           } else {
             this.shipAllInfo = data
-            console.log(this.shipId)
+            console.log(shipId)
           }
         })
-        return
       }
     }
   }
