@@ -125,7 +125,7 @@ export default {
             clearInterval(window.Timer)
             window.Timer = null
           }
-          window.Timer = setInterval(this.loopGetAllShipInfo, 15000)
+          window.Timer = setInterval(this.loopGetAllShipInfo, 20000)
         }
       })
     },
@@ -136,7 +136,7 @@ export default {
           return
         } else {
           this.allShipAllInfo = data
-          console.log('mapMaker')
+          // console.log('mapMaker')
         }
       })
     }

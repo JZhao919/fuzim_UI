@@ -374,7 +374,7 @@ export default {
             this.shipAllInfo = this.shipNoneInfo
           } else {
             this.shipAllInfo = data
-            console.log(this.shipId)
+            // console.log(this.shipId)
           }
         })
       }

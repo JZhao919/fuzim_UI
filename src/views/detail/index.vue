@@ -264,7 +264,7 @@ export default {
           return
         } else {
           this.allShipAllInfo = response.data
-          console.log('*')
+          // console.log('*')
           return
         }
       })
