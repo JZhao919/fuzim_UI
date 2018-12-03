@@ -4,7 +4,6 @@
 <script>
 require('../../../node_modules/dplayer/dist/DPlayer.min.css')
 import DPlayer from 'dplayer'
-var player
 export default {
   props: {
     autoplay: {
@@ -63,10 +62,7 @@ export default {
   },
   methods: {
     init() {
-      if (player) {
-        player = null
-      }
-      player = this.dp = new DPlayer({
+      const player = this.dp = new DPlayer({
         element: this.$el,
         live: true,
         autoplay: this.autoplay,
@@ -110,12 +106,6 @@ export default {
       player.on('error', () => {
         this.$emit('error')
       })
-    },
-    destroy() {
-      if (player) {
-        player.destroy() // 销毁播放器
-        player = null
-      }
     }
   }
 }

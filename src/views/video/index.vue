@@ -54,7 +54,7 @@ export default {
         shipCamcabinUrlHD: "http://hls.open.ys7.com/openlive/ddf892f123154f7b971b43b872146502.hd.m3u8",
         shipCamtailUrl: "http://hls.open.ys7.com/openlive/d5db3d8ddd8c41f385a9e09580956c48.m3u8",
         shipCamtailUrlHD: "http://hls.open.ys7.com/openlive/d5db3d8ddd8c41f385a9e09580956c48.hd.m3u8"
-      }, // 当前船只的定义信
+      }, // 当前船只的定义信 
       shipNoneDefInfo: {
         shipId: 0,
         shipName: "X",
@@ -87,13 +87,6 @@ export default {
         url: this.shipDefInfo.shipCamtailUrl,
         urlHD: this.shipDefInfo.shipCamtailUrlHD
       }
-    }
-  },
-  watch: {
-    headVideo: function() {
-      this.$refs.headVideo.reinit()
-      this.$refs.binVideo.reinit()
-      this.$refs.tailVideo.reinit()
     }
   },
   methods: {
@@ -145,6 +138,9 @@ export default {
           }
         }
       }
+      this.$refs.headVideo.reinit()
+      this.$refs.binVideo.reinit()
+      this.$refs.tailVideo.reinit()
     }
   }
 }
