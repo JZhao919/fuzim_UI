@@ -1,7 +1,7 @@
 <template>
    <div id="p-video">
-    <div id="v-title" ><span>{{shipName}}{{video.camcaLoca}}实时视频</span></div>
-    <playerHls id="mainplayer" ref="mainplayer" @play="play" :video="video" :contextmenu="contextmenu"></playerHls>
+    <div id="v-title" ><span>{{shipName}}{{camcaLoca}}实时视频</span></div>
+    <playerHls ref="playerHls" @play="play" :video="video" :contextmenu="contextmenu"></playerHls>
   </div>
 </template>
 
@@ -43,12 +43,11 @@ export default {
   },
   methods: {
     init() {
-      this.myPlayer = this.$refs.mainplayer.dp // 获取新播放器句柄
+      this.myPlayer = this.$refs.playerHls.dp // 获取新播放器句柄
     },
-    reinit() {
-      this.myPlayer.destroy()
-      this.$refs.mainplayer.init() // 重新初始化播放器
-      this.myPlayer = this.$refs.mainplayer.dp // 获取新播放器句柄
+    switchVideo(video) {
+      this.myPlayer.switchVideo(video)
+      // console.log(video.url)
     },
     play() {
       console.log('myPlayer callback')

@@ -7,7 +7,7 @@
           <el-scrollbar noresize style="height:100%">
             <el-button v-for="shipdef in allshipDefInfo" :key="shipdef.shipId"
             type="text" plain size="mini" 
-            @click.native="selectShip(shipdef.shipId)" :class="{ shipListRun: shipdef.shipStatus==='1' }">
+            @click.native="selectShip(shipdef)" :class="{ shipListRun: shipdef.shipStatus==='1' }">
             {{shipdef.shipName}} 
             </el-button>
           </el-scrollbar>
@@ -17,13 +17,13 @@
   </el-row>
   <el-row>
     <el-col :xs="24" :sm="24" :md="24" :lg="8" :xl="8">
-      <myPlayer ref="headVideo" :shipName="shipDefInfo.shipName" :camcaLoca="'头部'" :video="headVideo"></myPlayer>
+      <myPlayer ref="headVideo" :shipName="shipDefInfo.shipName" :video="headVideo"></myPlayer>
     </el-col>
     <el-col :xs="24" :sm="24" :md="12" :lg="8" :xl="8">
-      <myPlayer ref="binVideo" :shipName="shipDefInfo.shipName" :camcaLoca="'中部'" :video="binVideo"></myPlayer>
+      <myPlayer ref="binVideo" :shipName="shipDefInfo.shipName" :video="binVideo"></myPlayer>
     </el-col>
     <el-col :xs="24" :sm="24" :md="12" :lg="8" :xl="8">
-      <myPlayer ref="tailVideo" :shipName="shipDefInfo.shipName" :camcaLoca="'尾部'" :video="tailVideo"></myPlayer>
+      <myPlayer ref="tailVideo" :shipName="shipDefInfo.shipName" :video="tailVideo"></myPlayer>
     </el-col>
   </el-row>
 </div>
@@ -54,38 +54,18 @@ export default {
         shipCamcabinUrlHD: "http://hls.open.ys7.com/openlive/ddf892f123154f7b971b43b872146502.hd.m3u8",
         shipCamtailUrl: "http://hls.open.ys7.com/openlive/d5db3d8ddd8c41f385a9e09580956c48.m3u8",
         shipCamtailUrlHD: "http://hls.open.ys7.com/openlive/d5db3d8ddd8c41f385a9e09580956c48.hd.m3u8"
-      }, // 当前船只的定义信 
-      shipNoneDefInfo: {
-        shipId: 0,
-        shipName: "X",
-        shipStatus: '0',
-        shipNote: '',
-        shipCamheadUrl: "http://hls.1.m3u8",
-        shipCamheadUrlHD: "http://hls.1.hd.m3u8",
-        shipCamcabinUrl: "http://hls.1.m3u8",
-        shipCamcabinUrlHD: "http://hls.1.hd.m3u8",
-        shipCamtailUrl: "http://hls.1.m3u8",
-        shipCamtailUrlHD: "http://hls.1.hd.m3u8"
-      } // 默认船只的定义信
-    }
-  },
-  computed: {
-    headVideo: function() {
-      return {
-        url: this.shipDefInfo.shipCamheadUrl,
-        urlHD: this.shipDefInfo.shipCamheadUrlHD
-      }
-    },
-    binVideo: function() {
-      return {
-        url: this.shipDefInfo.shipCamcabinUrl,
-        urlHD: this.shipDefInfo.shipCamcabinUrlHD
-      }
-    },
-    tailVideo: function() {
-      return {
-        url: this.shipDefInfo.shipCamtailUrl,
-        urlHD: this.shipDefInfo.shipCamtailUrlHD
+      }, // 当前船只的定义信
+      headVideo: {
+        url: "http://hls.open.ys7.com/openlive/af6cda72ed224f6386dfd92b6521f27b.m3u8",
+        urlHD: "http://hls.open.ys7.com/openlive/af6cda72ed224f6386dfd92b6521f27b.hd.m3u8"
+      },
+      binVideo: {
+        url: "http://hls.open.ys7.com/openlive/ddf892f123154f7b971b43b872146502.m3u8",
+        urlHD: "http://hls.open.ys7.com/openlive/ddf892f123154f7b971b43b872146502.hd.m3u8"
+      },
+      tailVideo: {
+        url: "http://hls.open.ys7.com/openlive/d5db3d8ddd8c41f385a9e09580956c48.m3u8",
+        urlHD: "http://hls.open.ys7.com/openlive/d5db3d8ddd8c41f385a9e09580956c48.hd.m3u8"
       }
     }
   },
@@ -125,22 +105,23 @@ export default {
         }
       })
     },
-    selectShip(shipId) {
-      for (let i = 0; i < this.allshipDefInfo.length; i++) {
-        if (this.allshipDefInfo[i].shipId === shipId) {
-          if (this.allshipDefInfo[i].shipCamheadUrl !== "" || this.allshipDefInfo[i].shipCamcabinUrl !== "" || this.allshipDefInfo[i].shipCamtailUrl !== "") {
-            this.shipDefInfo = this.allshipDefInfo[i]
-            break
-          } else {
-            this.notification(0, "当前船只没有视频")
-            this.shipDefInfo = this.shipNoneDefInfo // 当前船只视频信息置空
-            break
-          }
-        }
+    selectShip(shipdef) {
+      this.shipDefInfo = shipdef
+      const headVideo = {
+        url: shipdef.shipCamheadUrl,
+        urlHD: shipdef.shipCamheadUrlHD
       }
-      this.$refs.headVideo.reinit()
-      this.$refs.binVideo.reinit()
-      this.$refs.tailVideo.reinit()
+      const binVideo = {
+        url: shipdef.shipCamcabinUrl,
+        urlHD: shipdef.shipCamcabinUrlHD
+      }
+      const tailVideo = {
+        url: shipdef.shipCamtailUrl,
+        urlHD: shipdef.shipCamtailUrlHD
+      }
+      this.$refs.headVideo.switchVideo(headVideo)
+      this.$refs.binVideo.switchVideo(binVideo)
+      this.$refs.tailVideo.switchVideo(tailVideo)
     }
   }
 }

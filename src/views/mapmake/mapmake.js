@@ -162,6 +162,7 @@ export function upDataMarker(data) {
     initMake(data)
   } else {
     markerList.render([]) // 清除数据
+    markerList.clearData()
     markerList.render(data) // 绘制数据
     markerList.clearRecycle()
   }
