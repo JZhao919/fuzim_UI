@@ -8,6 +8,7 @@ export function initmap() {
     makemap = null
   }
   makemap = new AMap.Map('makemap', {
+    mapStyle: 'amap://styles/12cb5f735c7e70f55c221548b0e11763', // 设置地图的显示样式
     center: [118.789582, 32.019405],
     zoom: 15
   })
@@ -42,13 +43,17 @@ function initPage(MarkerList, MarkerData) {
     getPosition: function(dataItem) {
       // 返回数据项的经纬度，AMap.LngLat实例或者经纬度数组
       let lngLat = new AMap.LngLat(dataItem.longitude, dataItem.latitude) // 创建高德坐标对象
-      AMap.convertFrom(lngLat, 'gps', function(status, result) {
-        if (result.info === 'ok') {
-          lngLat = result.locations[0] // Array.<LngLat>
-        } else {
-          return
-        }
-      })
+      if (dataItem.longitude === 0 || dataItem.latitude === 0) {
+        lngLat = [118.789279, 32.019657]
+      } else {
+        AMap.convertFrom(lngLat, 'gps', function(status, result) {
+          if (result.info === 'ok') {
+            lngLat = result.locations[0] // Array.<LngLat>
+          } else {
+            lngLat = [118.789279, 32.019657]
+          }
+        })
+      }
       return lngLat
     },
     getMarker: function(dataItem, context, recycledMarker) {
@@ -114,11 +119,11 @@ function initPage(MarkerList, MarkerData) {
       })
     }
   })
-  // 监听选中改变
-  markerList.on('selectedChanged', function(event, info) {})
-  // 监听Marker上的点击，详见markerEvents
-  markerList.on('markerClick', function(event, record) {})
-  // 绘制数据源，Let's go!
+  // // 监听选中改变
+  // markerList.on('selectedChanged', function(event, info) {})
+  // // 监听Marker上的点击，详见markerEvents
+  // markerList.on('markerClick', function(event, record) {})
+  // // 绘制数据源，Let's go!
   markerList.render(MarkerData)
 }
 
@@ -152,13 +157,18 @@ function closeInfoWindow() {
 }
 
 // 更新marker数据
-export function UpDataMarker(data) {
+export function upDataMarker(data) {
   if (markerList === null) {
     initMake(data)
   } else {
     markerList.render([]) // 清除数据
-    // markerList.clearData()
     markerList.render(data) // 绘制数据
     markerList.clearRecycle()
   }
+}
+// 清楚全部标点
+export function clearAllMarker() {
+  markerList.clearRecycle()
+  markerList.clearData()
+  markerList = null
 }

@@ -160,7 +160,7 @@ export default {
     this.init()
   },
   destroyed() {
-    if (window.Timer) {
+    if (window.Timer !== null) {
       clearInterval(window.Timer)
       window.Timer = null
     }
@@ -348,7 +348,7 @@ export default {
           break
         }
       }
-      getOneShipInfo(shipId).then(response => {
+      getOneShipInfo(this.shipId).then(response => {
         const data = response.data
         if (!data || data === null || data.length <= 0) {
           this.shipAllInfo = this.shipNoneInfo
@@ -358,11 +358,12 @@ export default {
           this.notification(1, '成功获取该船当前数据！')
         }
       })
-      if (window.Timer) {
+      if (window.Timer !== null) {
         clearInterval(window.Timer)
         window.Timer = null
+      } else {
+        window.Timer = setInterval(this.loopGetOneShipInfo, 10000)
       }
-      window.Timer = setInterval(this.loopGetOneShipInfo, 10000)
     },
     loopGetOneShipInfo() {
       if (this.shipId === null || !this.shipId) {
@@ -374,7 +375,7 @@ export default {
             this.shipAllInfo = this.shipNoneInfo
           } else {
             this.shipAllInfo = data
-            // console.log(this.shipId)
+            console.log(this.shipId)
           }
         })
       }

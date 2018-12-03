@@ -7,8 +7,9 @@ let pathSimplifierIns // 全局简单轨迹线
 // 地图初始化函数
 export function initMap() {
   trailmap = new AMap.Map('trailmap', {
+    mapStyle: 'amap://styles/12cb5f735c7e70f55c221548b0e11763', // 设置地图的显示样式
     center: [118.789582, 32.019405],
-    zoom: 16
+    zoom: 15
   })
   trailmap.plugin(['AMap.ToolBar', 'AMap.Scale'], () => {
     trailmap.addControl(new AMap.ToolBar())

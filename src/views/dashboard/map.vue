@@ -14,8 +14,8 @@ export default {
     shipInfo: {
       shipName: '',
       runStatus: '',
-      longitude: 118.789582,
-      latitude: 32.019405
+      longitude: 0,
+      latitude: 0
     }
   },
   mounted() {
@@ -28,7 +28,8 @@ export default {
     // 地图初始化函数
     initmap() {
       dashmap = new AMap.Map('dashmap', {
-        center: [118.789582, 32.019405],
+        mapStyle: 'amap://styles/12cb5f735c7e70f55c221548b0e11763', // 设置地图的显示样式
+        center: [118.789279, 32.019657],
         zoom: 16
       })
       dashmap.plugin(['AMap.Scale'], function() {
@@ -37,15 +38,20 @@ export default {
     },
     // 坐标标注函数
     dashaddMarker() {
-      let lngLat = new AMap.LngLat(this.shipInfo.longitude, this.shipInfo.latitude) // 创建高德坐标对象
-      // 转换坐标
-      AMap.convertFrom(lngLat, 'gps', (status, result) => {
-        if (result.info === 'ok') {
-          lngLat = result.locations[0] // Array.<LngLat>
-        } else {
-          console.log("转换地图坐标失败")
-        }
-      })
+      let lngLat // 创建高德坐标对象
+      if (this.shipInfo.longitude === 0 || this.shipInfo.latitude === 0) {
+        lngLat = [118.789279, 32.019657]
+      } else {
+        lngLat = new AMap.LngLat(this.shipInfo.longitude, this.shipInfo.latitude)
+        // 转换坐标
+        AMap.convertFrom(lngLat, 'gps', (status, result) => {
+          if (result.info === 'ok') {
+            lngLat = result.locations[0] // Array.<LngLat>
+          } else {
+            console.log("转换地图坐标失败")
+          }
+        })
+      }
       let iconUrl
       switch (this.shipInfo.runStatus) {
         case '0':
@@ -63,15 +69,14 @@ export default {
       }
       dashmap.setCenter(lngLat) // 移动地图中心点
       if (dashmarker !== null) {
-        dashmarker.setIcon(iconUrl)
-        dashmarker.setPosition(lngLat)
-      } else {
-        dashmarker = new AMap.Marker({
-          icon: iconUrl, // 标注图标类型 <静态文件>
-          position: lngLat, // 位置坐标
-          map: dashmap
-        })
+        dashmarker.setMap(null)
+        dashmarker = null
       }
+      dashmarker = new AMap.Marker({
+        icon: iconUrl, // 标注图标类型 <静态文件>
+        position: lngLat, // 位置坐标
+        map: dashmap
+      })
     }
   }
 }

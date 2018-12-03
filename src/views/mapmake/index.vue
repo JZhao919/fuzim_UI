@@ -6,7 +6,7 @@
   </el-row>
 </template>
 <script>
-import { initmap, UpDataMarker } from './mapmake.js'
+import { initmap, upDataMarker, clearAllMarker } from './mapmake.js'
 import { getAllShipInfo } from '@/api/shipinfo'
 export default {
   name: 'mapmake',
@@ -80,10 +80,11 @@ export default {
       clearInterval(window.Timer)
       window.Timer = null
     }
+    clearAllMarker()
   },
   watch: {
     allShipAllInfo: function() {
-      UpDataMarker(this.allShipAllInfo)
+      upDataMarker(this.allShipAllInfo)
     }
   },
   methods: {
@@ -136,7 +137,7 @@ export default {
           return
         } else {
           this.allShipAllInfo = data
-          // console.log('mapMaker')
+          console.log('mapMaker')
         }
       })
     }
