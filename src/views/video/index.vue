@@ -44,28 +44,28 @@ export default {
     return {
       allshipDefInfo: [], // 所有船只定义信息
       shipDefInfo: {
-        shipId: 2,
-        shipName: "永熙号",
+        shipId: 0,
+        shipName: "X",
         shipStatus: '0',
         shipNote: '',
-        shipCamheadUrl: "http://hls.open.ys7.com/openlive/af6cda72ed224f6386dfd92b6521f27b.m3u8",
-        shipCamheadUrlHD: "http://hls.open.ys7.com/openlive/af6cda72ed224f6386dfd92b6521f27b.hd.m3u8",
-        shipCamcabinUrl: "http://hls.open.ys7.com/openlive/ddf892f123154f7b971b43b872146502.m3u8",
-        shipCamcabinUrlHD: "http://hls.open.ys7.com/openlive/ddf892f123154f7b971b43b872146502.hd.m3u8",
-        shipCamtailUrl: "http://hls.open.ys7.com/openlive/d5db3d8ddd8c41f385a9e09580956c48.m3u8",
-        shipCamtailUrlHD: "http://hls.open.ys7.com/openlive/d5db3d8ddd8c41f385a9e09580956c48.hd.m3u8"
+        shipCamheadUrl: "",
+        shipCamheadUrlHD: "",
+        shipCamcabinUrl: "",
+        shipCamcabinUrlHD: "",
+        shipCamtailUrl: "",
+        shipCamtailUrlHD: ""
       }, // 当前船只的定义信
       headVideo: {
-        url: "http://hls.open.ys7.com/openlive/af6cda72ed224f6386dfd92b6521f27b.m3u8",
-        urlHD: "http://hls.open.ys7.com/openlive/af6cda72ed224f6386dfd92b6521f27b.hd.m3u8"
+        url: "http://hls.open.ys7.com/1.m3u8",
+        urlHD: "http://hls.open.ys7.com/1.hd.m3u8"
       },
       binVideo: {
-        url: "http://hls.open.ys7.com/openlive/ddf892f123154f7b971b43b872146502.m3u8",
-        urlHD: "http://hls.open.ys7.com/openlive/ddf892f123154f7b971b43b872146502.hd.m3u8"
+        url: "http://hls.open.ys7.com/1.m3u8",
+        urlHD: "http://hls.open.ys7.com/1.hd.m3u8"
       },
       tailVideo: {
-        url: "http://hls.open.ys7.com/openlive/d5db3d8ddd8c41f385a9e09580956c48.m3u8",
-        urlHD: "http://hls.open.ys7.com/openlive/d5db3d8ddd8c41f385a9e09580956c48.hd.m3u8"
+        url: "http://hls.open.ys7.com/1.m3u8",
+        urlHD: "http://hls.open.ys7.com/1.hd.m3u8"
       }
     }
   },
