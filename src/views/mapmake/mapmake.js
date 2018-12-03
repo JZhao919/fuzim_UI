@@ -1,5 +1,6 @@
 import AMap from 'AMap'
 import AMapUI from 'AMapUI'
+import GPS from '@/utils/GPS'
 let makemap = null // 全局地图变量
 let markerList = null // 全局标点列表
 // 地图初始化函数
@@ -42,19 +43,13 @@ function initPage(MarkerList, MarkerData) {
     },
     getPosition: function(dataItem) {
       // 返回数据项的经纬度，AMap.LngLat实例或者经纬度数组
-      let lngLat = new AMap.LngLat(dataItem.longitude, dataItem.latitude) // 创建高德坐标对象
       if (dataItem.longitude === 0 || dataItem.latitude === 0) {
-        lngLat = [118.789279, 32.019657]
+        return [118.789381, 32.019571]
       } else {
-        AMap.convertFrom(lngLat, 'gps', function(status, result) {
-          if (result.info === 'ok') {
-            lngLat = result.locations[0] // Array.<LngLat>
-          } else {
-            lngLat = [118.789279, 32.019657]
-          }
-        })
+        const LngLat = GPS.gcj_encrypt(dataItem.longitude, dataItem.latitude)
+        // console.log(LngLat)
+        return LngLat
       }
-      return lngLat
     },
     getMarker: function(dataItem, context, recycledMarker) {
       let iconUrl

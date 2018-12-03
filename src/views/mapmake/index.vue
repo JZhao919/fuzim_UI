@@ -35,9 +35,9 @@ export default {
         // GPS信息
         gpsTime: 0,
         gpsLondir: "",
-        longitude: 118.789582,
+        longitude: 0,
         gpsLatdir: "",
-        latitude: 32.019405,
+        latitude: 0,
         gpsVardir: "",
         gpsMagvar: 0.0,
         gpsTrackTure: 0,

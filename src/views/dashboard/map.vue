@@ -6,6 +6,7 @@
 </template>
 <script>
 import AMap from 'AMap'
+import GPS from '@/utils/GPS'
 let dashmap = null // 全局首页地图变量
 var dashmarker = null // 全局首页标记点变量
 export default {
@@ -40,17 +41,9 @@ export default {
     dashaddMarker() {
       let lngLat // 创建高德坐标对象
       if (this.shipInfo.longitude === 0 || this.shipInfo.latitude === 0) {
-        lngLat = [118.789279, 32.019657]
+        lngLat = [118.789381, 32.019571]
       } else {
-        lngLat = new AMap.LngLat(this.shipInfo.longitude, this.shipInfo.latitude)
-        // 转换坐标
-        AMap.convertFrom(lngLat, 'gps', (status, result) => {
-          if (result.info === 'ok') {
-            lngLat = result.locations[0] // Array.<LngLat>
-          } else {
-            console.log("转换地图坐标失败")
-          }
-        })
+        lngLat = GPS.gcj_encrypt(this.shipInfo.longitude, this.shipInfo.latitude) // 转换坐标
       }
       let iconUrl
       switch (this.shipInfo.runStatus) {
