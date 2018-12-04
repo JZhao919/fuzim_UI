@@ -28,8 +28,9 @@
 
 <script>
 // eslint-disable-next-line
-import { initMap, makeTrail1, makeTrail2, dateToInt } from './track.js'
+import { dateToInt } from '@/utils/times'
 import { getAllShipDefInfo } from '@/api/shipinfo'
+import { initMap, makeTrail1, makeTrail2 } from './track.js'
 export default {
   name: 'trail',
   mounted() {
@@ -38,9 +39,9 @@ export default {
   },
   data() {
     return {
-      allShipDefInfo: [{}],
-      shipId: null, // 选择的船只编号
+      allShipDefInfo: [{}], // 所有船只的定义信息
       shipName: '', // 输入的船只名称
+      shipId: null, // 匹配的船只编号
       begDT: null, // 开始日期时间
       endDT: null // 结束日期时间
     }
@@ -85,13 +86,9 @@ export default {
     },
     // 提交查询函数
     submit() {
-      if (this.begDT === null) {
-        this.notification(0, '请务必设置轨迹的开始时间！')
-        return
-      }
       for (let i = 0; i < this.allShipDefInfo.length; i++) {
         if (this.allShipDefInfo[i].shipName === this.shipName) {
-          this.shipId = this.allShipDefInfo[i].shipId
+          this.shipId = this.allShipDefInfo[i].shipId // 匹配获得船只编号
           break
         }
       }
@@ -99,17 +96,39 @@ export default {
         this.notification(0, '船只名称有误,请重新输入！')
         return
       }
-      if (this.endDT === null) {
+      if (this.begDT === null) {
+        this.notification(0, '请务必设置轨迹的开始时间！')
+        return
+      }
+      if (this.endDT === null) { // 只有开始时间
+        const nowTime = dateToInt(new Date())
         const startTime = dateToInt(this.begDT)
-        this.notification(1, '将获取' + startTime + '后的轨迹数据！')
-        makeTrail1(this.shipId, startTime)
+        if (startTime >= nowTime) {
+          this.notification(0, '起始时间大于当前,请重新输入！')
+          return
+        } else if (nowTime - startTime > 235959) {
+          this.notification(0, '起始时间最早为一天之前,请重新输入！')
+          return
+        } else {
+          this.notification(1, '将绘制' + startTime + '后的轨迹！')
+          makeTrail1(this.shipId, startTime)
+        }
         this.shipId = null
         this.begDT = null
+        this.endDT = null
       } else {
         const startTime = dateToInt(this.begDT)
         const endTime = dateToInt(this.endDT)
-        this.notification(1, '将获取' + startTime + '与' + endTime + '之间的轨迹数据！')
-        makeTrail2(this.shipId, startTime, endTime)
+        if (startTime > endTime) {
+          this.notification(0, '起始时间大于结束时间,请重新输入！')
+          return
+        } else if (endTime - startTime > 235959) {
+          this.notification(0, '最长时间的间隔为一天,请重新输入！')
+          return
+        } else {
+          this.notification(1, '将获取' + startTime + '与' + endTime + '之间的轨迹数据！')
+          makeTrail2(this.shipId, startTime, endTime)
+        }
         this.shipId = null
         this.begDT = null
         this.endDT = null

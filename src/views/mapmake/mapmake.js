@@ -1,8 +1,12 @@
 import AMap from 'AMap'
 import AMapUI from 'AMapUI'
 import GPS from '@/utils/GPS'
+import { dateToInt } from '@/utils/times'
+
+let nowdatetime // 当前的日期与时间
 let makemap = null // 全局地图变量
 let markerList = null // 全局标点列表
+
 // 地图初始化函数
 export function initmap() {
   if (makemap !== null) {
@@ -52,20 +56,28 @@ function initPage(MarkerList, MarkerData) {
       }
     },
     getMarker: function(dataItem, context, recycledMarker) {
-      let iconUrl
-      switch (dataItem.runStatus) {
-        case '0':
-          iconUrl = '/static/img/ship_g.png'
-          break
-        case '1':
-          iconUrl = '/static/img/ship_r.png'
-          break
-        case '2':
-          iconUrl = '/static/img/ship_b.png'
-          break
-        default:
-          iconUrl = '/static/img/ship_w.png'
-          break
+      let iconUrl = '/static/img/ship_w.png' // 默认是无色
+      if (!dataItem.gpsTime || dataItem.gpsTime === "" || dataItem.gpsTime === "0") {
+        iconUrl = '/static/img/ship_b.png' // GPS时间为空--黑色
+      } else if (nowdatetime - parseInt(dataItem.gpsTime) > 2999) {
+        iconUrl = '/static/img/ship_b.png' // GPS时间是半小时之前的--黑色
+      } else {
+        switch (dataItem.runStatus) { // 半小时之内的GPS状态
+          case '0':
+            iconUrl = '/static/img/ship_g.png'
+            break
+          case '1':
+            iconUrl = '/static/img/ship_lg.png'
+            break
+          case '2':
+            iconUrl = '/static/img/ship_ly.png'
+            break
+          case '3':
+            iconUrl = '/static/img/ship_r.png'
+            break
+          default:
+            break
+        }
       }
       const label = {
         offset: new AMap.Pixel(-4, 10),
@@ -114,12 +126,9 @@ function initPage(MarkerList, MarkerData) {
       })
     }
   })
-  // // 监听选中改变
-  // markerList.on('selectedChanged', function(event, info) {})
-  // // 监听Marker上的点击，详见markerEvents
-  // markerList.on('markerClick', function(event, record) {})
-  // // 绘制数据源，Let's go!
-  markerList.render(MarkerData)
+  // markerList.on('selectedChanged', function(event, info) {}) // 监听选中改变
+  // markerList.on('markerClick', function(event, record) {})   // 监听Marker上的点击，详见markerEvents
+  markerList.render(MarkerData) // 绘制数据源，Let's go!
 }
 
 // 构建自定义信息窗体函数
@@ -151,13 +160,14 @@ function closeInfoWindow() {
   makemap.clearInfoWindow()
 }
 
-// 更新marker数据
+// 初始和更新marker数据
 export function upDataMarker(data) {
+  nowdatetime = dateToInt(new Date()) // 重置当前刷新时间
   if (markerList === null) {
     initMake(data)
   } else {
     markerList.render([]) // 清除数据
-    markerList.clearData()
+    // markerList.clearData()
     markerList.render(data) // 绘制数据
     markerList.clearRecycle()
   }

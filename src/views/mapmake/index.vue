@@ -79,8 +79,8 @@ export default {
     if (window.Timer) {
       clearInterval(window.Timer)
       window.Timer = null
-    }
-    clearAllMarker()
+    } // 清除定时器
+    clearAllMarker() // 清除标记点
   },
   watch: {
     allShipAllInfo: function() {
@@ -117,7 +117,7 @@ export default {
     init() {
       getAllShipInfo().then(response => {
         const data = this.allShipAllInfo = response.data
-        if (data === [] || !data || data === null || data.length <= 0) {
+        if (!data || data === null || data.length <= 0) {
           this.notification(2, "数据库中没有船只数据！")
         } else {
           this.notification(1, "成功获取所有船只数据！")
@@ -133,7 +133,7 @@ export default {
     loopGetAllShipInfo() {
       getAllShipInfo().then(response => {
         const data = this.allShipAllInfo = response.data
-        if (data === [] || !data || data === null || data.length <= 0) {
+        if (!data || data === null || data.length <= 0) {
           return
         } else {
           this.allShipAllInfo = data

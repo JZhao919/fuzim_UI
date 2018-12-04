@@ -1,5 +1,6 @@
 import AMap from 'AMap'
 import AMapUI from 'AMapUI'
+import GPS from '@/utils/GPS'
 import { getAllGPSByIdTime, getAllGPSByIdTimeBetween } from "@/api/GPSinfo"
 let trailmap // 全局地图
 let pathSimplifierIns // 全局简单轨迹线
@@ -18,7 +19,7 @@ export function initMap() {
 }
 
 /**
- * 坐标获取与数量处理
+ * 坐标获取与数量处理与转换
  * @param number shipId
  * @param number startTime
  * @return Promise Array.<AMap.LngLat> gps
@@ -34,13 +35,13 @@ function getlngLats1(shipId, startTime) {
           const jump = parseInt(gpslength / 70)
           for (let i = 0; i < gpslength; i += jump) {
             if (data[i].longitude && data[i].longitude !== 0 && data[i].latitude && data[i].latitude !== 0) {
-              gps.push(new AMap.LngLat(data[i].longitude, data[i].latitude))
+              gps.push(GPS.gcj_encrypt(data[i].longitude, data[i].latitude))
             }
           }
         } else {
           for (let i = 0; i < gpslength; i++) {
             if (data[i].longitude && data[i].longitude !== 0 && data[i].latitude && data[i].latitude !== 0) {
-              gps.push(new AMap.LngLat(data[i].longitude, data[i].latitude))
+              gps.push(GPS.gcj_encrypt(data[i].longitude, data[i].latitude))
             }
           }
         }
@@ -51,7 +52,7 @@ function getlngLats1(shipId, startTime) {
         rejects('获取数据为空')
       }
     }).catch(errer => {
-      rejects('获取数据为空')
+      rejects('获取数据errer')
     })
   })
 }
@@ -67,13 +68,13 @@ function getlngLats2(shipId, startTime, endTime) {
           const jump = parseInt(gpslength / 70)
           for (let i = 0; i < gpslength; i += jump) {
             if (data[i].longitude && data[i].longitude !== 0 && data[i].latitude && data[i].latitude !== 0) {
-              gps.push(new AMap.LngLat(data[i].longitude, data[i].latitude))
+              gps.push(GPS.gcj_encrypt(data[i].longitude, data[i].latitude))
             }
           }
         } else {
           for (let i = 0; i < gpslength; i++) {
             if (data[i].longitude && data[i].longitude !== 0 && data[i].latitude && data[i].latitude !== 0) {
-              gps.push(new AMap.LngLat(data[i].longitude, data[i].latitude))
+              gps.push(GPS.gcj_encrypt(data[i].longitude, data[i].latitude))
             }
           }
         }
@@ -84,23 +85,7 @@ function getlngLats2(shipId, startTime, endTime) {
         rejects('获取数据为空')
       }
     }).catch(errer => {
-      rejects('获取数据为空')
-    })
-  })
-}
-
-/** 坐标批量转换函数
- * Promise
- * @param Array.<AMap.LngLat> gps
- * @resolve <AMap.LngLat> gdlngLats
- **/
-function lngLatsTrans(gps) {
-  return new Promise((resolve, rejects) => {
-    AMap.convertFrom(gps, 'gps', (status, result) => {
-      if (result.info === 'ok') {
-        const lngLats = result.locations // Array.<LngLat>
-        resolve(lngLats)
-      }
+      rejects('获取数据errer')
     })
   })
 }
@@ -186,9 +171,7 @@ function trailMaker(lngLats) {
  */
 export function makeTrail1(shipId, startTime) {
   getlngLats1(shipId, startTime).then(response => {
-    lngLatsTrans(response).then(response => {
-      trailMaker(response)
-    }).catch(errer => console.log(errer))
+    trailMaker(response)
   }).catch(errer => {
     console.log(errer)
   })
@@ -196,33 +179,8 @@ export function makeTrail1(shipId, startTime) {
 
 export function makeTrail2(shipId, startTime, endTime) {
   getlngLats2(shipId, startTime, endTime).then(response => {
-    lngLatsTrans(response).then(response => {
-      trailMaker(response)
-    }).catch(errer => console.log(errer))
+    trailMaker(response)
   }).catch(errer => {
     console.log(errer)
   })
-}
-
-/**
- * 时间格式化函数
- * @param {Date} datetime
- * @return Int datetime yyyyMMddHHmmss
- */
-export function dateToInt(datetime) {
-  datetime = new Date(datetime)
-  var year = datetime.getFullYear()
-  var month = datetime.getMonth() + 1 // js从0开始取
-  var date = datetime.getDate()
-  var hour = datetime.getHours()
-  var minutes = datetime.getMinutes()
-  var second = datetime.getSeconds()
-  year = String(year)
-  String(month).length < 2 ? month = '0' + month : month
-  String(date).length < 2 ? date = '0' + date : date
-  String(hour).length < 2 ? hour = '0' + hour : hour
-  String(minutes).length < 2 ? minutes = '0' + minutes : minutes
-  String(second).length < 2 ? second = '0' + second : second
-  var time = year + month + date + hour + minutes + second // '20090612171805'
-  return parseInt(time)
 }
