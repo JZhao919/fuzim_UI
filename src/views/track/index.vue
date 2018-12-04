@@ -30,7 +30,7 @@
 // eslint-disable-next-line
 import { dateToInt } from '@/utils/times'
 import { getAllShipDefInfo } from '@/api/shipinfo'
-import { initMap, makeTrail1, makeTrail2 } from './track.js'
+import { initMap, makeTrail1, makeTrail2, clearTrack } from './track.js'
 export default {
   name: 'trail',
   mounted() {
@@ -45,6 +45,9 @@ export default {
       begDT: null, // 开始日期时间
       endDT: null // 结束日期时间
     }
+  },
+  destory() {
+    clearTrack()
   },
   methods: {
     notification(code, string) {
