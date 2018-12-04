@@ -7,6 +7,7 @@
 <script>
 import AMap from 'AMap'
 import GPS from '@/utils/GPS'
+import { dateToInt } from '@/utils/times'
 let dashmap = null // 全局首页地图变量
 var dashmarker = null // 全局首页标记点变量
 export default {
@@ -16,7 +17,8 @@ export default {
       shipName: '',
       runStatus: '',
       longitude: 0,
-      latitude: 0
+      latitude: 0,
+      gpsTime: '0'
     }
   },
   mounted() {
@@ -31,7 +33,7 @@ export default {
       dashmap = new AMap.Map('dashmap', {
         mapStyle: 'amap://styles/12cb5f735c7e70f55c221548b0e11763', // 设置地图的显示样式
         center: [118.789279, 32.019657],
-        zoom: 16
+        zoom: 17
       })
       dashmap.plugin(['AMap.Scale'], function() {
         dashmap.addControl(new AMap.Scale())
@@ -45,20 +47,30 @@ export default {
       } else {
         lngLat = GPS.gcj_encrypt(this.shipInfo.longitude, this.shipInfo.latitude) // 转换坐标
       }
-      let iconUrl
-      switch (this.shipInfo.runStatus) {
-        case '0':
-          iconUrl = '/static/img/ship_g.png'
-          break
-        case '1':
-          iconUrl = '/static/img/ship_r.png'
-          break
-        case '2':
-          iconUrl = '/static/img/ship_b.png'
-          break
-        default:
-          iconUrl = '/static/img/ship_w.png'
-          break
+      let iconUrl = '/static/img/ship_w.png' // 默认是无色
+      const gpsTime = this.shipInfo.gpsTime
+      const nowdatetime = dateToInt(new Date())
+      if (!gpsTime || gpsTime === "" || gpsTime === "0") {
+        iconUrl = '/static/img/ship_b.png' // GPS时间为空--黑色
+      } else if (nowdatetime - parseInt(gpsTime) > 2999) {
+        iconUrl = '/static/img/ship_b.png' // GPS时间是半小时之前的--黑色
+      } else {
+        switch (this.shipInfo.runStatus) { // 半小时之内的GPS状态
+          case '0':
+            iconUrl = '/static/img/ship_g.png'
+            break
+          case '1':
+            iconUrl = '/static/img/ship_lg.png'
+            break
+          case '2':
+            iconUrl = '/static/img/ship_ly.png'
+            break
+          case '3':
+            iconUrl = '/static/img/ship_r.png'
+            break
+          default:
+            break
+        }
       }
       dashmap.setCenter(lngLat) // 移动地图中心点
       if (dashmarker !== null) {

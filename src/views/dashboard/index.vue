@@ -7,7 +7,7 @@
         <el-scrollbar noresize style="height:100%">
           <el-button v-for="shipdef in allshipDefInfo" :key="shipdef.shipId" :class="{ shipNoRun: shipdef.shipStatus=='0' }"
           type="text" plain size="mini"
-          @click.native="submit(shipdef.shipId)">
+          @click.native="submit(shipdef)">
           {{shipdef.shipName}}
           </el-button>
         </el-scrollbar>
@@ -295,6 +295,7 @@ export default {
     markerInfo: function() {
       return {
         shipName: this.shipAllInfo.shipName,
+        gpsTime: this.shipAllInfo.gpsTime,
         runStatus: this.shipAllInfo.runStatus,
         longitude: this.shipAllInfo.longitude,
         latitude: this.shipAllInfo.latitude
@@ -340,14 +341,9 @@ export default {
       })
       return
     },
-    submit(shipId) {
-      this.shipId = shipId
-      for (let i = 0; i < this.allshipDefInfo.length; i++) {
-        if (this.allshipDefInfo[i].shipId === shipId) {
-          this.shipDefInfo = this.allshipDefInfo[i]
-          break
-        }
-      }
+    submit(shipdef) {
+      this.shipId = shipdef.shipId
+      this.shipDefInfo = shipdef
       getOneShipInfo(this.shipId).then(response => {
         const data = response.data
         if (!data || data === null || data.length <= 0) {
