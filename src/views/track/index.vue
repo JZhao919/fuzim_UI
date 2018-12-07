@@ -184,7 +184,7 @@ export default {
 }
 #trailmap{
   width: 100%;
-  height: 54rem;
+  height: 52rem;
   border-radius: 5px;
 }
 </style>

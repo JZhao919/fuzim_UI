@@ -33,7 +33,10 @@ export default {
       dashmap = new AMap.Map('dashmap', {
         mapStyle: 'amap://styles/12cb5f735c7e70f55c221548b0e11763', // 设置地图的显示样式
         center: [118.789279, 32.019657],
-        zoom: 17
+        zoom: 18,
+        dragEnable: false,
+        keyboardEnable: false,
+        doubleClickZoom: false
       })
       dashmap.plugin(['AMap.Scale'], function() {
         dashmap.addControl(new AMap.Scale())

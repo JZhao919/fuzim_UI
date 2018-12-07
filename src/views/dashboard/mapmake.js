@@ -13,7 +13,10 @@ export function initmap() {
   makemap = new AMap.Map('makemap', {
     mapStyle: 'amap://styles/12cb5f735c7e70f55c221548b0e11763', // 设置地图的显示样式
     center: [118.789582, 32.019405],
-    zoom: 15
+    zoom: 17,
+    dragEnable: false,
+    keyboardEnable: false,
+    doubleClickZoom: false
   })
   makemap.plugin(['AMap.ToolBar', 'AMap.Scale'], function() {
     makemap.addControl(new AMap.ToolBar())

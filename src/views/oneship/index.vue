@@ -25,7 +25,9 @@
         <el-collapse-item title="船只基本信息" name="1">
           <div class="oneshipinfocard-con">
             <div><span>船只名称：</span><span>{{shipDefInfo.shipName}}</span></div>
-            <div><span>使用情况：</span><span v-if="shipDefInfo.shipStatus === '1'" key="run">正在使用</span><span v-else key="nrun">不能使用</span></div>
+            <div><span>使用情况：</span><span v-if='shipDefInfo.shipStatus === "0"' key="run">正在使用</span>
+            <span v-else-if='shipDefInfo.shipStatus === "1"' key="run">不能使用</span>
+            <span v-else key="no">未知</span></div>
             <div><span>船只描述：</span>{{shipDefInfo.shipNote}}</div>
           </div>
         </el-collapse-item>
@@ -440,7 +442,7 @@ export default {
     background: 0 0;
   }
   #splcollcontent .shipNoRun {
-    color: #a3a3a3;
+    color: #303133;
   }
 
 /* 船只定义信息卡 */
