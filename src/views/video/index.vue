@@ -3,6 +3,7 @@
   <el-row id="v-shiplist">
     <div id="v-splcollcontent">
       <el-scrollbar noresize style="height:100%">
+        <span style="font-size:13px;">点击选择播放一条船的视频：</span>
         <el-button v-for="shipdef in allshipDefInfo" :key="shipdef.shipId"
         type="text" plain size="mini" 
         @click.native="selectShip(shipdef)" :class="{ shipListRun: shipdef.shipStatus==='0' }">
@@ -162,7 +163,7 @@ export default {
   background: 0 0;
 }
 #v-splcollcontent .shipListRun {
-  color: #b6b6b6;
+  color: #303133;
   background: 0 0;
 }
 </style>

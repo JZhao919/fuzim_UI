@@ -60,7 +60,7 @@ service.interceptors.response.use(
   },
   error => {
     console.log('err' + error) // for debug
-    if (response.status === 500) {
+    if (error.response.status === 500) {
       MessageBox.confirm('权限失效请重新登录！', '确定登出', {
         confirmButtonText: '重新登录',
         cancelButtonText: '取消',

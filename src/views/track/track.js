@@ -36,8 +36,8 @@ export function getlngLatsOne(shipId, startTime) {
       if (!data || data === null || gpslength <= 0) {
         resolve(gps) // 返回空数组
       } else {
-        if (gpslength > 70) {
-          const jump = parseInt(gpslength / 70)
+        if (gpslength > 1000) {
+          const jump = parseInt(gpslength / 1000)
           for (let i = 0; i < gpslength; i += jump) {
             if (data[i].longitude && data[i].longitude !== 0 && data[i].latitude && data[i].latitude !== 0) {
               gps.push(GPS.gcj_encrypt(data[i].longitude, data[i].latitude))
@@ -68,8 +68,8 @@ export function getlngLatsTwo(shipId, startTime, endTime) {
       if (!data || data === null || gpslength <= 0) {
         resolve(gps) // 返回空数组
       } else {
-        if (gpslength > 700) {
-          const jump = parseInt(gpslength / 700)
+        if (gpslength > 1000) {
+          const jump = parseInt(gpslength / 1000)
           for (let i = 0; i < gpslength; i += jump) {
             if (data[i].longitude && data[i].longitude !== 0 && data[i].latitude && data[i].latitude !== 0) {
               gps.push(GPS.gcj_encrypt(data[i].longitude, data[i].latitude))
