@@ -74,6 +74,7 @@ export default {
         preload: this.preload,
         contextmenu: this.contextmenu,
         logo: this.logo,
+        volume: 0.7,
         mutex: true,
         video: {
           quality: [{

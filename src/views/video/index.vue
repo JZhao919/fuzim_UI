@@ -1,28 +1,29 @@
 <template>
 <div id="v-video">
   <el-row id="v-shiplist">
-    <el-collapse id="v-splcoll">
-      <el-collapse-item title="点击打开船只选择列表" name="1">
-        <div id="v-splcollcontent">
-          <el-scrollbar noresize style="height:100%">
-            <el-button v-for="shipdef in allshipDefInfo" :key="shipdef.shipId"
-            type="text" plain size="mini" 
-            @click.native="selectShip(shipdef)" :class="{ shipListRun: shipdef.shipStatus==='1' }">
-            {{shipdef.shipName}} 
-            </el-button>
-          </el-scrollbar>
-        </div>
-      </el-collapse-item>
-    </el-collapse>
+    <div id="v-splcollcontent">
+      <el-scrollbar noresize style="height:100%">
+        <el-button v-for="shipdef in allshipDefInfo" :key="shipdef.shipId"
+        type="text" plain size="mini" 
+        @click.native="selectShip(shipdef)" :class="{ shipListRun: shipdef.shipStatus==='0' }">
+        {{shipdef.shipName}} 
+        </el-button>
+        <!-- <el-button v-for="shipdef in 200" :key="shipdef"
+        type="text" plain size="mini" 
+        @click.native="selectShip(shipdef)">
+        {{shipdef}} 
+        </el-button> -->
+      </el-scrollbar>
+    </div>
   </el-row>
   <el-row>
-    <el-col :xs="24" :sm="24" :md="24" :lg="8" :xl="8">
+    <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="8">
       <myPlayer ref="headVideo" :shipName="shipDefInfo.shipName" :video="headVideo"></myPlayer>
     </el-col>
-    <el-col :xs="24" :sm="24" :md="12" :lg="8" :xl="8">
+    <el-col :xs="12" :sm="12" :md="12" :lg="8" :xl="8">
       <myPlayer ref="binVideo" :shipName="shipDefInfo.shipName" :video="binVideo"></myPlayer>
     </el-col>
-    <el-col :xs="24" :sm="24" :md="12" :lg="8" :xl="8">
+    <el-col :xs="12" :sm="12" :md="12" :lg="8" :xl="8">
       <myPlayer ref="tailVideo" :shipName="shipDefInfo.shipName" :video="tailVideo"></myPlayer>
     </el-col>
   </el-row>
@@ -75,21 +76,24 @@ export default {
         case 0:
           this.$notify.error({
             title: '错误！',
-            message: string
+            message: string,
+            duration: 1500
           })
           break
         case 1:
           this.$notify({
             title: '成功！',
             message: string,
-            type: 'success'
+            type: 'success',
+            duration: 1500
           })
           break
         case 2:
           this.$notify({
             title: '注意！',
             message: string,
-            type: 'warning'
+            type: 'warning',
+            duration: 1500
           })
           break
         default:
@@ -133,49 +137,23 @@ export default {
 }
 #v-shiplist {
   margin:0;
-  padding: 10px 5px 10px 5px; 
+  padding: 5px; 
   width: 100%;
   height: auto;
-}
-#v-splcoll {
-  width: 100%;
-  height: auto;
-  background-color: #ffffff;
-}
-#v-splcoll .el-collapse-item__header{
-  border: 0;
-  padding:0;
-  background-color: #eeeff1;
-  width: 100%;
-  height: 30px;
-  text-align: center;
-  font-size: 13px;
-  line-height: 30px;
-}
-#v-splcoll .el-collapse-item__arrow{
-  line-height: 30px;
-}
-#v-splcoll .el-collapse-item__wrap {
-  border: 0;
-  background-color: #ffffff;
-}
-#v-splcoll .el-collapse-item__content {
-  border: 0;
-  padding: 0;
-  font-size: 13px;
-  color: #303133;
 }
 
 #v-splcollcontent {
-  height: 200px;
+  height: 100px;
+  border: 2px solid #b6b6b6;
+  border-radius: 1px;
 }
 #v-splcollcontent .el-scrollbar__wrap{
   overflow-x:hidden;
   overflow-y: auto;
 }
 #v-splcollcontent .el-button--mini{
-  margin: 4px;
-  padding: 4px;
+  margin: 3px;
+  padding: 3px;
   font-size: 13px;
   border-radius: 1px;
 }
@@ -188,6 +166,4 @@ export default {
   background: 0 0;
 }
 </style>
-<style scoped>
 
-</style>

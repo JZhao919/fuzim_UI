@@ -221,21 +221,24 @@ export default {
         case 0:
           this.$notify.error({
             title: '错误！',
-            message: string
+            message: string,
+            duration: 1500
           })
           break
         case 1:
           this.$notify({
             title: '成功！',
             message: string,
-            type: 'success'
+            type: 'success',
+            duration: 1500
           })
           break
         case 2:
           this.$notify({
             title: '注意！',
             message: string,
-            type: 'warning'
+            type: 'warning',
+            duration: 1500
           })
           break
         default:
@@ -285,7 +288,8 @@ export default {
 <style>
 #fz-detail{
   margin: 0;
-  padding: 5px;
+  border: 0;
+  padding: 6px;
   width: 100%;
   height: auto;
 }

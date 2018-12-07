@@ -58,19 +58,18 @@ export default {
 
 <style scoped>
   #p-video{
-    border: 0;
-    margin-bottom: 10px;    
+    border: 0;   
     padding: 5px;
     width: 100%;
     height: auto;
   }
   #p-video #v-title{
     width: 100%;
-    height: 30px;
+    height: 26px;
     background-color: #eeeff1;
     color: #303133;
     text-align: center;
     font-size: 13px;
-    line-height: 32px;
+    line-height: 28px;
   }
 </style>

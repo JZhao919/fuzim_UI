@@ -88,8 +88,7 @@ export default {
 </script>
 <style scoped>
 #map-card{
-  margin-bottom: 10px;
-  padding: 10px;
+  padding: 5px;
   width: 100%;
 }
 #map-card .map-title{
