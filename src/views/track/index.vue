@@ -12,7 +12,12 @@
         </el-date-picker>
       </el-col>
       <el-col :xs=12 :sm="12" :md="6">
-        <el-input id="shipnum" clearable size="mini" v-model="shipName" placeholder="请输入要查询的游船名称"></el-input>
+        <el-select id="shipnum" v-model="shipId" size="mini" filterable clearable placeholder="请输入要查询的游船名称"
+        no-data-text="当前没有船只" no-match-text="没有相匹配的船只">
+          <el-option
+            v-for="item in allShipDefInfo" :key="item.shipId" :label="item.shipName" :value="item.shipId">
+          </el-option>
+        </el-select>
       </el-col>
       <el-col :xs="12" :sm="12" :md="6">
         <el-button id="submit" plain size="mini" type="info" icon="el-icon-check" v-on:click="submit">确认</el-button>
@@ -40,7 +45,6 @@ export default {
   data() {
     return {
       allShipDefInfo: [{}], // 所有船只的定义信息
-      shipName: '', // 输入的船只名称
       shipId: null, // 匹配的船只编号
       begDT: null, // 开始日期时间
       endDT: null // 结束日期时间
@@ -56,20 +60,23 @@ export default {
           this.$notify({
             title: '成功！',
             message: string,
-            type: 'success'
+            type: 'success',
+            duration: 2000
           })
           break
         case 0:
           this.$notify.error({
             title: '错误！',
-            message: string
+            message: string,
+            duration: 2000
           })
           break
         case 2:
           this.$notify({
             title: '注意！',
             message: string,
-            type: 'warning'
+            type: 'warning',
+            duration: 2000
           })
           break
         default:
@@ -89,14 +96,9 @@ export default {
     },
     // 提交查询函数
     submit() {
-      for (let i = 0; i < this.allShipDefInfo.length; i++) {
-        if (this.allShipDefInfo[i].shipName === this.shipName) {
-          this.shipId = this.allShipDefInfo[i].shipId // 匹配获得船只编号
-          break
-        }
-      }
       if (this.shipId === null || !this.shipId) {
         this.notification(0, '船只名称有误,请重新输入！')
+        clearTrack()
         return
       }
       if (this.begDT === null) {
@@ -116,7 +118,7 @@ export default {
           this.notification(2, '开始获取轨迹数据，请稍候！')
           getlngLatsOne(this.shipId, startTime).then(response => {
             if (response.length <= 0) {
-              this.notification(0, '轨迹数据为空！')
+              this.notification(2, '轨迹数据为空！')
               clearTrack()
             } else {
               this.notification(1, '开始绘制轨迹！')
@@ -140,7 +142,7 @@ export default {
           this.notification(2, '开始获取轨迹数据，请稍候！')
           getlngLatsTwo(this.shipId, startTime, endTime).then(response => {
             if (response.length <= 0) {
-              this.notification(0, '轨迹数据为空！')
+              this.notification(2, '轨迹数据为空！')
               clearTrack()
             } else {
               this.notification(1, '开始绘制轨迹！')
@@ -175,6 +177,9 @@ export default {
   width: 100%;
 }
 #fz-trail #shipnum{
+  width: 100%;
+}
+#fz-trail .el-select{
   width: 100%;
 }
 #trailmap{
