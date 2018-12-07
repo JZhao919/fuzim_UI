@@ -7,8 +7,8 @@
       :default-sort="defaultSort"
       :row-class-name="tableRowClassName"
       >
-        <el-table-column fixed label="船号" prop="shipId" align="center" sortable></el-table-column>
         <el-table-column fixed label="名称" prop="shipName" align="center"></el-table-column>
+        <el-table-column label="船号" prop="shipId" align="center" sortable></el-table-column>
         <el-table-column label="次数" prop="ioTimes" align="center" sortable></el-table-column>
         <el-table-column label="运行" prop="runStatus" align="center" sortable></el-table-column>
         <el-table-column label="运行时间" prop="runTime" align="center" show-overflow-tooltip></el-table-column>
@@ -32,8 +32,8 @@
       :default-sort="defaultSort"
       :row-class-name="tableRowClassName"
       >
-        <el-table-column fixed label="船号" prop="shipId" align="center" sortable></el-table-column>
         <el-table-column fixed label="名称" prop="shipName" align="center"></el-table-column>
+        <el-table-column label="船号" prop="shipId" align="center" sortable></el-table-column>
         <el-table-column label="出行次数" prop="ioTimes" align="center" sortable></el-table-column>
         <el-table-column label="是否运行" prop="runStatus" align="center" sortable></el-table-column>
         <el-table-column label="会船等待" prop="wait" align="center" sortable></el-table-column>
@@ -50,8 +50,8 @@
       :default-sort="defaultSort"
       :row-class-name="tableRowClassName"
       >
-        <el-table-column fixed label="船号" prop="shipId" align="center" sortable></el-table-column>
         <el-table-column fixed label="名称" prop="shipName" align="center"></el-table-column>
+        <el-table-column label="船号" prop="shipId" align="center" sortable></el-table-column>
         <el-table-column label="超速" prop="overSpeed" align="center" sortable></el-table-column>
         <el-table-column label="撞船" prop="collide" align="center" sortable></el-table-column>
         <el-table-column label="最小船距" prop="ultrasonicValue" align="center" show-overflow-tooltip></el-table-column>
@@ -68,8 +68,8 @@
       :default-sort="defaultSort"
       :row-class-name="tableRowClassName"
       >
-        <el-table-column fixed label="船号" prop="shipId" align="center" sortable></el-table-column>
         <el-table-column fixed label="名称" prop="shipName" align="center"></el-table-column>
+        <el-table-column label="船号" prop="shipId" align="center" sortable></el-table-column>
         <el-table-column fixed label="时间" prop="gpsTime" align="center" show-overflow-tooltip></el-table-column>
         <el-table-column label="经度方向" prop="gpsLondir" align="center"></el-table-column>
         <el-table-column label="经度" prop="longitude" align="center" show-overflow-tooltip></el-table-column>
@@ -87,8 +87,8 @@
       :default-sort="defaultSort"
       :row-class-name="tableRowClassName"
       >
-        <el-table-column fixed label="船号" prop="shipId" align="center" sortable></el-table-column>
         <el-table-column fixed label="名称" prop="shipName" align="center"></el-table-column>
+        <el-table-column label="船号" prop="shipId" align="center" sortable></el-table-column>
         <el-table-column label="SOC" prop="batterySOC" align="center"></el-table-column>
         <el-table-column label="总电压" prop="batteryTotalVolt" align="center" sortable></el-table-column>
         <el-table-column label="总电流" prop="batteryTotalCurr" align="center" sortable></el-table-column>
@@ -110,8 +110,8 @@
       :default-sort="defaultSort"
       :row-class-name="tableRowClassName"
       >
-        <el-table-column fixed label="船号" prop="shipId" align="center" sortable></el-table-column>
         <el-table-column fixed label="名称" prop="shipName" align="center"></el-table-column>
+        <el-table-column label="船号" prop="shipId" align="center" sortable></el-table-column>
         <el-table-column label="电流1" prop="motorCurrent1" align="center" sortable></el-table-column>
         <el-table-column label="电压1" prop="motorVoltage1" align="center" sortable></el-table-column>
         <el-table-column label="转速1" prop="motorSpeed1" align="center" sortable></el-table-column>
@@ -154,7 +154,7 @@ export default {
   },
   data() {
     return {
-      activeName: 'all',
+      activeName: 'status',
       defaultSort: { prop: 'shipId', order: 'ascending' },
       allShipAllInfo: [{
         // 状态信息
@@ -248,7 +248,7 @@ export default {
           this.notification(2, "数据库中没有船只数据！")
         } else {
           this.allShipAllInfo = response.data
-          this.notification(1, "成功获取所有船只数据！")
+          // this.notification(1, "成功获取所有船只数据！")
           if (window.Timer) {
             clearInterval(window.Timer)
             window.Timer = null

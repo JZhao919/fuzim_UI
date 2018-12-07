@@ -68,16 +68,16 @@ export const constantRouterMap = [
   },
 
   {
-    path: '/map',
+    path: '/oneship',
     component: Layout,
-    redirect: '/map/index',
+    redirect: '/oneship/index',
     hidden: false,
     children: [
       {
-        name: 'map',
+        name: 'oneship',
         path: 'index',
-        component: () => import('@/views/mapmake/index'),
-        meta: { title: '地图标注', icon: 'table' }
+        component: () => import('@/views/oneship/index'),
+        meta: { title: '单船信息', icon: 'table' }
       }
     ]
   },

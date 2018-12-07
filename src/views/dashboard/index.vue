@@ -1,186 +1,37 @@
 <template>
-<div id="dashboard">
-<el-row id="shiplist">
-  <el-collapse id="spl-coll">
-    <el-collapse-item title="点击打开船只选择列表" name="1">
-      <div id="splcollcontent">
-        <el-scrollbar noresize style="height:100%">
-          <el-button v-for="shipdef in allshipDefInfo" :key="shipdef.shipId" :class="{ shipNoRun: shipdef.shipStatus=='0' }"
-          type="text" plain size="mini"
-          @click.native="submit(shipdef)">
-          {{shipdef.shipName}}
-          </el-button>
-        </el-scrollbar>
-      </div>
-    </el-collapse-item>
-  </el-collapse>
-</el-row>
-<el-row>
-  <el-col :xs="24" :sm="16" :md="18" :lg="18">
-    <mapCard :shipInfo="markerInfo"></mapCard>
-  </el-col>
-  <el-col :xs="24" :sm="8" :md="6" :lg="6">
-    <div id="defcard">
-      <el-collapse value= 1 >
-        <el-collapse-item title="船只基本信息" name="1">
-          <div id="defcardcontent">
-            <div><span>船只名称：</span><span>{{shipDefInfo.shipName}}</span></div>
-            <div><span>使用情况：</span><span v-if="shipDefInfo.shipStatus === '1'" key="run">正在使用</span><span v-else key="nrun">不能使用</span></div>
-            <div><span>船只描述：</span>{{shipDefInfo.shipNote}}</div>
-          </div>
-        </el-collapse-item>
-      </el-collapse>
-    </div>
-  </el-col>
-</el-row>
-<el-row>
-  <el-col :xs="24" :sm="12" :md="8" :lg="8">
-    <div id="statuscard">
-      <el-collapse>
-        <el-collapse-item title="船只状态信息" name="1">
-          <div id="statuscardcontent">
-            <div>船只进出次数：<span>{{shipAllInfo.ioTimes}}</span></div>
-            <div>船只运行状态：
-              <span v-if="shipAllInfo.runStatus === '0'" key="runing" class="runing">正在行驶</span>
-              <span v-else-if="shipAllInfo.runStatus === '1'" key="runwait">暂停行驶</span>
-              <span v-else-if="shipAllInfo.runStatus === '2'" key="noruning">停在码头</span>
-              <span v-else key="norun">...</span></div>
-            <div>是否等待会船：
-              <span v-if="shipAllInfo.wait === '1'" key="waiting" class="waiting">等待会船.</span>
-              <span v-else key="nowait">不需会船.</span></div>
-            <div>上次离岸时间：<span>{{shipAllInfo.startRunTime}}</span></div>
-            <div>上次靠岸时间：<span>{{shipAllInfo.endRunTime}}</span></div>
-            <div>船只运行时间：<span>{{shipAllInfo.runTime}}</span></div>
-            <div>船只运行速度：<span>{{shipAllInfo.speed}}</span></div>
-          </div>
-        </el-collapse-item>
-      </el-collapse>
-      </div>
-  </el-col>
-  <el-col :xs="24" :sm="12" :md="8" :lg="8">
-    <div id="warncard">
-      <el-collapse>
-        <el-collapse-item title="船只警告信息" name="1">
-          <div id="warncardcontent">
-            <div>是否超速：<span v-if="shipAllInfo.overSpeed === '1'" key="wait" class="waring">是</span><span v-else key="nwait">否</span></div>
-            <div>碰撞危险：<span v-if="shipAllInfo.collide === '1'" key="wait" class="waring">有</span><span v-else key="nwait">无</span></div>
-            <div>超声距离：<span>{{shipAllInfo.ultrasonicValue}}</span></div>
-            <div>漏水危险：<span v-if="shipAllInfo.leakage === '1'" key="wait" class="waring">有</span><span v-else key="nwait">无</span></div>
-            <div>烟雾危险：<span v-if="shipAllInfo.overSmog === '1'" key="wait" class="waring">有</span><span v-else key="nwait">无</span></div>
-            <div>火光危险：<span v-if="shipAllInfo.overFire === '1'" key="wait" class="waring">有</span><span v-else key="nwait">无</span></div>
-            <div>电机危险：<span v-if="shipAllInfo.overMotor === '1'" key="wait" class="waring">是</span><span v-else key="nwait">否</span></div>
-            <div>电池危险：<span v-if="shipAllInfo.batteryStatus === '1'" key="wait" class="waring">是</span><span v-else key="nwait">否</span></div>
-          </div>
-        </el-collapse-item>
-      </el-collapse>
-    </div>
-  </el-col>
-  <el-col :xs="24" :sm="12" :md="8" :lg="8">
-    <div id="GPScard">
-      <el-collapse>
-        <el-collapse-item title="船只GPS信息" name="1">
-          <div id="GPScardcontent">
-            <div>GPS时间：<span>{{shipAllInfo.gpsTime}}</span></div>
-            <div>GPS经度：<span>{{shipAllInfo.gpsLondir}}：{{shipAllInfo.longitude}}</span></div>
-            <div>GPS纬度：<span>{{shipAllInfo.gpsLatdir}}：{{shipAllInfo.latitude}}</span></div>
-            <div>地磁偏角：<span>{{shipAllInfo.gpsVardir}}：{{shipAllInfo.gpsMagvar}}</span></div>
-            <div>地航向角：<span>{{shipAllInfo.gpsTrackTure}}</span></div>
-            <div>工作模式：<span>{{shipAllInfo.gpsModeInd}}</span></div>
-          </div>
-        </el-collapse-item>
-      </el-collapse>
-    </div>
-  </el-col>
-  <el-col :xs="24" :sm="12" :md="8" :lg="8">
-    <div id="batterycard">
-      <el-collapse>
-        <el-collapse-item title="船只电池信息" name="1">
-          <div id="batterycardcontent">
-            <div><span>集总SOC：</span><span>{{shipAllInfo.batterySOC}}</span></div>
-            <div><span>总电压值：</span><span>{{shipAllInfo.batteryTotalVolt}}</span></div>
-            <div><span>总电流值：</span><span>{{shipAllInfo.batteryTotalCurr}}</span></div>
-            <div><span>正电阻值：</span><span>{{shipAllInfo.batteryTotalRP}}</span></div>
-            <div><span>负电阻值：</span><span>{{shipAllInfo.batteryTotalRN}}</span></div>
-            <div><span>高电压序号：</span><span>{{shipAllInfo.batteryMaxVoltSN}}</span></div>
-            <div><span>高电压值：</span><span>{{shipAllInfo.batteryMaxVolt}}</span></div>
-            <div><span>低电压序号：</span><span>{{shipAllInfo.batteryMinVoltSN}}</span></div>
-            <div><span>低电压值：</span><span>{{shipAllInfo.batteryMinVolt}}</span></div>
-            <div><span>高温度序号：</span><span>{{shipAllInfo.batteryMaxTEMPSN}}</span></div>
-            <div><span>高温度值：</span><span>{{shipAllInfo.batteryMaxTEMP}}</span></div>
-            <div><span>低温度序号：</span><span>{{shipAllInfo.batteryMinTEMPSN}}</span></div>
-            <div><span>低温度值：</span><span>{{shipAllInfo.batteryMinTEMP}}</span></div>
-          </div>
-        </el-collapse-item>
-      </el-collapse>
-    </div>
-  </el-col>
-  <el-col :xs="24" :sm="12" :md="8" :lg="8">
-    <div id="motorcard">
-      <el-collapse>
-        <el-collapse-item title="船只电机信息" name="1">
-          <div id="motorcardcontent">
-            <div>电机电流1：<span>{{shipAllInfo.motorCurrent1}}</span></div>
-            <div>电机电流2：<span>{{shipAllInfo.motorCurrent2}}</span></div>
-            <div>电机电压1：<span>{{shipAllInfo.motorVoltage1}}</span></div>
-            <div>电机电压2：<span>{{shipAllInfo.motorVoltage2}}</span></div>
-            <div>电机转速1：<span>{{shipAllInfo.motorSpeed1}}</span></div>
-            <div>电机转速2：<span>{{shipAllInfo.motorSpeed2}}</span></div>
-          </div>
-        </el-collapse-item>
-      </el-collapse>
-    </div>
-  </el-col>
-  <el-col :xs="24" :sm="12" :md="8" :lg="8">
-    <div id="radarcard">
-      <el-collapse>
-        <el-collapse-item title="船只雷达信息" name="1">
-          <div id="radarcardcontent">
-            <div><span>雷达距离：</span><span>{{shipAllInfo.radarRange}}</span></div>
-            <div><span>雷达速度：</span><span>{{shipAllInfo.radarAzimuth}}</span></div>
-            <div><span>雷达方位角：</span><span>{{shipAllInfo.radarVerl}}</span></div>
-            <div><span>雷达信噪比：</span><span>{{shipAllInfo.radarSNR}}</span></div>
-            <div><span>硬件保留：</span><span>{{shipAllInfo.hardware}}</span></div>
-          </div>
-        </el-collapse-item>
-      </el-collapse>
-    </div>
-  </el-col>
-</el-row>
+<div>
+  <el-row>
+    <el-col :span="24">
+      <el-card id="makemap"></el-card>
+    </el-col>
+  </el-row>
+  <div id="infoWindows">
+    <p>正在运行: {{infoWindows.runNums}} 艘</p>
+    <p>等待出发: {{infoWindows.waitNums}} 艘</p>
+    <p>暂停使用: {{infoWindows.norunNums}} 艘</p>
+  </div>
 </div>
 </template>
 <script>
-import mapCard from './map'
-import { getAllShipDefInfo, getOneShipInfo } from '@/api/shipinfo'
+import { dateToInt } from '@/utils/times'
+import { getAllShipInfo } from '@/api/shipinfo'
+import { initmap, upDataMarker, clearAllMarker } from './mapmake.js'
+let nowdatetime // 当前的日期与时间当前刷新时间
 export default {
-  name: 'dashboard',
-  components: {
-    mapCard
-  },
-  mounted() {
-    this.init()
-  },
-  destroyed() {
-    if (window.Timer !== null) {
-      clearInterval(window.Timer)
-      window.Timer = null
-    }
-  },
+  name: 'mapmake',
   data() {
     return {
-      shipId: null, // 当前选择的船只
-      shipDefInfo: {
-        shipId: 0,
-        shipName: '',
-        shipNote: '',
-        shipStatus: ''
-      }, // 当前船只的定义信息
-      allshipDefInfo: [], // 所有船只定义信息
-      shipNoneInfo: {
+      infoWindows: {
+        runNums: 1, // 运行中数量
+        norunNums: 1, // 暂停使用数量
+        waitNums: 1 // 等待出发数量
+      },
+      allShipAllInfo: [{
         // 状态信息
         shipId: 0,
-        shipName: '',
+        shipName: '123',
         ioTimes: 0,
-        runStatus: '',
+        runStatus: '0',
         startRunTime: 0,
         endRunTime: 0,
         runTime: 0,
@@ -231,78 +82,27 @@ export default {
         motorCurrent2: 0,
         motorVoltage2: 0,
         motorSpeed2: 0
-      }, // 默认船只的所有信息
-      shipAllInfo: {
-        // 状态信息
-        shipId: 0,
-        shipName: '',
-        ioTimes: 0,
-        runStatus: '',
-        startRunTime: 0,
-        endRunTime: 0,
-        runTime: 0,
-        wait: '',
-        speed: 0,
-        // 警告信息
-        overSpeed: "",
-        collide: "",
-        ultrasonicValue: "0|0",
-        leakage: "",
-        overSmog: "",
-        overFire: "",
-        overMotor: "",
-        batteryStatus: "",
-        // GPS信息
-        gpsTime: 0,
-        gpsLondir: "",
-        longitude: 0,
-        gpsLatdir: "",
-        latitude: 0,
-        gpsVardir: "",
-        gpsMagvar: 0.0,
-        gpsTrackTure: 0,
-        gpsModeInd: "",
-        // 电池信息
-        batterySOC: "",
-        batteryTotalVolt: "",
-        batteryTotalCurr: "",
-        batteryTotalRP: "",
-        batteryTotalRN: "",
-        batteryMaxVoltSN: "",
-        batteryMaxVolt: "",
-        batteryMinVoltSN: "",
-        batteryMinVolt: "",
-        batteryMaxTEMPSN: "",
-        batteryMaxTEMP: "",
-        batteryMinTEMPSN: "",
-        batteryMinTEMP: "",
-        // 电机与雷达
-        radarRange: "",
-        radarAzimuth: "",
-        radarVerl: "",
-        radarSNR: "",
-        hardware: "空",
-        motorCurrent1: 0,
-        motorVoltage1: 0,
-        motorSpeed1: 0,
-        motorCurrent2: 0,
-        motorVoltage2: 0,
-        motorSpeed2: 0
-      } // 当前船只的所有信息
+      }] // 所有船只全部信息
     }
   },
-  computed: {
-    markerInfo: function() {
-      return {
-        shipName: this.shipAllInfo.shipName,
-        gpsTime: this.shipAllInfo.gpsTime,
-        runStatus: this.shipAllInfo.runStatus,
-        longitude: this.shipAllInfo.longitude,
-        latitude: this.shipAllInfo.latitude
-      }
+  mounted() {
+    initmap()
+    this.getAllInfo()
+  },
+  destroyed() {
+    if (window.Timer) {
+      clearInterval(window.Timer)
+      window.Timer = null
+    } // 清除定时器
+    clearAllMarker() // 清除标记点
+  },
+  watch: {
+    allShipAllInfo: function() {
+      upDataMarker(this.allShipAllInfo, nowdatetime)
     }
   },
   methods: {
+    // 消息通知函数
     notification(code, string) {
       switch (code) {
         case 0:
@@ -328,377 +128,104 @@ export default {
         default:
       }
     },
-    init() {
-      this.shipAllInfo = this.shipNoneInfo
-      getAllShipDefInfo().then(response => {
-        const data = response.data
-        if (data === [] || !data || data === null || data === "") {
-          this.notification(2, '数据库中没有船只信息！')
-          this.allshipDefInfo = {}
-        } else {
-          this.allshipDefInfo = data
-        }
-      })
-      return
-    },
-    submit(shipdef) {
-      this.shipId = shipdef.shipId
-      this.shipDefInfo = shipdef
-      getOneShipInfo(this.shipId).then(response => {
-        const data = response.data
+    // 获取远程数据
+    getAllInfo() {
+      nowdatetime = dateToInt(new Date()) // 重置当前刷新时间
+      getAllShipInfo().then(response => {
+        const data = this.allShipAllInfo = response.data
         if (!data || data === null || data.length <= 0) {
-          this.shipAllInfo = this.shipNoneInfo
-          this.notification(2, '该船当前没有详细数据！')
+          this.notification(2, "数据库中没有船只数据！")
         } else {
-          this.shipAllInfo = data
-          this.notification(1, '成功获取该船当前数据！')
+          // this.notification(1, "成功获取所有船只数据！")
+          this.allShipAllInfo = data
+          this.counts()
+          if (window.Timer) {
+            clearInterval(window.Timer)
+            window.Timer = null
+          }
+          // window.Timer = setInterval(this.loopGetAllShipInfo, 20000)
         }
       })
-      if (window.Timer !== null) {
-        clearInterval(window.Timer)
-        window.Timer = null
-      } else {
-        window.Timer = setInterval(this.loopGetOneShipInfo, 10000)
-      }
     },
-    loopGetOneShipInfo() {
-      if (this.shipId === null || !this.shipId) {
-        return
-      } else {
-        getOneShipInfo(this.shipId).then(response => {
-          const data = response.data
-          if (!data || data === null || data.length <= 0) {
-            this.shipAllInfo = this.shipNoneInfo
-          } else {
-            this.shipAllInfo = data
-            console.log(this.shipId)
+    // 循环获取远程数据
+    loopGetAllShipInfo() {
+      nowdatetime = dateToInt(new Date()) // 重置当前刷新时间
+      getAllShipInfo().then(response => {
+        const data = this.allShipAllInfo = response.data
+        if (!data || data === null || data.length <= 0) {
+          return
+        } else {
+          this.allShipAllInfo = data
+          this.counts()
+          console.log('mapMaker')
+        }
+      })
+    },
+    // 船只状态计数函数
+    counts() {
+      let shipInfo
+      let runNums = 0 // 运行状态计数
+      let waitNums = 0 // 等待状态计数
+      let norunNums = 0 // 暂停使用计数
+      for (let i = 0; i < this.allShipAllInfo.length; i++) {
+        shipInfo = this.allShipAllInfo[i]
+        if (!shipInfo.gpsTime || shipInfo.gpsTime === "" || shipInfo.gpsTime === "0") {
+          norunNums++
+        } else if (nowdatetime - parseInt(shipInfo.gpsTime) > 2999) {
+          norunNums++
+        } else {
+          switch (shipInfo.runStatus) { // 半小时之内的GPS状态
+            case '0':
+              runNums++
+              break
+            case '1':
+              runNums++
+              break
+            case '2':
+              runNums++
+              break
+            case '3':
+              waitNums++
+              break
+            default:
+              norunNums++
+              break
           }
-        })
+        }
       }
+      this.infoWindows.runNums = runNums
+      this.infoWindows.waitNums = waitNums
+      this.infoWindows.norunNums = norunNums
     }
   }
 }
 </script>
+
 <style>
-#dashboard {
-  border: 0;
-  padding: 5px;
-  color: #303133;
-}
-
-/* 船只列表信息卡 */
-  #shiplist {
-    padding:10px;
-    width: 100%;
-    height: auto;
-  }
-  #spl-coll {
-    width: 100%;
-    height: auto;
-    background-color: #ffffff;
-  }
-  #spl-coll .el-collapse-item__header{
-    border: 0;
-    padding:0;
-    background-color: #eeeff1;
-    width: 100%;
-    height: 30px;
+  #makemap{
+    display: -webkit-flex;
+    display: flex;
+    flex-direction: column; /*主轴为纵轴*/
+    justify-content:flex-start; /*主轴自上而下*/
+    align-content: center; /*交叉轴中心对其*/
+    margin: 2px;
+    border: solid 2px #f7f7f7;
+    padding: 0px;
+    height: 907px;
     text-align: center;
-    font-size: 13px;
-    line-height: 30px;
+    font-size: 80%;
+    color: #606266
   }
-  #spl-coll .el-collapse-item__arrow{
-    line-height: 30px;
+  #infoWindows {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    border: 1px solid #606266;
+    padding: 5px;
+    background-color: #f7f7f7bf;
+    color: #6d6b6b;
   }
-  #spl-coll .el-collapse-item__wrap {
-    border: 0;
-    background-color: #ffffff;
-  }
-  #spl-coll .el-collapse-item__content {
-    border: 0;
-    padding: 0;
-    font-size: 13px;
-    color: #ffffff;
-  }
-  #splcollcontent {
-    height: 200px;
-  }
-  #splcollcontent .el-scrollbar__wrap{
-    overflow-x:hidden;
-    overflow-y: auto;
-  }
-  #splcollcontent .el-button--mini{
-    margin: 4px;
-    padding: 4px;
-    font-size: 13px;
-    border-radius: 1px;
-  }
-  #splcollcontent .el-button--text{
-    color: #303133;
-    background: 0 0;
-  }
-  #splcollcontent .shipNoRun {
-    color: #a3a3a3;
-  }
-
-/* 船只定义信息卡 */
-  #defcard {
-    margin-bottom: 10px;
-    padding: 10px;
-    width: 100%;
-    height: auto;
-    background-color: #ffffff;
-  }
-  #defcard .el-collapse-item__header{
-    border: 0;
-    padding:0;
-    background-color: #eeeff1;
-    width: 100%;
-    height: 30px;
-    text-align: center;
-    font-size: 13px;
-    line-height: 30px;
-  }
-  #defcard .el-collapse-item__arrow {
-    line-height: 30px;
-  }
-  #defcard .el-collapse-item__wrap {
-    border:0;
-    background-color: #ffffff;
-  }
-  #defcard .el-collapse-item__content {
-    border: 0;
-    padding: 1rem;
-    height: 440px;
-    font-size: 13px;
-    text-align: left;
-  }
-  #defcardcontent div {
-    padding: 0.5rem 0 0 1rem;
-  }
-
-/* 船只雷达信息卡 */
-  #radarcard {
-    margin-bottom: 10px;
-    padding: 10px;
-    width: 100%;
-    height: auto;
-    background-color: #ffffff;
-  }
-  #radarcard .el-collapse-item__header{
-    border: 0;
-    padding:0;
-    background-color: #eeeff1;
-    width: 100%;
-    height: 30px;
-    text-align: center;
-    font-size: 13px;
-    line-height: 30px;
-  }
-  #radarcard .el-collapse-item__arrow {
-    line-height: 30px;
-  }
-  #radarcard .el-collapse-item__wrap {
-    border:0;
-    background-color: #ffffff;
-  }
-  #radarcard .el-collapse-item__content {
-    border: 0;
-    padding: 1rem;
-    height: 340px;
-    font-size: 13px;
-    text-align: left;
-  }
-  #radarcardcontent div {
-    padding: 0.5rem 0 0 1rem;
-  }
-
-/* 船只电机信息卡 */
-  #motorcard {
-    margin-bottom: 10px;
-    padding: 10px;
-    width: 100%;
-    height: auto;
-    background-color: #ffffff;
-  }
-  #motorcard .el-collapse-item__header{
-    border: 0;
-    padding:0;
-    background-color: #eeeff1;
-    width: 100%;
-    height: 30px;
-    text-align: center;
-    font-size: 13px;
-    line-height: 30px;
-  }
-  #motorcard .el-collapse-item__arrow {
-    line-height: 30px;
-  }
-  #motorcard .el-collapse-item__wrap {
-    border:0;
-    background-color: #ffffff;
-  }
-  #motorcard .el-collapse-item__content {
-    border: 0;
-    padding: 1rem;
-    height: 340px;
-    font-size: 13px;
-    text-align: left;
-  }
-  #motorcardcontent div {
-    padding: 0.5rem 0 0 1rem;
-  }
-
-/* 船只GPS信息卡 */
-  #GPScard {
-    margin-bottom: 10px;
-    padding: 10px;
-    width: 100%;
-    height: auto;
-    background-color: #ffffff;
-  }
-  #GPScard .el-collapse-item__header{
-    border: 0;
-    padding:0;
-    background-color: #eeeff1;
-    width: 100%;
-    height: 30px;
-    text-align: center;
-    font-size: 13px;
-    line-height: 30px;
-  }
-  #GPScard .el-collapse-item__arrow {
-    line-height: 30px;
-  }
-  #GPScard .el-collapse-item__wrap {
-    border:0;
-    background-color: #ffffff;
-  }
-  #GPScard .el-collapse-item__content {
-    border: 0;
-    padding: 1rem;
-    height: 340px;
-    font-size: 13px;
-    text-align: left;
-  }
-  #GPScardcontent div {
-    padding: 0.5rem 0 0 1rem;
-  }
-
-/* 船只警告信息卡 */
-  #warncard {
-    margin-bottom: 10px;
-    padding: 10px;
-    width: 100%;
-    height: auto;
-    background-color: #ffffff;
-  }
-  #warncard .el-collapse-item__header{
-    border: 0;
-    padding:0;
-    background-color: #eeeff1;
-    width: 100%;
-    height: 30px;
-    text-align: center;
-    font-size: 13px;
-    line-height: 30px;
-  }
-  #warncard .el-collapse-item__arrow {
-    line-height: 30px;
-  }
-  #warncard .el-collapse-item__wrap {
-    border:0;
-    background-color: #ffffff;
-  }
-  #warncard .el-collapse-item__content {
-    border: 0;
-    padding: 1rem;
-    height: 340px;
-    font-size: 13px;
-    text-align: left;
-  }
-  #warncardcontent div {
-    padding: 0.5rem 0 0 1rem;
-  }
-  #warncardcontent .waring {
-    color: red;
-  }
-
-/* 船只状态信息卡 */
-  #statuscard {
-    margin-bottom: 10px;
-    padding: 10px;
-    width: 100%;
-    height: auto;
-    background-color: #ffffff;
-  }
-  #statuscard .el-collapse-item__header{
-    border: 0;
-    padding:0;
-    background-color: #eeeff1;
-    width: 100%;
-    height: 30px;
-    text-align: center;
-    font-size: 13px;
-    line-height: 30px;
-  }
-  #statuscard .el-collapse-item__arrow {
-    line-height: 30px;
-  }
-  #statuscard .el-collapse-item__wrap {
-    border:0;
-    background-color: #ffffff;
-  }
-  #statuscard .el-collapse-item__content {
-    border: 0;
-    padding: 1rem;
-    height: 340px;
-    font-size: 13px;
-    text-align: left;
-  }
-  #statuscardcontent div {
-    padding: 0.5rem 0 0 1rem;
-  }
-  #statuscardcontent .runing {
-    background-color: #aaff56b6;
-  }
-  #statuscardcontent .waiting {
-    background-color: #4949ff70;
-  }
-
-/* 船只电池信息卡 */
-  #batterycard {
-    margin-bottom: 10px;
-    padding: 10px;
-    width: 100%;
-    height: auto;
-    background-color: #ffffff;
-  }
-  #batterycard .el-collapse-item__header{
-    border: 0;
-    padding:0;
-    background-color: #eeeff1;
-    width: 100%;
-    height: 30px;
-    text-align: center;
-    font-size: 13px;
-    line-height: 30px;
-  }
-  #batterycard .el-collapse-item__arrow {
-    line-height: 30px;
-  }
-  #batterycard .el-collapse-item__wrap {
-    border:0;
-    background-color: #ffffff;
-  }
-  #batterycard .el-collapse-item__content {
-    border: 0;
-    padding: 1rem;
-    height: 340px;
-    font-size: 13px;
-    text-align: left;
-  }
-  #batterycardcontent div {
-    padding: 2px 0 0 1rem;
+  #infoWindows p {
+    margin: 2px 2px 2px 2px;
   }
 </style>

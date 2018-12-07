@@ -22,18 +22,20 @@ export function initMap() {
 }
 
 /**
- * 坐标获取与数量处理与转换
+ * 坐标获取与数量处理与坐标系转换
  * @param number shipId
  * @param number startTime
  * @return Promise Array.<AMap.LngLat> gps
  */
-function getlngLats1(shipId, startTime) {
+export function getlngLatsOne(shipId, startTime) {
   const gps = [] // 处理后的坐标组
   return new Promise((resolve, rejects) => {
     getAllGPSByIdTime(shipId, startTime).then(response => {
       const data = response.data // 返回的坐标数据
       const gpslength = data.length
-      if (data && data !== null && gpslength > 0) {
+      if (!data || data === null || gpslength <= 0) {
+        resolve(gps) // 返回空数组
+      } else {
         if (gpslength > 70) {
           const jump = parseInt(gpslength / 70)
           for (let i = 0; i < gpslength; i += jump) {
@@ -48,25 +50,24 @@ function getlngLats1(shipId, startTime) {
             }
           }
         }
-        // console.log(gps)
         resolve(gps)
         return
-      } else {
-        rejects('获取数据为空')
       }
     }).catch(errer => {
-      rejects('获取数据errer')
+      rejects('获取数据错误：' + errer)
     })
   })
 }
 
-function getlngLats2(shipId, startTime, endTime) {
+export function getlngLatsTwo(shipId, startTime, endTime) {
   const gps = [] // 处理后的坐标组
   return new Promise((resolve, rejects) => {
     getAllGPSByIdTimeBetween(shipId, startTime, endTime).then(response => {
       const data = response.data // 返回的坐标数据
       const gpslength = data.length
-      if (data && data !== '' && gpslength > 0) {
+      if (!data || data === null || gpslength <= 0) {
+        resolve(gps) // 返回空数组
+      } else {
         if (gpslength > 70) {
           const jump = parseInt(gpslength / 70)
           for (let i = 0; i < gpslength; i += jump) {
@@ -81,14 +82,11 @@ function getlngLats2(shipId, startTime, endTime) {
             }
           }
         }
-        // console.log(gps)
         resolve(gps)
         return
-      } else {
-        rejects('获取数据为空')
       }
     }).catch(errer => {
-      rejects('获取数据errer')
+      rejects('获取数据错误：' + errer)
     })
   })
 }
@@ -97,7 +95,7 @@ function getlngLats2(shipId, startTime, endTime) {
  * 轨迹绘制函数
  * @param Array.<AMap.LngLat>||AMap.LngLat lngLats
  */
-function initTrack(lngLats) {
+export function initTrack(lngLats) {
   AMapUI.load(['ui/misc/PathSimplifier', 'lib/$', 'lib/utils'], function(PathSimplifier, $, utils) {
     if (!PathSimplifier.supportCanvas) {
       alert('当前环境不支持 Canvas！')
@@ -164,36 +162,6 @@ function initTrack(lngLats) {
     })
     navg.start()
   }
-}
-/**
- * 绘制轨迹函数
- * @param number shipId 船号
- * @param number startTime 开始时间
- */
-export function makeTrail1(shipId, startTime) {
-  getlngLats1(shipId, startTime).then(response => {
-    if (pathSimplifierIns !== null) {
-      pathSimplifierIns.clearPathNavigators()
-      pathSimplifierIns.setData(null)
-      pathSimplifierIns = null
-    }
-    initTrack(response)
-  }).catch(errer => {
-    console.log(errer)
-  })
-}
-
-export function makeTrail2(shipId, startTime, endTime) {
-  getlngLats2(shipId, startTime, endTime).then(response => {
-    if (pathSimplifierIns !== null) {
-      pathSimplifierIns.clearPathNavigators()
-      pathSimplifierIns.setData(null)
-      pathSimplifierIns = null
-    }
-    initTrack(response)
-  }).catch(errer => {
-    console.log(errer)
-  })
 }
 
 // 清楚轨迹

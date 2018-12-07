@@ -1,9 +1,7 @@
 import AMap from 'AMap'
 import AMapUI from 'AMapUI'
 import GPS from '@/utils/GPS'
-import { dateToInt } from '@/utils/times'
-
-let nowdatetime // 当前的日期与时间
+let nowdatetime = null
 let makemap = null // 全局地图变量
 let markerList = null // 全局标点列表
 
@@ -23,7 +21,7 @@ export function initmap() {
   })
 }
 
-function initMake(MarkerData) {
+function initMaker(MarkerData) {
   // 加载MarkerList，loadUI的路径参数为模块名中 'ui/' 之后的部分
   AMapUI.loadUI(['misc/MarkerList'], function(MarkerList) {
     // 启动页面
@@ -106,8 +104,8 @@ function initPage(MarkerList, MarkerData) {
       // 点击弹出窗口内容
       var InfoWdC = "船只运行时间：" + dataItem.runTime + "<br/>上次停止时刻：" + dataItem.endRunTime + "<br/>上次启动时刻：" + dataItem.startRunTime +
         "<br/>烟雾警报：" + dataItem.overSmog + ",<br/>火光警报：" + dataItem.overFire + ",<br/>漏水警报：" + dataItem.leakage +
-        "<br/>撞船警报：" + dataItem.collide + " ---> 船距：" + dataItem.ultrasonicValue +
-        "<br/>超速警报：" + dataItem.overSpeed + " ---> 船速：" + dataItem.speed +
+        "<br/>撞船警报：" + dataItem.collide + " ===> 船距：" + dataItem.ultrasonicValue +
+        "<br/>超速警报：" + dataItem.overSpeed + " ===> 船速：" + dataItem.speed +
         "<br/>电机警报：" + dataItem.overMotor + "<br/>转速：" + dataItem.motorSpeed1 + "|" + dataItem.motorSpeed2 +
         "<br/>电流：" + dataItem.motorCurrent1 + "|" + dataItem.motorCurrent2 + "<br/>电压：" + dataItem.motorVoltage1 + "|" + dataItem.motorVoltage2 +
         "<br/>电池警报：" + dataItem.batteryStatus
@@ -159,12 +157,11 @@ function createInfoWindow(title, content) {
 function closeInfoWindow() {
   makemap.clearInfoWindow()
 }
-
 // 初始和更新marker数据
-export function upDataMarker(data) {
-  nowdatetime = dateToInt(new Date()) // 重置当前刷新时间
+export function upDataMarker(data, datetime) {
+  nowdatetime = datetime
   if (markerList === null) {
-    initMake(data)
+    initMaker(data)
   } else {
     markerList.render([]) // 清除数据
     // markerList.clearData()

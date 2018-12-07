@@ -29,8 +29,8 @@
 <script>
 // eslint-disable-next-line
 import { dateToInt } from '@/utils/times'
-import { getAllShipDefInfo } from '@/api/shipinfo'
-import { initMap, makeTrail1, makeTrail2, clearTrack } from './track.js'
+import { getAllShipDefInfo } from "@/api/shipinfo"
+import { initMap, getlngLatsOne, getlngLatsTwo, initTrack, clearTrack } from './track.js'
 export default {
   name: 'trail',
   mounted() {
@@ -113,8 +113,16 @@ export default {
           this.notification(0, '起始时间最早为一天之前,请重新输入！')
           return
         } else {
-          this.notification(1, '将绘制' + startTime + '后的轨迹！')
-          makeTrail1(this.shipId, startTime)
+          this.notification(2, '开始获取轨迹数据，请稍候！')
+          getlngLatsOne(this.shipId, startTime).then(response => {
+            if (response.length <= 0) {
+              this.notification(0, '轨迹数据为空！')
+              clearTrack()
+            } else {
+              this.notification(1, '开始绘制轨迹！')
+              initTrack(response)
+            }
+          })
         }
         this.shipId = null
         this.begDT = null
@@ -129,8 +137,16 @@ export default {
           this.notification(0, '最长时间的间隔为一天,请重新输入！')
           return
         } else {
-          this.notification(1, '将获取' + startTime + '与' + endTime + '之间的轨迹数据！')
-          makeTrail2(this.shipId, startTime, endTime)
+          this.notification(2, '开始获取轨迹数据，请稍候！')
+          getlngLatsTwo(this.shipId, startTime, endTime).then(response => {
+            if (response.length <= 0) {
+              this.notification(0, '轨迹数据为空！')
+              clearTrack()
+            } else {
+              this.notification(1, '开始绘制轨迹！')
+              initTrack(response)
+            }
+          })
         }
         this.shipId = null
         this.begDT = null
