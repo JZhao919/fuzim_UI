@@ -143,7 +143,7 @@ export default {
             clearInterval(window.Timer)
             window.Timer = null
           }
-          // window.Timer = setInterval(this.loopGetAllShipInfo, 20000)
+          window.Timer = setInterval(this.loopGetAllShipInfo, 20000)
         }
       })
     },

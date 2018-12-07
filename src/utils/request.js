@@ -60,12 +60,24 @@ service.interceptors.response.use(
   },
   error => {
     console.log('err' + error) // for debug
-    Message({
-      message: error.message,
-      type: 'error',
-      duration: 3 * 1000
-    })
-    return Promise.reject(error)
+    if (response.status === 500) {
+      MessageBox.confirm('权限失效请重新登录！', '确定登出', {
+        confirmButtonText: '重新登录',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        store.dispatch('FedLogOut').then(() => {
+          location.reload()// 为了重新实例化vue-router对象 避免bug
+        })
+      })
+    } else {
+      Message({
+        message: error.message,
+        type: 'error',
+        duration: 3 * 1000
+      })
+      return Promise.reject(error)
+    }
   }
 )
 
