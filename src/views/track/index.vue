@@ -3,12 +3,12 @@
     <el-row id="DateTime">
       <el-col :xs="12" :sm="12" :md="6">
         <el-date-picker type="datetime" clearable size="mini" placeholder="开始时间(必选)" format="yyyyMMddHHmmss"
-          v-model="begDT" default-time="9:00:00">
+          v-model="begDT" default-time="10:00:00">
         </el-date-picker>
       </el-col>
       <el-col :xs="12" :sm="12" :md="6">
         <el-date-picker type="datetime" clearable size="mini" placeholder="结束时间(默认当前)" format="yyyyMMddHHmmss"
-          v-model="endDT" default-time="14:00:00">
+          v-model="endDT" default-time="21:00:00">
         </el-date-picker>
       </el-col>
       <el-col :xs=12 :sm="12" :md="6">

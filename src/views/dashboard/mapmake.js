@@ -81,7 +81,7 @@ function initPage(MarkerList, MarkerData) {
         }
       }
       const label = {
-        offset: new AMap.Pixel(-4, 10),
+        offset: new AMap.Pixel(-1, 10),
         content: dataItem.shipName
       }
       const title = dataItem.shipName + "的GPS信息：\n当前坐标为：N:" + dataItem.latitude + "|E:" + dataItem.longitude + "\n当前磁偏角：" + dataItem.gpsVardir + ":" + dataItem.gpsMagvar + "\n当前航向角：" + dataItem.gpsTrackTure
@@ -90,12 +90,16 @@ function initPage(MarkerList, MarkerData) {
         recycledMarker.setTitle(title)
         recycledMarker.setLabel(label)
         recycledMarker.setIcon(iconUrl)
+        recycledMarker.setClickable(true)
+        recycledMarker.setzIndex(context.index + 2)
         // recycledMarker.setAnimation('AMAP_ANIMATION_DROP') // 标点下落动态
         return recycledMarker
       }
       // 返回一个新的Marker
       return new AMap.Marker({
         // animation: 'AMAP_ANIMATION_DROP',
+        topWhenClick: true,
+        zIndex: context.index + 2,
         title: title,
         label: label,
         icon: iconUrl

@@ -231,4 +231,16 @@ export default {
   #infoWindows p {
     margin: 2px 2px 2px 2px;
   }
+  .amap-marker-label {
+    position: absolute;
+    z-index: 2;
+    border: 1px solid #0a0a0a85;
+    background-color: #f5f5f570;
+    white-space: nowrap;
+    cursor: default;
+    padding: 3px;
+    font-size: 11px;
+    line-height: 12px;
+    color: black;
+  }
 </style>

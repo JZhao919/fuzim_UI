@@ -230,7 +230,7 @@ export function clearTrackInfoWid() {
 }
 // 清楚轨迹
 export function clearTrack() {
-  console.log(123)
+  // console.log(123)
   if (pathSimplifierIns !== null) {
     pathSimplifierIns.clearPathNavigators()
     pathSimplifierIns.setData(null)
