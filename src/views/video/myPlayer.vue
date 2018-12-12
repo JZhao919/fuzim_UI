@@ -1,7 +1,7 @@
 <template>
    <div id="p-video">
-    <div id="v-title" ><span>{{shipName}}{{camcaLoca}}实时视频</span></div>
-    <playerHls ref="playerHls" @play="play" :video="video" :contextmenu="contextmenu"></playerHls>
+    <div id="v-title" ><span>{{shipName}}{{camcaLoca}}号实时视频</span></div>
+    <playerHls ref="playerHls" :video="video" :contextmenu="contextmenu"></playerHls>
   </div>
 </template>
 
@@ -34,7 +34,7 @@ export default {
     },
     data() {
       return {
-        myPlayer: null
+        mydp: null
       }
     }
   },
@@ -43,14 +43,31 @@ export default {
   },
   methods: {
     init() {
-      this.myPlayer = this.$refs.playerHls.dp // 获取新播放器句柄
+      const myPlayer = this.mydp = this.$refs.playerHls.dp // 获取新播放器句柄
+      myPlayer.on('play', () => {
+        this.$emit('play')
+      })
+      myPlayer.on('pause', () => {
+        this.$emit('pause')
+      })
+      myPlayer.on('canplay', () => {
+        this.$emit('canplay')
+      })
+      myPlayer.on('playing', () => {
+        this.$emit('playing')
+      })
+      myPlayer.on('ended', () => {
+        this.$emit('ended')
+      })
+      myPlayer.on('error', () => {
+        this.$emit('error')
+      })
     },
     switchVideo(video) {
-      this.myPlayer.switchVideo(video)
-      // console.log(video.url)
+      this.mydp.switchVideo(video)
     },
-    play() {
-      console.log('myPlayer callback')
+    destroyed() {
+      this.mydp.destroy()
     }
   }
 }

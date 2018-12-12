@@ -14,7 +14,7 @@ export function initmap() {
     mapStyle: 'amap://styles/12cb5f735c7e70f55c221548b0e11763', // 设置地图的显示样式
     center: [118.789582, 32.019405],
     zoom: 17,
-    dragEnable: false,
+    // dragEnable: false,
     keyboardEnable: false,
     doubleClickZoom: false
   })
@@ -90,12 +90,12 @@ function initPage(MarkerList, MarkerData) {
         recycledMarker.setTitle(title)
         recycledMarker.setLabel(label)
         recycledMarker.setIcon(iconUrl)
-        recycledMarker.setAnimation('AMAP_ANIMATION_DROP') // 标点下落动态
+        // recycledMarker.setAnimation('AMAP_ANIMATION_DROP') // 标点下落动态
         return recycledMarker
       }
       // 返回一个新的Marker
       return new AMap.Marker({
-        animation: 'AMAP_ANIMATION_DROP',
+        // animation: 'AMAP_ANIMATION_DROP',
         title: title,
         label: label,
         icon: iconUrl
@@ -160,6 +160,7 @@ function createInfoWindow(title, content) {
 function closeInfoWindow() {
   makemap.clearInfoWindow()
 }
+
 // 初始和更新marker数据
 export function upDataMarker(data, datetime) {
   nowdatetime = datetime
@@ -172,6 +173,7 @@ export function upDataMarker(data, datetime) {
     markerList.clearRecycle()
   }
 }
+
 // 清楚全部标点
 export function clearAllMarker() {
   markerList.clearRecycle()

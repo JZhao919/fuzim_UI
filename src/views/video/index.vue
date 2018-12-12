@@ -1,19 +1,14 @@
 <template>
 <div id="v-video">
   <el-row id="v-shiplist">
-    <div id="v-splcollcontent">
+    <div id="v-content">
       <el-scrollbar noresize style="height:100%">
-        <span style="font-size:13px;">点击选择播放一条船的视频：</span>
         <el-button v-for="shipdef in allshipDefInfo" :key="shipdef.shipId"
         type="text" plain size="mini" 
-        @click.native="selectShip(shipdef)" :class="{ shipListRun: shipdef.shipStatus==='0' }">
+        @click.native="selectShip(shipdef)">
         {{shipdef.shipName}} 
         </el-button>
-        <!-- <el-button v-for="shipdef in 200" :key="shipdef"
-        type="text" plain size="mini" 
-        @click.native="selectShip(shipdef)">
-        {{shipdef}} 
-        </el-button> -->
+         <!-- :class="{ shipListRun: shipdef.shipStatus==='0' }" -->
       </el-scrollbar>
     </div>
   </el-row>
@@ -42,6 +37,9 @@ export default {
   mounted() {
     this.init()
   },
+  beforeDestroy() {
+    this.destroy()
+  },
   data() {
     return {
       allshipDefInfo: [], // 所有船只定义信息
@@ -58,17 +56,17 @@ export default {
         shipCamtailUrlHD: ""
       }, // 当前船只的定义信
       headVideo: {
-        url: "http://hls.open.ys7.com/1.m3u8",
-        urlHD: "http://hls.open.ys7.com/1.hd.m3u8"
+        url: "",
+        urlHD: ""
       },
       binVideo: {
-        url: "http://hls.open.ys7.com/1.m3u8",
-        urlHD: "http://hls.open.ys7.com/1.hd.m3u8"
+        url: "",
+        urlHD: ""
       },
       tailVideo: {
-        url: "http://hls.open.ys7.com/1.m3u8",
-        urlHD: "http://hls.open.ys7.com/1.hd.m3u8"
-      }
+        url: "",
+        urlHD: ""
+      } // http://hls.open.ys7.com/1.m3u8
     }
   },
   methods: {
@@ -78,7 +76,7 @@ export default {
           this.$notify.error({
             title: '错误！',
             message: string,
-            duration: 1500
+            duration: 15000
           })
           break
         case 1:
@@ -86,7 +84,7 @@ export default {
             title: '成功！',
             message: string,
             type: 'success',
-            duration: 1500
+            duration: 1000
           })
           break
         case 2:
@@ -94,7 +92,7 @@ export default {
             title: '注意！',
             message: string,
             type: 'warning',
-            duration: 1500
+            duration: 1000
           })
           break
         default:
@@ -104,9 +102,14 @@ export default {
       getAllShipDefInfo().then(response => {
         if (!response.data || response.data === null || response.data === [] || response.data === "") {
           this.allshipDefInfo = [] // 所有船只定义信息置空
-          this.notification(0, "当前船只信息为空")
+          this.notification(0, "当前船只视频信息为空")
         } else {
-          this.allshipDefInfo = response.data
+          const data = this.allshipDefInfo = response.data
+          for (let i = data.length - 1; i >= 0; i--) {
+            if (data[i].shipCamheadUrl || data[i].shipCamcabinUrl || data[i].shipCamtailUrl) { // 随机选择一个存在视频链接的
+              this.selectShip(data[i])
+            }
+          }
         }
       })
     },
@@ -127,6 +130,11 @@ export default {
       this.$refs.headVideo.switchVideo(headVideo)
       this.$refs.binVideo.switchVideo(binVideo)
       this.$refs.tailVideo.switchVideo(tailVideo)
+    },
+    destroy() {
+      this.$refs.headVideo.destroyed()
+      this.$refs.binVideo.destroyed()
+      this.$refs.tailVideo.destroyed()
     }
   }
 }
@@ -142,29 +150,47 @@ export default {
   width: 100%;
   height: auto;
 }
-
-#v-splcollcontent {
+#v-content {
   height: 100px;
   border: 2px solid #b6b6b6;
   border-radius: 1px;
 }
-#v-splcollcontent .el-scrollbar__wrap{
+#v-content .el-scrollbar__wrap{
   overflow-x:hidden;
   overflow-y: auto;
 }
-#v-splcollcontent .el-button--mini{
+#v-content .el-button{
   margin: 3px;
   padding: 3px;
   font-size: 13px;
   border-radius: 1px;
 }
-#v-splcollcontent .el-button--text{
-  color: #303133;
-  background: 0 0;
+#v-content .el-button:hover{
+  margin: 3px;
+  padding: 3px;
+  color: #0000ff;
+  font-size: 15px;
+  border-color:#ff0000;
+  border-radius: 1px;
 }
-#v-splcollcontent .shipListRun {
-  color: #303133;
+#v-content .el-button:active{
+  margin: 3px;
+  padding: 3px;
+  color: #0000ff;
+  font-size: 16px;
+  border-color:#ff0000;
+  border-radius: 1px;
+}
+#v-content .el-button:focus{
+  margin: 3px;
+  padding: 3px;
+  color: #0000ff;
+  font-size: 16px;
+  border-color:#ff0000;
+  border-radius: 1px;
+}
+#v-content .el-button--text{
+  color: black;
   background: 0 0;
 }
 </style>
-

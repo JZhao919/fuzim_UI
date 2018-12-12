@@ -6,25 +6,25 @@
     </el-col>
   </el-row>
   <div id="infoWindows">
-    <p>正在运行: {{infoWindows.runNums}} 艘</p>
-    <p>等待出发: {{infoWindows.waitNums}} 艘</p>
-    <p>暂停使用: {{infoWindows.norunNums}} 艘</p>
+    <p style="color: #ff0000;">等待出发: {{infoWindows.waitNums}} 艘</p>
+    <p style="color: #3ebb00;">正在运行: {{infoWindows.runNums}} 艘</p>
+    <p style="color: #000000;">暂停使用: {{infoWindows.norunNums}} 艘</p>
   </div>
 </div>
 </template>
 <script>
-import { dateToInt } from '@/utils/times'
+import { dateToInt, intToDate } from '@/utils/times'
 import { getAllShipInfo } from '@/api/shipinfo'
 import { initmap, upDataMarker, clearAllMarker } from './mapmake.js'
-let nowdatetime // 当前的日期与时间当前刷新时间
+let nowdatetime = new Date() // 当前的日期与时间当前刷新时间
 export default {
   name: 'mapmake',
   data() {
     return {
       infoWindows: {
-        runNums: 1, // 运行中数量
-        norunNums: 1, // 暂停使用数量
-        waitNums: 1 // 等待出发数量
+        runNums: 0, // 运行中数量
+        norunNums: 0, // 暂停使用数量
+        waitNums: 0 // 等待出发数量
       },
       allShipAllInfo: [{
         // 状态信息
@@ -98,7 +98,7 @@ export default {
   },
   watch: {
     allShipAllInfo: function() {
-      upDataMarker(this.allShipAllInfo, nowdatetime)
+      upDataMarker(this.allShipAllInfo, dateToInt(nowdatetime))
     }
   },
   methods: {
@@ -108,21 +108,24 @@ export default {
         case 0:
           this.$notify.error({
             title: '错误！',
-            message: string
+            message: string,
+            duration: 1000
           })
           break
         case 1:
           this.$notify({
             title: '成功！',
             message: string,
-            type: 'success'
+            type: 'success',
+            duration: 1000
           })
           break
         case 2:
           this.$notify({
             title: '注意！',
             message: string,
-            type: 'warning'
+            type: 'warning',
+            duration: 1000
           })
           break
         default:
@@ -130,7 +133,7 @@ export default {
     },
     // 获取远程数据
     getAllInfo() {
-      nowdatetime = dateToInt(new Date()) // 重置当前刷新时间
+      nowdatetime = new Date() // 重置当前刷新时间
       getAllShipInfo().then(response => {
         const data = this.allShipAllInfo = response.data
         if (!data || data === null || data.length <= 0) {
@@ -171,7 +174,7 @@ export default {
         shipInfo = this.allShipAllInfo[i]
         if (!shipInfo.gpsTime || shipInfo.gpsTime === "" || shipInfo.gpsTime === "0") {
           norunNums++
-        } else if (nowdatetime - parseInt(shipInfo.gpsTime) > 2999) {
+        } else if (intToDate(nowdatetime).getTime() - intToDate(shipInfo.gpsTime).getTime() > 1800000) { // 超过半小时
           norunNums++
         } else {
           switch (shipInfo.runStatus) { // 半小时之内的GPS状态
@@ -222,7 +225,7 @@ export default {
     top: 15px;
     border: 1px solid #606266;
     padding: 5px;
-    background-color: #f7f7f7bf;
+    background-color: #f7f7f7;
     color: #6d6b6b;
   }
   #infoWindows p {

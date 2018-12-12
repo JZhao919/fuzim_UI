@@ -49,7 +49,7 @@ export default {
       endDT: null // 查询结束时间
     }
   },
-  destory() {
+  destroyed() {
     clearTrack()
     clearTrackInfoWid()
   },
