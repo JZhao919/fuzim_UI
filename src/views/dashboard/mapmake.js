@@ -1,6 +1,7 @@
 import AMap from 'AMap'
 import AMapUI from 'AMapUI'
 import GPS from '@/utils/GPS'
+import { intToDate } from '@/utils/times'
 let nowdatetime = null
 let makemap = null // 全局地图变量
 let markerList = null // 全局标点列表
@@ -60,7 +61,7 @@ function initPage(MarkerList, MarkerData) {
       let iconUrl = '/static/img/ship_w.png' // 默认是无色
       if (!dataItem.gpsTime || dataItem.gpsTime === "" || dataItem.gpsTime === "0") {
         iconUrl = '/static/img/ship_b.png' // GPS时间为空--黑色
-      } else if (nowdatetime - parseInt(dataItem.gpsTime) > 2999) {
+      } else if (nowdatetime.getTime() - intToDate(dataItem.gpsTime).getTime() > 1800000) {
         iconUrl = '/static/img/ship_b.png' // GPS时间是半小时之前的--黑色
       } else {
         switch (dataItem.runStatus) { // 半小时之内的GPS状态

@@ -159,7 +159,7 @@ export function initTrack(lngLats) {
 }
 
 // 轨迹介绍
-function trackInfo() {
+export function trackInfo() {
   let trailIoTimes1 = null
   let trailIoTimes2 = null
   trailIoTimes-- // 尝试次数减一

@@ -34,7 +34,7 @@
 <script>
 // eslint-disable-next-line
 import { getAllShipDefInfo } from "@/api/shipinfo"
-import { initMap, getlngLats, initTrack, clearTrack, clearTrackInfoWid } from './track.js'
+import { initMap, getlngLats, initTrack, clearTrack, trackInfo, clearTrackInfoWid } from './track.js'
 export default {
   name: 'trail',
   mounted() {
@@ -135,6 +135,7 @@ export default {
           } else {
             // this.notification(1, '开始绘制轨迹！')
             initTrack(response)
+            trackInfo()
           }
         })
       }

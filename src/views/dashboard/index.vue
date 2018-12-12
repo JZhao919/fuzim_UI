@@ -13,14 +13,14 @@
 </div>
 </template>
 <script>
-import { dateToInt, intToDate } from '@/utils/times'
+import { intToDate } from '@/utils/times'
 import { getAllShipInfo } from '@/api/shipinfo'
 import { initmap, upDataMarker, clearAllMarker } from './mapmake.js'
-let nowdatetime = new Date() // 当前的日期与时间当前刷新时间
 export default {
   name: 'mapmake',
   data() {
     return {
+      nowdatetime: null, // 当前的日期与时间当前刷新时间
       infoWindows: {
         runNums: 0, // 运行中数量
         norunNums: 0, // 暂停使用数量
@@ -98,7 +98,7 @@ export default {
   },
   watch: {
     allShipAllInfo: function() {
-      upDataMarker(this.allShipAllInfo, dateToInt(nowdatetime))
+      upDataMarker(this.allShipAllInfo, this.nowdatetime)
     }
   },
   methods: {
@@ -133,7 +133,7 @@ export default {
     },
     // 获取远程数据
     getAllInfo() {
-      nowdatetime = new Date() // 重置当前刷新时间
+      this.nowdatetime = new Date() // 重置当前刷新时间
       getAllShipInfo().then(response => {
         const data = this.allShipAllInfo = response.data
         if (!data || data === null || data.length <= 0) {
@@ -152,7 +152,7 @@ export default {
     },
     // 循环获取远程数据
     loopGetAllShipInfo() {
-      nowdatetime = dateToInt(new Date()) // 重置当前刷新时间
+      this.nowdatetime = new Date() // 重置当前刷新时间
       getAllShipInfo().then(response => {
         const data = this.allShipAllInfo = response.data
         if (!data || data === null || data.length <= 0) {
@@ -174,7 +174,8 @@ export default {
         shipInfo = this.allShipAllInfo[i]
         if (!shipInfo.gpsTime || shipInfo.gpsTime === "" || shipInfo.gpsTime === "0") {
           norunNums++
-        } else if (intToDate(nowdatetime).getTime() - intToDate(shipInfo.gpsTime).getTime() > 1800000) { // 超过半小时
+        } else if (this.nowdatetime.getTime() - intToDate(shipInfo.gpsTime).getTime() > 1800000) { // 超过半小时
+          // console.log(this.nowdatetime.getTime() - intToDate(shipInfo.gpsTime).getTime())
           norunNums++
         } else {
           switch (shipInfo.runStatus) { // 半小时之内的GPS状态
