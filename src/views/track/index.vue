@@ -2,17 +2,17 @@
   <div id="fz-trail">
     <el-row id="DateTime">
       <el-col :xs="12" :sm="12" :md="6">
-        <el-date-picker type="datetime" clearable size="mini" placeholder="选择开始日期时间" format="yyyyMMddHHmmss"
+        <el-date-picker type="datetime" clearable size="mini" placeholder="开始时间(必选)" format="yyyyMMddHHmmss"
           v-model="begDT" default-time="9:00:00">
         </el-date-picker>
       </el-col>
       <el-col :xs="12" :sm="12" :md="6">
-        <el-date-picker type="datetime" clearable size="mini" placeholder="选择结束日期时间" format="yyyyMMddHHmmss"
-          v-model="endDT" default-time="22:00:00">
+        <el-date-picker type="datetime" clearable size="mini" placeholder="结束时间(默认当前)" format="yyyyMMddHHmmss"
+          v-model="endDT" default-time="14:00:00">
         </el-date-picker>
       </el-col>
       <el-col :xs=12 :sm="12" :md="6">
-        <el-select id="shipnum" v-model="shipId" size="mini" filterable clearable placeholder="请输入要查询的游船名称"
+        <el-select id="shipnum" v-model="shipId" size="mini" filterable clearable placeholder="输入或选择游船名称(必选)"
         no-data-text="当前没有船只" no-match-text="没有相匹配的船只">
           <el-option
             v-for="item in allShipDefInfo" :key="item.shipId" :label="item.shipName" :value="item.shipId">
@@ -33,9 +33,8 @@
 
 <script>
 // eslint-disable-next-line
-import { dateToInt } from '@/utils/times'
 import { getAllShipDefInfo } from "@/api/shipinfo"
-import { initMap, getlngLatsOne, getlngLatsTwo, initTrack, clearTrack } from './track.js'
+import { initMap, getlngLats, initTrack, clearTrack, clearTrackInfoWid } from './track.js'
 export default {
   name: 'trail',
   mounted() {
@@ -45,13 +44,14 @@ export default {
   data() {
     return {
       allShipDefInfo: [{}], // 所有船只的定义信息
-      shipId: null, // 匹配的船只编号
-      begDT: null, // 开始日期时间
-      endDT: null // 结束日期时间
+      shipId: null, // 查询的船只编号
+      begDT: null, // 查询开始时间
+      endDT: null // 查询结束时间
     }
   },
   destory() {
     clearTrack()
+    clearTrackInfoWid()
   },
   methods: {
     notification(code, string) {
@@ -61,14 +61,14 @@ export default {
             title: '成功！',
             message: string,
             type: 'success',
-            duration: 2000
+            duration: 1000
           })
           break
         case 0:
           this.$notify.error({
             title: '错误！',
             message: string,
-            duration: 2000
+            duration: 1000
           })
           break
         case 2:
@@ -76,7 +76,15 @@ export default {
             title: '注意！',
             message: string,
             type: 'warning',
-            duration: 2000
+            duration: 1000
+          })
+          break
+        case 3:
+          this.$notify({
+            title: '注意！',
+            message: string,
+            type: 'info',
+            duration: 1000
           })
           break
         default:
@@ -96,64 +104,43 @@ export default {
     },
     // 提交查询函数
     submit() {
+      clearTrack()
+      clearTrackInfoWid()
       if (this.shipId === null || !this.shipId) {
         this.notification(0, '船只名称有误,请重新输入！')
-        clearTrack()
         return
       }
-      if (this.begDT === null) {
+      const startTime = this.begDT // 查询开始时间
+      let endTime = this.endDT // 查询结束时间
+      if (startTime === null) {
         this.notification(0, '请务必设置轨迹的开始时间！')
         return
       }
-      if (this.endDT === null) { // 只有开始时间
-        const nowTime = dateToInt(new Date())
-        const startTime = dateToInt(this.begDT)
-        if (startTime >= nowTime) {
-          this.notification(0, '起始时间大于当前,请重新输入！')
-          return
-        } else if (nowTime - startTime > 235959) {
-          this.notification(0, '起始时间最早为一天之前,请重新输入！')
-          return
-        } else {
-          this.notification(2, '开始获取轨迹数据，请稍候！')
-          getlngLatsOne(this.shipId, startTime).then(response => {
-            if (response.length <= 0) {
-              this.notification(2, '轨迹数据为空！')
-              clearTrack()
-            } else {
-              this.notification(1, '开始绘制轨迹！')
-              initTrack(response)
-            }
-          })
-        }
-        this.shipId = null
-        this.begDT = null
-        this.endDT = null
-      } else {
-        const startTime = dateToInt(this.begDT)
-        const endTime = dateToInt(this.endDT)
-        if (startTime > endTime) {
-          this.notification(0, '起始时间大于结束时间,请重新输入！')
-          return
-        } else if (endTime - startTime > 235959) {
-          this.notification(0, '最长时间的间隔为一天,请重新输入！')
-          return
-        } else {
-          this.notification(2, '开始获取轨迹数据，请稍候！')
-          getlngLatsTwo(this.shipId, startTime, endTime).then(response => {
-            if (response.length <= 0) {
-              this.notification(2, '轨迹数据为空！')
-              clearTrack()
-            } else {
-              this.notification(1, '开始绘制轨迹！')
-              initTrack(response)
-            }
-          })
-        }
-        this.shipId = null
-        this.begDT = null
-        this.endDT = null
+      if (endTime === null) { // 只有开始时间
+        endTime = new Date() // 当前时间为结束时间
       }
+      const startstamps = startTime.getTime()
+      const endstamps = endTime.getTime()
+      if (startstamps >= endstamps) {
+        this.notification(0, '起始时间要小于结束时间,请重新输入！')
+        return
+      } else if (endstamps - startstamps > 86400000) {
+        this.notification(0, '最长的时间间隔为一天,请重新输入！')
+        return
+      } else {
+        this.notification(3, '开始获取轨迹数据，请稍候！')
+        getlngLats(this.shipId, startTime, endTime).then(response => {
+          if (response.length <= 0) {
+            this.notification(2, '轨迹数据为空！')
+          } else {
+            // this.notification(1, '开始绘制轨迹！')
+            initTrack(response)
+          }
+        })
+      }
+      this.shipId = null
+      this.begDT = null
+      this.endDT = null
       return
     }
   }

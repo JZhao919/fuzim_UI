@@ -24,4 +24,11 @@ export function getOneShipInfo(shipId) {
     params: { shipId }
   })
 }
-
+// 船只详细信息获取（单一）时间段内
+export function getOneShipInfoByTimeBetween(shipId, startTime, endTime) {
+  return request({
+    url: '/shipInfo/getAllByIdTimeBetween',
+    method: 'get',
+    params: { shipId, startTime, endTime }
+  })
+}
