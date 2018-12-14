@@ -55,7 +55,7 @@ export function timestampsToTime(timestamps) {
     }
     return result
   }
-  return betweenTime + "秒"
+  return secondTime + "秒"
 }
 
 

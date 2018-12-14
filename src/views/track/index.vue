@@ -140,8 +140,6 @@ export default {
         })
       }
       this.shipId = null
-      this.begDT = null
-      this.endDT = null
       return
     }
   }
