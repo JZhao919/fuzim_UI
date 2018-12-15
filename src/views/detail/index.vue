@@ -1,6 +1,6 @@
 <template>
 <div id="fz-detail">
-  <el-tabs v-model="activeName" type="border-card" tab-position="top">
+  <el-tabs v-model="activeName" type="border-card" tab-position="top" v-loading="loadingContrul">
     <el-tab-pane label="全部" name="all">
       <el-table max-height='52rem' border size="mini" fit style="width:100%" 
       :data="allShipAllInfo"
@@ -126,8 +126,7 @@
       </el-table>
     </el-tab-pane>
   </el-tabs>
-  <p class="text">
-    <span>注释： 白色表示：该船只正常；</span>
+  <p class="text">注释： 白色表示：该船只正常；
     <span style="background-color: #ff828277; color: #ff0000;">红色表示：可能有烟雾、着火、漏水、电机的危险；</span>
     <span style="background-color: #fff78877; color: #b1a500;">黄色表示：可能有撞船、超速、电池的危险；</span>
     <span style="background-color: #707df877; color: #0000ff;">蓝色表示：正在等待会船；</span>
@@ -215,30 +214,48 @@ export default {
       }] // 所有船只的全部信息
     }
   },
+  computed: {
+    loadingContrul: function() {
+      if (this.allShipAllInfo[0].shipId !== 0) {
+        return false
+      } else {
+        return true
+      }
+    }
+  },
   methods: {
-    notification(code, string) {
+    messages(code, string) {
       switch (code) {
-        case 0:
-          this.$notify.error({
-            title: '错误！',
-            message: string,
-            duration: 1500
-          })
-          break
         case 1:
-          this.$notify({
-            title: '成功！',
+          this.$message({
             message: string,
             type: 'success',
-            duration: 1500
+            duration: 1500,
+            showClose: true
+          })
+          break
+        case 0:
+          this.$message({
+            message: string,
+            type: 'error',
+            duration: 1500,
+            showClose: true
           })
           break
         case 2:
-          this.$notify({
-            title: '注意！',
+          this.$message({
             message: string,
             type: 'warning',
-            duration: 1500
+            duration: 1500,
+            showClose: true
+          })
+          break
+        case 3:
+          this.$message({
+            message: string,
+            type: 'info',
+            duration: 1500,
+            showClose: true
           })
           break
         default:
@@ -248,10 +265,10 @@ export default {
     init() {
       getAllShipInfo().then(response => {
         if (response.data === [] || !response.data || response.data === null || response.data.length <= 0) {
-          this.notification(2, "数据库中没有船只数据！")
+          this.messages(2, "数据库中没有船只数据！")
         } else {
           this.allShipAllInfo = response.data
-          // this.notification(1, "成功获取所有船只数据！")
+          // this.messages(1, "成功获取所有船只数据！")
           if (window.Timer) {
             clearInterval(window.Timer)
             window.Timer = null

@@ -301,29 +301,38 @@ export default {
     }
   },
   methods: {
-    notification(code, string) {
+    messages(code, string) {
       switch (code) {
-        case 0:
-          this.$notify.error({
-            title: '错误！',
-            message: string,
-            duration: 1500
-          })
-          break
         case 1:
-          this.$notify({
-            title: '成功！',
+          this.$message({
             message: string,
             type: 'success',
-            duration: 1500
+            duration: 1500,
+            showClose: true
+          })
+          break
+        case 0:
+          this.$message({
+            message: string,
+            type: 'error',
+            duration: 1500,
+            showClose: true
           })
           break
         case 2:
-          this.$notify({
-            title: '注意！',
+          this.$message({
             message: string,
             type: 'warning',
-            duration: 1500
+            duration: 1500,
+            showClose: true
+          })
+          break
+        case 3:
+          this.$message({
+            message: string,
+            type: 'info',
+            duration: 1500,
+            showClose: true
           })
           break
         default:
@@ -334,7 +343,7 @@ export default {
       getAllShipDefInfo().then(response => {
         const data = response.data
         if (data === [] || !data || data === null || data === "") {
-          this.notification(2, '数据库中没有船只信息！')
+          this.messages(2, '数据库中没有船只信息！')
           this.allshipDefInfo = {}
         } else {
           this.allshipDefInfo = data
@@ -349,10 +358,10 @@ export default {
         const data = response.data
         if (!data || data === null || data.length <= 0) {
           this.shipAllInfo = this.shipNoneInfo
-          this.notification(2, '该船当前没有详细数据！')
+          this.messages(2, '该船当前没有详细数据！')
         } else {
           this.shipAllInfo = data
-          // this.notification(1, '成功获取该船当前数据！')
+          // this.messages(1, '成功获取该船当前数据！')
         }
       })
       if (window.Timer !== null) {

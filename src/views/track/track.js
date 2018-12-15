@@ -2,7 +2,7 @@ import AMap from 'AMap'
 import AMapUI from 'AMapUI'
 import GPS from '@/utils/GPS'
 import { getOneShipInfoByTimeBetween } from '@/api/shipinfo'
-import { Notification } from 'element-ui'
+import { Notification, Message, Loading } from 'element-ui'
 import { dateToInt, intToDate, timestampsToTime } from '@/utils/times'
 
 let trailmap = null // 全局地图对象
@@ -38,6 +38,14 @@ export function initMap() {
  * @return Promise Array.<AMap.LngLat> gps
  */
 export function getlngLats(shipId, startTime, endTime) {
+  const loadingInstance = Loading.service({
+    fullscreen: true,
+    lock: true,
+    text: '正在获取坐标数据，请稍候...',
+    spinner: 'el-icon-loading',
+    background: 'rgba(0, 0, 0, 0.8)'
+  })
+  loadingInstance
   selectStartTime = startTime
   selectEndTime = endTime // 初始化查询时间
   if (runPoints.length > 0) {
@@ -87,13 +95,16 @@ export function getlngLats(shipId, startTime, endTime) {
           }
           resolve(tracks)
         }
-        return
       }
+      loadingInstance.close()
+      return
     }).catch(error => {
-      Notification({
+      loadingInstance.close()
+      Message({
         message: '获取数据超时，请缩短查询时间。',
         duration: 3000,
-        type: 'error'
+        type: 'error',
+        showClose: true
       })
       rejects('获取数据错误：' + error)
     })
@@ -200,7 +211,7 @@ export function trackInfo() {
     message: htmlMSG,
     duration: 0,
     position: 'top-right',
-    offset: 100
+    offset: 150
   })
 }
 

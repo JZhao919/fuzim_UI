@@ -8,7 +8,7 @@
       </el-col>
       <el-col :xs="12" :sm="12" :md="6">
         <el-date-picker type="datetime" clearable size="mini" placeholder="结束时间(默认当前)" format="yyyyMMddHHmmss"
-          v-model="endDT" default-time="14:00:00">
+          v-model="endDT" default-time="21:00:00">
         </el-date-picker>
       </el-col>
       <el-col :xs=12 :sm="12" :md="6">
@@ -54,37 +54,38 @@ export default {
     clearTrackInfoWid()
   },
   methods: {
-    notification(code, string) {
+    messages(code, string) {
       switch (code) {
         case 1:
-          this.$notify({
-            title: '成功！',
+          this.$message({
             message: string,
             type: 'success',
-            duration: 1000
+            duration: 1500,
+            showClose: true
           })
           break
         case 0:
-          this.$notify.error({
-            title: '错误！',
+          this.$message({
             message: string,
-            duration: 1000
+            type: 'error',
+            duration: 1500,
+            showClose: true
           })
           break
         case 2:
-          this.$notify({
-            title: '注意！',
+          this.$message({
             message: string,
             type: 'warning',
-            duration: 1000
+            duration: 1500,
+            showClose: true
           })
           break
         case 3:
-          this.$notify({
-            title: '注意！',
+          this.$message({
             message: string,
             type: 'info',
-            duration: 1000
+            duration: 1500,
+            showClose: true
           })
           break
         default:
@@ -107,13 +108,13 @@ export default {
       clearTrack()
       clearTrackInfoWid()
       if (this.shipId === null || !this.shipId) {
-        this.notification(0, '船只名称有误,请重新输入！')
+        this.messages(0, '船只名称有误,请重新输入！')
         return
       }
       const startTime = this.begDT // 查询开始时间
       let endTime = this.endDT // 查询结束时间
       if (startTime === null) {
-        this.notification(0, '请务必设置轨迹的开始时间！')
+        this.messages(0, '请务必设置轨迹的开始时间！')
         return
       }
       if (endTime === null) { // 只有开始时间
@@ -122,18 +123,16 @@ export default {
       const startstamps = startTime.getTime()
       const endstamps = endTime.getTime()
       if (startstamps >= endstamps) {
-        this.notification(0, '起始时间要小于结束时间,请重新输入！')
+        this.messages(0, '起始时间要小于结束时间,请重新输入！')
         return
       } else if (endstamps - startstamps > 86400000) {
-        this.notification(0, '最长的时间间隔为一天,请重新输入！')
+        this.messages(0, '最长的时间间隔为一天,请重新输入！')
         return
       } else {
-        this.notification(3, '开始获取轨迹数据，请稍候！')
         getlngLats(this.shipId, startTime, endTime).then(response => {
           if (response.length <= 0) {
-            this.notification(2, '轨迹数据为空！')
+            this.messages(2, '轨迹数据为空！')
           } else {
-            // this.notification(1, '开始绘制轨迹！')
             initTrack(response)
             trackInfo()
           }

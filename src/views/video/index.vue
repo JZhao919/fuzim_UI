@@ -70,29 +70,38 @@ export default {
     }
   },
   methods: {
-    notification(code, string) {
+    messages(code, string) {
       switch (code) {
-        case 0:
-          this.$notify.error({
-            title: '错误！',
-            message: string,
-            duration: 15000
-          })
-          break
         case 1:
-          this.$notify({
-            title: '成功！',
+          this.$message({
             message: string,
             type: 'success',
-            duration: 1000
+            duration: 1500,
+            showClose: true
+          })
+          break
+        case 0:
+          this.$message({
+            message: string,
+            type: 'error',
+            duration: 1500,
+            showClose: true
           })
           break
         case 2:
-          this.$notify({
-            title: '注意！',
+          this.$message({
             message: string,
             type: 'warning',
-            duration: 1000
+            duration: 1500,
+            showClose: true
+          })
+          break
+        case 3:
+          this.$message({
+            message: string,
+            type: 'info',
+            duration: 1500,
+            showClose: true
           })
           break
         default:
@@ -102,7 +111,7 @@ export default {
       getAllShipDefInfo().then(response => {
         if (!response.data || response.data === null || response.data === [] || response.data === "") {
           this.allshipDefInfo = [] // 所有船只定义信息置空
-          this.notification(0, "当前船只视频信息为空")
+          this.messages(0, "当前船只视频信息为空")
         } else {
           const data = this.allshipDefInfo = response.data
           for (let i = data.length - 1; i >= 0; i--) {
