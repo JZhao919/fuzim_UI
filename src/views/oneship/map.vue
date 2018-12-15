@@ -7,7 +7,7 @@
 <script>
 import AMap from 'AMap'
 import GPS from '@/utils/GPS'
-import { dateToInt } from '@/utils/times'
+import { intToDate } from '@/utils/times'
 let dashmap = null // 全局首页地图变量
 var dashmarker = null // 全局首页标记点变量
 export default {
@@ -30,6 +30,9 @@ export default {
   methods: {
     // 地图初始化函数
     initmap() {
+      if (dashmap !== null) {
+        dashmap = null
+      }
       dashmap = new AMap.Map('dashmap', {
         mapStyle: 'amap://styles/12cb5f735c7e70f55c221548b0e11763', // 设置地图的显示样式
         center: [118.789279, 32.019657],
@@ -44,7 +47,7 @@ export default {
     },
     // 坐标标注函数
     dashaddMarker() {
-      let lngLat // 创建高德坐标对象
+      let lngLat
       if (this.shipInfo.longitude === 0 || this.shipInfo.latitude === 0) {
         lngLat = [118.789381, 32.019571]
       } else {
@@ -52,10 +55,10 @@ export default {
       }
       let iconUrl = '/static/img/ship_w.png' // 默认是无色
       const gpsTime = this.shipInfo.gpsTime
-      const nowdatetime = dateToInt(new Date())
+      const nowdatetime = new Date().getTime()
       if (!gpsTime || gpsTime === "" || gpsTime === "0") {
         iconUrl = '/static/img/ship_b.png' // GPS时间为空--黑色
-      } else if (nowdatetime - parseInt(gpsTime) > 2999) {
+      } else if (nowdatetime - intToDate(gpsTime).getTime() > 1800000) {
         iconUrl = '/static/img/ship_b.png' // GPS时间是半小时之前的--黑色
       } else {
         switch (this.shipInfo.runStatus) { // 半小时之内的GPS状态

@@ -1,19 +1,15 @@
 <template>
-<div id="dashboard">
-<el-row id="shiplist">
-  <el-collapse id="spl-coll">
-    <el-collapse-item title="点击选择一条船获取其信息" name="1">
-      <div id="splcollcontent">
-        <el-scrollbar noresize style="height:100%">
-          <el-button v-for="shipdef in allshipDefInfo" :key="shipdef.shipId" :class="{ shipNoRun: shipdef.shipStatus=='0' }"
-          type="text" plain size="mini"
-          @click.native="submit(shipdef)">
-          {{shipdef.shipName}}
-          </el-button>
-        </el-scrollbar>
-      </div>
-    </el-collapse-item>
-  </el-collapse>
+<div id="oneship">
+<el-row>
+  <div id="shiplist">
+    <el-scrollbar noresize style="height:100%">
+      <el-button v-for="shipdef in allshipDefInfo" :key="shipdef.shipId" :class="{ shipNoRun: shipdef.shipStatus=='0' }"
+      type="text" plain size="mini"
+      @click.native="submit(shipdef)">
+      {{shipdef.shipName}}
+      </el-button>
+    </el-scrollbar>
+  </div>
 </el-row>
 <el-row>
   <el-col :xs="24" :sm="16" :md="18" :lg="18">
@@ -385,104 +381,96 @@ export default {
 }
 </script>
 <style>
-#dashboard {
+#oneship {
   border: 0;
   padding: 5px;
   color: #303133;
 }
 /* 船只列表信息卡 */
-  #shiplist {
-    padding:5px;
-    width: 100%;
-    height: auto;
-  }
-  #spl-coll {
-    width: 100%;
-    height: auto;
-    background-color: #ffffff;
-  }
-  #spl-coll .el-collapse-item__header{
-    border: 0;
-    padding:0;
-    background-color: #eeeff1;
-    width: 100%;
-    height: 30px;
-    text-align: center;
-    font-size: 13px;
-    line-height: 30px;
-  }
-  #spl-coll .el-collapse-item__arrow{
-    line-height: 30px;
-  }
-  #spl-coll .el-collapse-item__wrap {
-    border: 0;
-    background-color: #ffffff;
-  }
-  #spl-coll .el-collapse-item__content {
-    border: 0;
-    padding: 0;
-    font-size: 13px;
-    color: #ffffff;
-  }
-  #splcollcontent {
-    height: 200px;
-  }
-  #splcollcontent .el-scrollbar__wrap{
-    overflow-x:hidden;
-    overflow-y: auto;
-  }
-  #splcollcontent .el-button--mini{
-    margin: 4px;
-    padding: 4px;
-    font-size: 13px;
-    border-radius: 1px;
-  }
-  #splcollcontent .el-button--text{
-    color: #303133;
-    background: 0 0;
-  }
-  #splcollcontent .shipNoRun {
-    color: #303133;
-  }
+#shiplist {
+  padding:5px;
+  width: 100%;
+  height: 100px;
+  border: 2px solid #b6b6b6;
+  border-radius: 1px;
+}
+#shiplist .el-scrollbar__wrap{
+  overflow-x:hidden;
+  overflow-y: auto;
+}
+#shiplist .el-button{
+  margin: 3px;
+  padding: 3px;
+  font-size: 13px;
+  border-radius: 1px;
+}
+#shiplist .el-button:hover{
+  margin: 3px;
+  padding: 3px;
+  color: #0000ff;
+  font-size: 15px;
+  border-color:#ff0000;
+  border-radius: 1px;
+}
+#shiplist .el-button:active{
+  margin: 3px;
+  padding: 3px;
+  color: #0000ff;
+  font-size: 16px;
+  border-color:#ff0000;
+  border-radius: 1px;
+}
+#shiplist .el-button:focus{
+  margin: 3px;
+  padding: 3px;
+  color: #0000ff;
+  font-size: 16px;
+  border-color:#ff0000;
+  border-radius: 1px;
+}
+#shiplist .el-button--text{
+  color: black;
+  background: 0 0;
+}
 
 /* 船只定义信息卡 */
-  #defcard .el-collapse-item__content {
-    height: 440px;
-  }
+#defcard .el-collapse-item__content {
+  height: 440px;
+}
 
 /* 船只运行信息卡 */
-  .oneshipinfocard {
-    padding: 5px;
-    width: 100%;
-    height: auto;
-    background-color: #ffffff;
-  }
-  .oneshipinfocard .el-collapse-item__header{
-    border: 0;
-    padding:0;
-    background-color: #eeeff1;
-    width: 100%;
-    height: 30px;
-    text-align: center;
-    font-size: 13px;
-    line-height: 30px;
-  }
-  .oneshipinfocard .el-collapse-item__arrow {
-    line-height: 30px;
-  }
-  .oneshipinfocard .el-collapse-item__wrap {
-    border:0;
-    background-color: #ffffff;
-  }
-  .oneshipinfocard .el-collapse-item__content {
-    border: 0;
-    padding: 1rem;
-    height: 340px;
-    font-size: 13px;
-    text-align: left;
-  }
-  .oneshipinfocard-con div {
-    padding: 0.5rem 0 0 1rem;
-  }
-  </style>
+.oneshipinfocard {
+  padding: 5px;
+  width: 100%;
+  height: auto;
+  background-color: #ffffff;
+}
+.oneshipinfocard .el-collapse-item__header{
+  border: 0;
+  padding:0;
+  background-color: #eeeff1;
+  width: 100%;
+  height: 30px;
+  text-align: center;
+  font-size: 13px;
+  line-height: 30px;
+}
+.oneshipinfocard .el-collapse-item__arrow {
+  line-height: 30px;
+}
+.oneshipinfocard .el-collapse-item__wrap {
+  border:0;
+  background-color: #ffffff;
+}
+.oneshipinfocard .el-collapse-item__content {
+  border: 0;
+  padding: 1rem;
+  height: 340px;
+  font-size: 13px;
+  text-align: left;
+}
+.oneshipinfocard-con div {
+  padding: 0.5rem 0 0 1rem;
+}
+</style>
 
