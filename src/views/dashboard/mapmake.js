@@ -58,7 +58,7 @@ function initPage(MarkerList, MarkerData) {
       }
     },
     getMarker: function(dataItem, context, recycledMarker) {
-      let iconUrl = '/static/img/ship_w.png' // 默认是无色
+      let iconUrl = '/static/img/ship_b.png' // 默认是黑色
       if (!dataItem.gpsTime || dataItem.gpsTime === "" || dataItem.gpsTime === "0") {
         iconUrl = '/static/img/ship_b.png' // GPS时间为空--黑色
       } else if (nowdatetime.getTime() - intToDate(dataItem.gpsTime).getTime() > 1800000) {
@@ -72,7 +72,7 @@ function initPage(MarkerList, MarkerData) {
             iconUrl = '/static/img/ship_lg.png'
             break
           case '2':
-            iconUrl = '/static/img/ship_ly.png'
+            iconUrl = '/static/img/ship_y.png'
             break
           case '3':
             iconUrl = '/static/img/ship_r.png'

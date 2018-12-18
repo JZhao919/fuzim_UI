@@ -1,15 +1,12 @@
 <template>
   <div id="map-card">
     <div class="map-title">{{shipInfo.shipName}}船位置</div>
-    <div id="dashmap" class="map-content"></div>
+    <div id="oneshipmap" class="map-content"></div>
   </div>
 </template>
 <script>
-import AMap from 'AMap'
-import GPS from '@/utils/GPS'
 import { intToDate } from '@/utils/times'
-let dashmap = null // 全局首页地图变量
-var dashmarker = null // 全局首页标记点变量
+import { initmap, drowTrack, clearTracks, clearMap } from './oneshiptrack.js'
 export default {
   name: 'map-card',
   props: {
@@ -22,72 +19,43 @@ export default {
     }
   },
   mounted() {
-    this.initmap()
+    initmap()
+  },
+  destroyed() {
+    clearTracks()
+    clearMap()
   },
   watch: {
     'shipInfo': 'dashaddMarker'
   },
   methods: {
-    // 地图初始化函数
-    initmap() {
-      if (dashmap !== null) {
-        dashmap = null
-      }
-      dashmap = new AMap.Map('dashmap', {
-        mapStyle: 'amap://styles/12cb5f735c7e70f55c221548b0e11763', // 设置地图的显示样式
-        center: [118.789279, 32.019657],
-        zoom: 18,
-        dragEnable: false,
-        keyboardEnable: false,
-        doubleClickZoom: false
-      })
-      dashmap.plugin(['AMap.Scale'], function() {
-        dashmap.addControl(new AMap.Scale())
-      })
-    },
-    // 坐标标注函数
     dashaddMarker() {
-      let lngLat
-      if (this.shipInfo.longitude === 0 || this.shipInfo.latitude === 0) {
-        lngLat = [118.789381, 32.019571]
-      } else {
-        lngLat = GPS.gcj_encrypt(this.shipInfo.longitude, this.shipInfo.latitude) // 转换坐标
-      }
-      let iconUrl = '/static/img/ship_w.png' // 默认是无色
+      let iconUrl = '/static/img/flag_b.png' // 默认是无色
       const gpsTime = this.shipInfo.gpsTime
       const nowdatetime = new Date().getTime()
       if (!gpsTime || gpsTime === "" || gpsTime === "0") {
-        iconUrl = '/static/img/ship_b.png' // GPS时间为空--黑色
+        iconUrl = '/static/img/flag_b.png' // GPS时间为空--黑色
       } else if (nowdatetime - intToDate(gpsTime).getTime() > 1800000) {
-        iconUrl = '/static/img/ship_b.png' // GPS时间是半小时之前的--黑色
+        iconUrl = '/static/img/flag_b.png' // GPS时间是半小时之前的--黑色
       } else {
         switch (this.shipInfo.runStatus) { // 半小时之内的GPS状态
           case '0':
-            iconUrl = '/static/img/ship_g.png'
+            iconUrl = '/static/img/flag_g.png'
             break
           case '1':
-            iconUrl = '/static/img/ship_lg.png'
+            iconUrl = '/static/img/flag_lg.png'
             break
           case '2':
-            iconUrl = '/static/img/ship_ly.png'
+            iconUrl = '/static/img/flag_y.png'
             break
           case '3':
-            iconUrl = '/static/img/ship_r.png'
+            iconUrl = '/static/img/flag_r.png'
             break
           default:
             break
         }
       }
-      dashmap.setCenter(lngLat) // 移动地图中心点
-      if (dashmarker !== null) {
-        dashmarker.setMap(null)
-        dashmarker = null
-      }
-      dashmarker = new AMap.Marker({
-        icon: iconUrl, // 标注图标类型 <静态文件>
-        position: lngLat, // 位置坐标
-        map: dashmap
-      })
+      drowTrack(this.shipInfo.longitude, this.shipInfo.latitude, iconUrl)
     }
   }
 }

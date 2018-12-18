@@ -60,7 +60,7 @@ export function getlngLats(shipId, startTime, endTime) {
         resolve(tracks) // 返回空轨迹对象集合
       } else {
         countRunNums(data, data.length - 1, 0) // 计算返回数据集合含有多少趟运行数据 结果存在runPoints[]中
-        console.log(runPoints)
+        // console.log(runPoints)
         if (runPoints.length === 0) {
           resolve(tracks) // 返回空数组
         } else {
@@ -69,7 +69,7 @@ export function getlngLats(shipId, startTime, endTime) {
             startID = runPoints[i].startID
             endID = runPoints[i].endID
             gpslength = startID - endID
-            console.log(gpslength)
+            // console.log(gpslength)
             const gps = [] // 轨迹中坐标数据
             if (gpslength > 400) {
               const jump = parseInt(gpslength / 400 + 1)
@@ -90,7 +90,7 @@ export function getlngLats(shipId, startTime, endTime) {
               name: '第' + (i + 1) + '条轨迹',
               path: gps
             }
-            console.log(track)
+            // console.log(track)
             tracks.push(track)
           }
           resolve(tracks)

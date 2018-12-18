@@ -18,7 +18,8 @@
   <el-col :xs="24" :sm="8" :md="6" :lg="6">
     <div id="defcard" class="oneshipinfocard">
       <el-collapse value= 1 >
-        <el-collapse-item title="船只基本信息" name="1">
+        <el-collapse-item name="1">
+          <template slot="title">{{shipDefInfo.shipName}}基本信息</template>
           <div class="oneshipinfocard-con">
             <div><span>船只名称：</span><span>{{shipDefInfo.shipName}}</span></div>
             <div><span>使用情况：</span><span v-if='shipDefInfo.shipStatus === "0"' key="run">正在使用</span>
@@ -35,7 +36,8 @@
   <el-col :xs="24" :sm="12" :md="8" :lg="8">
     <div class="oneshipinfocard">
       <el-collapse>
-        <el-collapse-item title="船只状态信息" name="1">
+        <el-collapse-item name="1">
+          <template slot="title">{{shipAllInfo.shipName}}状态信息</template>
           <div class="oneshipinfocard-con">
             <div>船只进出次数：<span>{{shipAllInfo.ioTimes}}</span></div>
             <div>船只运行状态：
@@ -58,7 +60,8 @@
   <el-col :xs="24" :sm="12" :md="8" :lg="8">
     <div class="oneshipinfocard">
       <el-collapse>
-        <el-collapse-item title="船只警告信息" name="1">
+        <el-collapse-item name="1">
+          <template slot="title">{{shipAllInfo.shipName}}警告信息</template>
           <div class="oneshipinfocard-con">
             <div>是否超速：<span v-if="shipAllInfo.overSpeed === '1'" key="wait" class="waring">是</span><span v-else key="nwait">否</span></div>
             <div>碰撞危险：<span v-if="shipAllInfo.collide === '1'" key="wait" class="waring">有</span><span v-else key="nwait">无</span></div>
@@ -76,7 +79,8 @@
   <el-col :xs="24" :sm="12" :md="8" :lg="8">
     <div class="oneshipinfocard">
       <el-collapse>
-        <el-collapse-item title="船只GPS信息" name="1">
+        <el-collapse-item name="1">
+          <template slot="title">{{shipAllInfo.shipName}}GPS信息</template>
           <div class="oneshipinfocard-con">
             <div>GPS时间：<span>{{shipAllInfo.gpsTime}}</span></div>
             <div>GPS经度：<span>{{shipAllInfo.gpsLondir}}：{{shipAllInfo.longitude}}</span></div>
@@ -92,7 +96,8 @@
   <el-col :xs="24" :sm="12" :md="8" :lg="8">
     <div class="oneshipinfocard">
       <el-collapse>
-        <el-collapse-item title="船只电池信息" name="1">
+        <el-collapse-item name="1">
+          <template slot="title">{{shipAllInfo.shipName}}电池信息</template>
           <div class="oneshipinfocard-con">
             <div><span>集总SOC：</span><span>{{shipAllInfo.batterySOC}}</span></div>
             <div><span>总电压值：</span><span>{{shipAllInfo.batteryTotalVolt}}</span></div>
@@ -115,7 +120,8 @@
   <el-col :xs="24" :sm="12" :md="8" :lg="8">
     <div class="oneshipinfocard">
       <el-collapse>
-        <el-collapse-item title="船只电机信息" name="1">
+        <el-collapse-item name="1">
+          <template slot="title">{{shipAllInfo.shipName}}电机信息</template>
           <div class="oneshipinfocard-con">
             <div>电机电流1：<span>{{shipAllInfo.motorCurrent1}}</span></div>
             <div>电机电流2：<span>{{shipAllInfo.motorCurrent2}}</span></div>
@@ -131,7 +137,8 @@
   <el-col :xs="24" :sm="12" :md="8" :lg="8">
     <div class="oneshipinfocard">
       <el-collapse>
-        <el-collapse-item title="船只雷达信息" name="1">
+        <el-collapse-item name="1">
+          <template slot="title">{{shipAllInfo.shipName}}雷达信息</template>
           <div class="oneshipinfocard-con">
             <div><span>雷达距离：</span><span>{{shipAllInfo.radarRange}}</span></div>
             <div><span>雷达速度：</span><span>{{shipAllInfo.radarAzimuth}}</span></div>
@@ -149,6 +156,7 @@
 <script>
 import mapCard from './map'
 import { getAllShipDefInfo, getOneShipInfo } from '@/api/shipinfo'
+import { clearTracks } from './oneshiptrack.js'
 export default {
   name: 'dashboard',
   components: {
@@ -166,12 +174,12 @@ export default {
   data() {
     return {
       shipId: null, // 当前选择的船只
-      shipDefInfo: {
+      shipDefInfo: { // 当前船只的定义信息
         shipId: 0,
         shipName: '',
         shipNote: '',
         shipStatus: ''
-      }, // 当前船只的定义信息
+      },
       allshipDefInfo: [], // 所有船只定义信息
       shipNoneInfo: {
         // 状态信息
@@ -354,6 +362,7 @@ export default {
     submit(shipdef) {
       this.shipId = shipdef.shipId
       this.shipDefInfo = shipdef
+      clearTracks()
       getOneShipInfo(this.shipId).then(response => {
         const data = response.data
         if (!data || data === null || data.length <= 0) {
@@ -361,7 +370,6 @@ export default {
           this.messages(2, '该船当前没有详细数据！')
         } else {
           this.shipAllInfo = data
-          // this.messages(1, '成功获取该船当前数据！')
         }
       })
       if (window.Timer !== null) {
@@ -381,7 +389,7 @@ export default {
             this.shipAllInfo = this.shipNoneInfo
           } else {
             this.shipAllInfo = data
-            console.log(this.shipId)
+            // console.log(this.shipId)
           }
         })
       }
