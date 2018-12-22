@@ -35,6 +35,8 @@ export default {
       const nowdatetime = new Date().getTime()
       if (!gpsTime || gpsTime === "" || gpsTime === "0") {
         iconUrl = '/static/img/flag_b.png' // GPS时间为空--黑色
+      } else if (!intToDate(gpsTime).getTime() || !nowdatetime) {
+        iconUrl = '/static/img/flag_b.png'
       } else if (nowdatetime - intToDate(gpsTime).getTime() > 1800000) {
         iconUrl = '/static/img/flag_b.png' // GPS时间是半小时之前的--黑色
       } else {

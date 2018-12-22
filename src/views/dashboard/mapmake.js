@@ -1,11 +1,13 @@
 import AMap from 'AMap'
 import AMapUI from 'AMapUI'
+import { Notification } from 'element-ui'
 import GPS from '@/utils/GPS'
 import { intToDate } from '@/utils/times'
-let nowdatetime = null
-let makemap = null // 全局地图变量
-let markerList = null // 全局标点列表
-
+let nowdatetime = null // 当前时间
+let makemap = null // 地图对象
+let markerList = null // 标点列表对象
+let markerWarnInfo = null // 警告弹窗对象
+let markerWarnFlag = 0 // 警告标志位，1表示存在警告
 // 地图初始化函数
 export function initmap() {
   if (makemap !== null) {
@@ -44,8 +46,14 @@ function initPage(MarkerList, MarkerData) {
     map: makemap, // 关联的map对象
     // listContainer: 'markerlist', // 列表的dom容器的节点或者id, 用于放置getListElement返回的内容
     getDataId: function(dataItem, index) {
-      // 返回数据项的Id
-      return index
+      if (markerWarnFlag === 1) {
+        return index // 返回数据项的Id
+      } else {
+        if (dataItem.leakage === '1' || dataItem.collide === '1' || dataItem.overMotor === '1' || dataItem.batteryStatus === '1' || dataItem.overSmog === '1' || dataItem.overFire === '1' || dataItem.overSpeed === '1') {
+          markerWarnFlag = 1 // 更改警告标志位
+        }
+      }
+      return index // 返回数据项的Id
     },
     getPosition: function(dataItem) {
       // 返回数据项的经纬度，AMap.LngLat实例或者经纬度数组
@@ -58,11 +66,18 @@ function initPage(MarkerList, MarkerData) {
       }
     },
     getMarker: function(dataItem, context, recycledMarker) {
+      const title = dataItem.shipName + "的GPS信息：\n当前坐标为：N:" + dataItem.latitude + "|E:" + dataItem.longitude + "\n当前磁偏角：" + dataItem.gpsVardir + ":" + dataItem.gpsMagvar + "\n当前航向角：" + dataItem.gpsTrackTure
+      const label = {
+        offset: new AMap.Pixel(-1, 10),
+        content: dataItem.shipName
+      }
       let iconUrl = '/static/img/ship_b.png' // 默认是黑色
-      if (!dataItem.gpsTime || dataItem.gpsTime === "" || dataItem.gpsTime === "0") {
-        iconUrl = '/static/img/ship_b.png' // GPS时间为空--黑色
-      } else if (nowdatetime.getTime() - intToDate(dataItem.gpsTime).getTime() > 1800000) {
-        iconUrl = '/static/img/ship_b.png' // GPS时间是半小时之前的--黑色
+      if (!dataItem.gpsTime || dataItem.gpsTime === "" || dataItem.gpsTime === "0") { // GPS时间为空--黑色
+        iconUrl = '/static/img/ship_b.png'
+      } else if (!intToDate(dataItem.gpsTime).getTime() || !nowdatetime.getTime()) {
+        iconUrl = '/static/img/ship_b.png'
+      } else if (nowdatetime.getTime() - intToDate(dataItem.gpsTime).getTime() > 1800000) { // GPS时间是半小时之前的--黑色
+        iconUrl = '/static/img/ship_b.png'
       } else {
         switch (dataItem.runStatus) { // 半小时之内的GPS状态
           case '0':
@@ -81,13 +96,7 @@ function initPage(MarkerList, MarkerData) {
             break
         }
       }
-      const label = {
-        offset: new AMap.Pixel(-1, 10),
-        content: dataItem.shipName
-      }
-      const title = dataItem.shipName + "的GPS信息：\n当前坐标为：N:" + dataItem.latitude + "|E:" + dataItem.longitude + "\n当前磁偏角：" + dataItem.gpsVardir + ":" + dataItem.gpsMagvar + "\n当前航向角：" + dataItem.gpsTrackTure
-      if (recycledMarker) {
-        // 存在可回收利用的marker,直接setLabel返回
+      if (recycledMarker) { // 存在可回收利用的marker,直接setLabel返回
         recycledMarker.setTitle(title)
         recycledMarker.setLabel(label)
         recycledMarker.setIcon(iconUrl)
@@ -98,7 +107,6 @@ function initPage(MarkerList, MarkerData) {
       }
       // 返回一个新的Marker
       return new AMap.Marker({
-        // animation: 'AMAP_ANIMATION_DROP',
         topWhenClick: true,
         zIndex: context.index + 2,
         title: title,
@@ -135,6 +143,7 @@ function initPage(MarkerList, MarkerData) {
   // markerList.on('selectedChanged', function(event, info) {}) // 监听选中改变
   // markerList.on('markerClick', function(event, record) {})   // 监听Marker上的点击，详见markerEvents
   markerList.render(MarkerData) // 绘制数据源，Let's go!
+  warningInfoWid()
 }
 
 // 构建自定义信息窗体函数
@@ -165,22 +174,49 @@ function createInfoWindow(title, content) {
 function closeInfoWindow() {
   makemap.clearInfoWindow()
 }
+// 初始化警告弹窗
+function warningInfoWid() {
+  if (markerWarnFlag === 1) {
+    if (markerWarnInfo !== null) {
+      markerWarnInfo.close()
+      markerWarnInfo = null
+    }
+    markerWarnInfo = Notification({
+      type: 'warning',
+      title: '警告！',
+      dangerouslyUseHTMLString: true,
+      message: '<p style="color: #ff0000;font-size: 14px">当前存在船只报警请排查</p>',
+      duration: 0,
+      position: 'top-right',
+      offset: 130
+    })
+  }
+}
 
 // 初始和更新marker数据
 export function upDataMarker(data, datetime) {
-  nowdatetime = datetime
+  markerWarnFlag = 0 // 将警告信息标志位清零
+  if (markerWarnInfo !== null) {
+    markerWarnInfo.close()
+    markerWarnInfo = null
+  } // 将警告弹窗关闭
+  nowdatetime = datetime // 更新当前时间
   if (markerList === null) {
     initMaker(data)
   } else {
     markerList.render([]) // 清除数据
-    // markerList.clearData()
     markerList.render(data) // 绘制数据
     markerList.clearRecycle()
+    warningInfoWid()
   }
 }
 
 // 清楚全部标点
 export function clearAllMarker() {
+  if (markerWarnInfo !== null) {
+    markerWarnInfo.close()
+    markerWarnInfo = null
+  }
   markerList.clearRecycle()
   markerList.clearData()
   markerList = null

@@ -69,20 +69,23 @@ export function getlngLats(shipId, startTime, endTime) {
             startID = runPoints[i].startID
             endID = runPoints[i].endID
             gpslength = startID - endID
-            console.log(gpslength)
+            // console.log(gpslength)
             const gps = [] // 轨迹中坐标数据
             if (gpslength > 400) {
               const jump = parseInt(gpslength / 400 + 1)
               for (let j = startID; j >= endID; j -= jump) {
                 if (data[j].longitude && data[j].longitude !== 0 && data[j].latitude && data[j].latitude !== 0) {
                   gps.push(GPS.gcj_encrypt(data[j].longitude, data[j].latitude))
+                } else {
+                  gps.push([118.789582, 32.019405])
                 }
               }
             } else {
               for (let j = startID; j >= endID; j--) {
-                // console.log(data[j].longitude)
                 if (data[j].longitude && data[j].longitude !== 0 && data[j].latitude && data[j].latitude !== 0) {
                   gps.push(GPS.gcj_encrypt(data[j].longitude, data[j].latitude))
+                } else {
+                  gps.push([118.789582, 32.019405])
                 }
               }
             }
@@ -90,7 +93,7 @@ export function getlngLats(shipId, startTime, endTime) {
               name: '第' + (i + 1) + '条轨迹',
               path: gps
             }
-            console.log(track)
+            // console.log(track)
             tracks.push(track)
           }
           resolve(tracks)
@@ -172,22 +175,17 @@ export function initTrack(tracks) {
       // 设置数据
       data: tracks
     })
-    console.log(tracks.length)
+    // console.log(tracks.length) // 输出轨迹条数
     // 创建一个巡航器，关联（轨迹1）
     for (let i = 0; i < tracks.length; i++) {
-      (function(i) {
-        var navg = pathSimplifierIns.createPathNavigator(i, {
-          loop: false, // 循环播放
-          speed: 300 // 巡航速度，单位千米/小时
-        })
-        navg.start()
-      })(i)
+      var navg = pathSimplifierIns.createPathNavigator(i, {
+        loop: false, // 循环播放
+        speed: 300 // 巡航速度，单位千米/小时
+      })
+      navg.start()
     }
     pathSimplifierIns.on('pathClick pointClick', () => {
-      if (trackInfoNotification !== null) {
-        trackInfoNotification.close()
-        trackInfoNotification = null
-      }
+      clearTrackInfoWid()
       trackInfo()
     })
   }
@@ -338,7 +336,7 @@ function countRunNums(list, sd, ed) {
  * @param {timestamps} seletTime 用户选择的时间长度时间长度毫秒
  * @returns {runInfo} runInfo 运行信息对象{次数，半次数，运行时间，停止时间}
  */
-export function countRunTime(runPoints, selectStartTime, selectEndTime) {
+function countRunTime(runPoints, selectStartTime, selectEndTime) {
   const StartTime = selectStartTime.getTime()
   const EndTime = selectEndTime.getTime()
   // 运行次数集合为空则返回：运行次数为0,运行时间为0

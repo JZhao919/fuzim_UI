@@ -136,19 +136,17 @@ function initTrack(iconUrl) {
 // 绘制轨迹
 export function drowTrack(longitude, latitude, iconUrl) {
   let lngLat
-  if (longitude === 0 || latitude === 0) {
+  if (longitude === 0 || latitude === 0 || !longitude || !latitude) {
     lngLat = [118.789381, 32.019571]
   } else {
     lngLat = GPS.gcj_encrypt(longitude, latitude) // 转换坐标
   }
-  // console.log(lngLat)
   if (oneshipTrackData.length === 0) {
     oneshipIconUrl = iconUrl
     oneshipTrackData.push(lngLat)
   } else {
     const lastlnglat = oneshipTrackData[oneshipTrackData.length - 1]
-    // console.log(lastlnglat)
-    if (lastlnglat[0] !== lngLat[0] || lastlnglat[1] !== lngLat[1]) {
+    if (lastlnglat[0] !== lngLat[0] || lastlnglat[1] !== lngLat[1]) { // 比较当前坐标有无变动
       oneshipIconUrl = iconUrl
       oneshipTrackData.push(lngLat)
     } else {
@@ -158,7 +156,6 @@ export function drowTrack(longitude, latitude, iconUrl) {
       }
     }
   }
-  // console.log('-----------')
   tracks[0].path = oneshipTrackData
   initTrack(iconUrl)
 }

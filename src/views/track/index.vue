@@ -138,7 +138,6 @@ export default {
           }
         })
       }
-      this.shipId = null
       return
     }
   }

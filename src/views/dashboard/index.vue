@@ -183,8 +183,14 @@ export default {
         shipInfo = this.allShipAllInfo[i]
         if (!shipInfo.gpsTime || shipInfo.gpsTime === "" || shipInfo.gpsTime === "0") {
           norunNums++
-        } else if (this.nowdatetime.getTime() - intToDate(shipInfo.gpsTime).getTime() > 1800000) { // 超过半小时
-          // console.log(this.nowdatetime.getTime() - intToDate(shipInfo.gpsTime).getTime())
+          continue
+        }
+        const timediff = this.nowdatetime.getTime() - intToDate(shipInfo.gpsTime).getTime()
+        if (!timediff) {
+          norunNums++
+          continue
+        }
+        if (timediff > 1800000) { // 超过半小时
           norunNums++
         } else {
           switch (shipInfo.runStatus) { // 半小时之内的GPS状态
