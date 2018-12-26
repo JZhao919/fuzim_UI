@@ -69,7 +69,7 @@ export function getlngLats(shipId, startTime, endTime) {
             startID = runPoints[i].startID
             endID = runPoints[i].endID
             gpslength = startID - endID
-            // console.log(gpslength)
+            console.log(gpslength)
             const gps = [] // 轨迹中坐标数据
             if (gpslength > 400) {
               const jump = parseInt(gpslength / 400 + 1)
@@ -93,7 +93,7 @@ export function getlngLats(shipId, startTime, endTime) {
               name: '第' + (i + 1) + '条轨迹',
               path: gps
             }
-            // console.log(track)
+            console.log(track)
             tracks.push(track)
           }
           resolve(tracks)

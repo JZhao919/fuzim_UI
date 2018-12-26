@@ -375,9 +375,8 @@ export default {
       if (window.Timer !== null) {
         clearInterval(window.Timer)
         window.Timer = null
-      } else {
-        window.Timer = setInterval(this.loopGetOneShipInfo, 10000)
       }
+      window.Timer = setInterval(this.loopGetOneShipInfo, 10000)
     },
     loopGetOneShipInfo() {
       if (this.shipId === null || !this.shipId) {
@@ -389,7 +388,7 @@ export default {
             this.shipAllInfo = this.shipNoneInfo
           } else {
             this.shipAllInfo = data
-            // console.log(this.shipId)
+            console.log(this.shipId)
           }
         })
       }
