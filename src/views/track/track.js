@@ -1,5 +1,7 @@
+/* eslint-disable */
 import AMap from 'AMap'
 import AMapUI from 'AMapUI'
+// eslint-disable-next-line
 import GPS from '@/utils/GPS'
 import { getOneShipInfoByTimeBetween } from '@/api/shipinfo'
 import { Notification, Message, Loading } from 'element-ui'
@@ -61,43 +63,43 @@ export function getlngLats(shipId, startTime, endTime) {
       } else {
         countRunNums(data, data.length - 1, 0) // 计算返回数据集合含有多少趟运行数据 结果存在runPoints[]中
         console.log(runPoints)
-        if (runPoints.length === 0) {
-          resolve(tracks) // 返回空数组
-        } else {
-          var gpslength, startID, endID
-          for (let i = 0; i < runPoints.length; i++) {
-            startID = runPoints[i].startID
-            endID = runPoints[i].endID
-            gpslength = startID - endID
-            console.log(gpslength)
-            const gps = [] // 轨迹中坐标数据
-            if (gpslength > 400) {
-              const jump = parseInt(gpslength / 400 + 1)
-              for (let j = startID; j >= endID; j -= jump) {
-                if (data[j].longitude && data[j].longitude !== 0 && data[j].latitude && data[j].latitude !== 0) {
-                  gps.push(GPS.gcj_encrypt(data[j].longitude, data[j].latitude))
-                } else {
-                  gps.push([118.789582, 32.019405])
-                }
-              }
-            } else {
-              for (let j = startID; j >= endID; j--) {
-                if (data[j].longitude && data[j].longitude !== 0 && data[j].latitude && data[j].latitude !== 0) {
-                  gps.push(GPS.gcj_encrypt(data[j].longitude, data[j].latitude))
-                } else {
-                  gps.push([118.789582, 32.019405])
-                }
-              }
-            }
-            var track = {
-              name: '第' + (i + 1) + '条轨迹',
-              path: gps
-            }
-            console.log(track)
-            tracks.push(track)
-          }
-          resolve(tracks)
-        }
+        // if (runPoints.length === 0) {
+        //   resolve(tracks) // 返回空数组
+        // } else {
+        //   var gpslength, startID, endID
+        //   for (let i = 0; i < runPoints.length; i++) {
+        //     startID = runPoints[i].startID
+        //     endID = runPoints[i].endID
+        //     gpslength = startID - endID
+        //     console.log(gpslength)
+        //     const gps = [] // 轨迹中坐标数据
+        //     if (gpslength > 400) {
+        //       const jump = parseInt(gpslength / 400 + 1)
+        //       for (let j = startID; j >= endID; j -= jump) {
+        //         if (data[j].longitude && data[j].longitude !== 0 && data[j].latitude && data[j].latitude !== 0) {
+        //           gps.push(GPS.gcj_encrypt(data[j].longitude, data[j].latitude))
+        //         } else {
+        //           gps.push([118.789582, 32.019405])
+        //         }
+        //       }
+        //     } else {
+        //       for (let j = startID; j >= endID; j--) {
+        //         if (data[j].longitude && data[j].longitude !== 0 && data[j].latitude && data[j].latitude !== 0) {
+        //           gps.push(GPS.gcj_encrypt(data[j].longitude, data[j].latitude))
+        //         } else {
+        //           gps.push([118.789582, 32.019405])
+        //         }
+        //       }
+        //     }
+        //     var track = {
+        //       name: '第' + (i + 1) + '条轨迹',
+        //       path: gps
+        //     }
+        //     console.log(track)
+        //     tracks.push(track)
+        //   }
+        //   resolve(tracks)
+        // }
       }
       loadingInstance.close()
       return
@@ -216,7 +218,6 @@ export function trackInfo() {
     offset: 0
   })
 }
-
 // 清楚轨迹信息窗口
 export function clearTrackInfoWid() {
   if (trackInfoNotification !== null) {
@@ -245,8 +246,8 @@ function countRunNums(list, sd, ed) {
   if (sd === ed) {
     return
   }
-  // console.log(3)
   let nsd = sd // 下一次查询的起始位置
+  console.log('countRunNums++' + sd + '|' + ed)
   // 运行时间节点对象
   const runPoint = {
     flag: null, // 标志位表明是否运行完: 0:没有 1:完成
@@ -255,51 +256,65 @@ function countRunNums(list, sd, ed) {
     startID: null, // 本次运行时间段在总数据集合中的位置(索引)
     endID: null
   }
+  let startRunTimes = ''
   // 起始点数据显示运行中
   if (list[sd].endRunTime === '0') {
-    runPoint.startPoint = intToDate(list[sd].gpsTime)
+    startRunTimes = list[sd].startRunTime
+    runPoint.startPoint = new Date(startRunTimes)
     runPoint.startID = sd
-    if (intToDate(list[sd].gpsTime).getTime - new Date(list[sd].startRunTime).getTime < 20000) {
+    if (intToDate(list[sd].gpsTime).getTime() - new Date(startRunTimes).getTime() < 20000) {
       runPoint.flag = 1
     } else {
       runPoint.flag = 0
     }
+    // console.log('本次开始时间：' + startRunTimes)
     // 寻找运行的结束时间点
     for (let i = sd - 1; i >= ed; i--) {
-      if (list[i].endRunTime !== '0') { // endRunTime !== 0 表示运行停止
-        runPoint.endPoint = intToDate(list[i].gpsTime) // 获取运行的结束时间点
-        runPoint.endID = i
-        if (runPoint.flag !== 0) {
-          runPoint.flag = 1
+      if (list[i].startRunTime == startRunTimes) {
+        if (list[i].endRunTime !== '0') { // endRunTime !== 0 表示运行停止
+          runPoint.endPoint = new Date(list[i].endRunTime) // 获取运行的结束时间点
+          runPoint.endID = i
+          runPoints.push(runPoint) // 收录运行节点
+          nsd = i - 1
+          break
+        } else {
+          if (i === ed) { // 遍历完数据仍没有结束运行
+            runPoint.endPoint = intToDate(list[i].gpsTime) // 用该条数据的gps时间代替;注意转换数据格式
+            runPoint.endID = i
+            runPoint.flag = 0
+            runPoints.push(runPoint) // 收录运行节点
+            nsd = ed
+            break
+          }
         }
-        runPoints.push(runPoint) // 收录运行节点
-        nsd = i - 1
-        break
-      }
-      if (i === ed && list[ed].endRunTime === '0') { // 遍历完数据仍没有结束运行
-        runPoint.endPoint = intToDate(list[ed].gpsTime) // 用该条数据的gps时间代替;注意转换数据格式
-        runPoint.endID = i
+      } else {
+        runPoint.endPoint = intToDate(list[i + 1].gpsTime) // 用该条数据的gps时间代替;注意转换数据格式
+        runPoint.endID = i + 1
         runPoint.flag = 0
         runPoints.push(runPoint) // 收录运行节点
-        nsd = ed
+        nsd = i
+        break
       }
     }
     if (nsd > ed) { // 递归运行下一次查询
       countRunNums(list, nsd, ed)
     }
   } else { // 起始点数据未运行
-    // 寻找第一次开始运行的点
     let tempsd = null
+    // 寻找第一次开始运行的点
     for (let i = sd - 1; i >= ed; i--) {
-      if (i === ed && list[ed].endRunTime !== '0') { // 遍历完数据仍没有开始运行 即该段数据全是未运行
-        tempsd = ed
-        return
-      }
       if (list[i].endRunTime === '0') {
-        runPoint.startPoint = intToDate(list[i].gpsTime) // 获取运行的开始时间点
+        startRunTimes = list[i].startRunTime
+        runPoint.startPoint = new Date(startRunTimes) // 获取运行的开始时间点
         runPoint.startID = i
-        tempsd = i
+        runPoint.flag = 1
+        tempsd = i - 1
         break
+      } else {
+        if (i === ed) { // 遍历完数据仍没有开始运行 即该段数据全是未运行
+          tempsd = ed
+          return
+        }
       }
     }
     if (tempsd <= ed) { // 最后一条数据为开始点则不收录不再寻找结束点
@@ -307,21 +322,31 @@ function countRunNums(list, sd, ed) {
       return
     }
     // 寻找运行的结束时间点
-    for (let i = tempsd - 1; i >= ed; i--) {
-      if (list[i].endRunTime !== '0') { // endRunTime !== 0 表示运行停止
-        runPoint.endPoint = intToDate(list[i].gpsTime) // 获取运行的结束时间点
-        runPoint.endID = i
-        runPoint.flag = 1
-        runPoints.push(runPoint) // 收录运行节点
-        nsd = i - 1
-        break
-      }
-      if (i === ed && list[ed].endRunTime === '0') { // 遍历完数据仍没有结束运行
+    for (let i = tempsd; i >= ed; i--) {
+      if (list[i].startRunTime == startRunTimes) {
+        if (list[i].endRunTime !== '0') { // endRunTime !== 0 表示运行停止
+          runPoint.endPoint = new Date(list[i].endRunTime) // 获取运行的结束时间点
+          runPoint.endID = i
+          runPoints.push(runPoint) // 收录运行节点
+          nsd = i - 1
+          break
+        } else {
+          if (i === ed) { // 遍历完数据仍没有结束运行
+            runPoint.endPoint = intToDate(list[i].gpsTime) // 用该条数据的gps时间代替;注意转换数据格式
+            runPoint.endID = i
+            runPoint.flag = 0
+            runPoints.push(runPoint) // 收录运行节点
+            nsd = ed
+            break
+          }
+        }
+      } else {
+        runPoint.endPoint = intToDate(list[i + 1].gpsTime) // 用该条数据的gps时间代替;注意转换数据格式
+        runPoint.endID = i + 1
         runPoint.flag = 0
-        runPoint.endID = i
-        runPoint.endPoint = intToDate(list[ed].gpsTime) // 用该条数据的gps时间代替;注意转换数据格式
         runPoints.push(runPoint) // 收录运行节点
-        nsd = ed
+        nsd = i
+        break
       }
     }
     if (nsd > ed) {
