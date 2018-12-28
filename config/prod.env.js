@@ -1,5 +1,5 @@
 'use strict'
 module.exports = {
   NODE_ENV: '"production"',
-  BASE_API: '"http://116.62.231.150:8080/templefuzi"',
+  BASE_API: '"https://easy-mock.com/mock/5b751c7029726d50328181f6/api"',
 }
