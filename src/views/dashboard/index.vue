@@ -148,7 +148,7 @@ export default {
         if (!data || data === null || data.length <= 0) {
           this.messages(2, "数据库中没有船只数据！")
         } else {
-          // this.notification(1, "成功获取所有船只数据！")
+          // this.messages(1, "成功获取所有船只数据！")
           this.allShipAllInfo = data
           this.counts()
           if (window.Timer) {
@@ -169,7 +169,7 @@ export default {
         } else {
           this.allShipAllInfo = data
           this.counts()
-          console.log('mapMaker')
+          console.log('dash')
         }
       })
     },

@@ -3,12 +3,12 @@
     <el-row id="DateTime">
       <el-col :xs="12" :sm="12" :md="6">
         <el-date-picker type="datetime" clearable size="mini" placeholder="开始时间(必选)" format="yyyyMMddHHmmss"
-          v-model="begDT" default-time="10:00:00">
+          v-model="begDT" default-time="11:00:00">
         </el-date-picker>
       </el-col>
       <el-col :xs="12" :sm="12" :md="6">
         <el-date-picker type="datetime" clearable size="mini" placeholder="结束时间(默认当前)" format="yyyyMMddHHmmss"
-          v-model="endDT" default-time="14:21:00">
+          v-model="endDT" default-time="16:00:00">
         </el-date-picker>
       </el-col>
       <el-col :xs=12 :sm="12" :md="6">
@@ -32,7 +32,6 @@
 </template>
 
 <script>
-// eslint-disable-next-line
 import { getAllShipDefInfo } from "@/api/shipinfo"
 import { initMap, getlngLats, initTrack, clearTrack, trackInfo, clearTrackInfoWid } from './track.js'
 export default {

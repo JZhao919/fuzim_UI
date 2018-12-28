@@ -65,9 +65,9 @@ export function getlngLats(shipId, startTime, endTime) {
         resolve(tracks) // 返回空轨迹对象集合
       } else {
         countRunNums(data, data.length - 1, 0) // 计算返回数据集合含有多少趟运行数据；结果存在runPoints[]中
-        console.log(runPoints)
+        // console.log(runPoints)
         runPoints = dealRunNums(runPoints) // 清洗运行趟数时间集合并返回覆盖运行运行趟数集合
-        console.log(runPoints)
+        // console.log(runPoints)
         if (runPoints.length === 0) {
           resolve(tracks) // 运行趟数集合；则返回空数组
         } else {
@@ -82,7 +82,7 @@ export function getlngLats(shipId, startTime, endTime) {
               trackNum++
             }
             gpslength = startID - endID // 该轨迹的数据数量长度
-            console.log(gpslength)
+            // console.log(gpslength)
             const gps = [] // 轨迹中要渲染的坐标数据
             if (gpslength > 400) { // 对过长的坐标数据长度进行适当的精简，采用等距跳跃采样
               const jump = parseInt(gpslength / 400 + 1)
@@ -106,7 +106,7 @@ export function getlngLats(shipId, startTime, endTime) {
               name: '第' + trackNum + '条轨迹',
               path: gps
             } // 构建轨迹对象
-            console.log(track)
+            // console.log(track)
             tracks.push(track) // 向轨迹对象集合添加轨迹对象
           }
           resolve(tracks)
@@ -258,6 +258,7 @@ export function clearTrack() {
  * @param {Array} runPoints 运行时间节点对象的集合
  */
 function countRunNums(list, sd, ed) {
+  // console.log('countRunNums++')
   if (sd === ed) {
     return
   } // 结束运行条件
@@ -379,7 +380,7 @@ function countRunNums(list, sd, ed) {
  * @returns {List[runPoint{}]} dealPoints
  */
 function dealRunNums(runPoints) {
-  console.log('dealRunNums')
+  // console.log('dealRunNums')
   let points = runPoints // 拷贝后做处理对象
   const dealPoints = [] // 处理后的数组
   const length = points.length
