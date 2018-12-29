@@ -13,6 +13,7 @@ let trackInfoNotification = null // 轨迹的信息窗口
 let selectStartTime = null // 查询轨迹开始运行时间
 let selectEndTime = null // 查询结轨迹束运行时间
 let runPoints = [] // 运行趟数对象的集合
+let dealPoints = [] // 处理之后的趟数对象的集合
 /**
  * 地图初始化函数
  */
@@ -57,6 +58,9 @@ export function getlngLats(shipId, startTime, endTime) {
   if (runPoints.length > 0) {
     runPoints = []
   }
+  if (dealPoints.length > 0) {
+    dealPoints = []
+  }
   return new Promise((resolve, rejects) => {
     getOneShipInfoByTimeBetween(shipId, dateToInt(startTime), dateToInt(endTime)).then(response => {
       const tracks = [] // 处理后的轨迹对象集合
@@ -66,41 +70,41 @@ export function getlngLats(shipId, startTime, endTime) {
       } else {
         countRunNums(data, data.length - 1, 0) // 计算返回数据集合含有多少趟运行数据；结果存在runPoints[]中
         // console.log(runPoints)
-        runPoints = dealRunNums(runPoints) // 清洗运行趟数时间集合并返回覆盖运行运行趟数集合
-        // console.log(runPoints)
-        if (runPoints.length === 0) {
+        dealPoints = dealRunNums(runPoints) // 清洗运行趟数时间集合并返回覆盖运行运行趟数集合
+        // console.log(dealPoints)
+        if (dealPoints.length === 0) {
           resolve(tracks) // 运行趟数集合；则返回空数组
         } else {
-          var gpslength, startID, endID
           var trackNum = 0 // 轨迹编号
-          for (let i = 0; i < runPoints.length; i++) {
-            if (runPoints[i].endPoint.getTime() - runPoints[i].startPoint.getTime() < 120000) { // 时间间隔超过两分钟的轨迹才创建渲染
+          for (let i = 0; i < dealPoints.length; i++) {
+            const indexs = dealPoints[i].indexs
+            if (indexs.length < 30) { // GPS数据太少的轨迹不绘制
               continue
             } else {
-              startID = runPoints[i].startID
-              endID = runPoints[i].endID
               trackNum++
             }
-            gpslength = startID - endID // 该轨迹的数据数量长度
-            // console.log(gpslength)
             const gps = [] // 轨迹中要渲染的坐标数据
-            if (gpslength > 400) { // 对过长的坐标数据长度进行适当的精简，采用等距跳跃采样
-              const jump = parseInt(gpslength / 400 + 1)
-              for (let j = startID; j >= endID; j -= jump) {
-                if (data[j].longitude && data[j].longitude !== 0 && data[j].latitude && data[j].latitude !== 0) {
-                  gps.push(GPS.gcj_encrypt(data[j].longitude, data[j].latitude))
+            if (indexs.length > 400) { // 对过长的坐标数据长度进行适当的精简，采用等距跳跃采样
+              const jump = parseInt(indexs.length / 400 + 1)
+              for (let j = 0; j < indexs.length; j += jump) {
+                // 坐标不存在或者坐标为[x,0]、[0,x]等数据则跳过
+                if (!data[indexs[j]].longitude || data[indexs[j]].longitude === 0 || !data[indexs[j]].latitude || data[indexs[j]].latitude === 0) {
+                  continue // 坐标数据不存在跳过
                 } else {
-                  gps.push([118.789582, 32.019405]) // 坐标数据不标准（产0等）用默认值覆盖
+                  gps.push(GPS.gcj_encrypt(data[indexs[j]].longitude, data[indexs[j]].latitude)) // 坐标在国外会返回默认值
                 }
               }
             } else {
-              for (let j = startID; j >= endID; j--) {
-                if (data[j].longitude && data[j].longitude !== 0 && data[j].latitude && data[j].latitude !== 0) {
-                  gps.push(GPS.gcj_encrypt(data[j].longitude, data[j].latitude))
+              for (let j = 0; j < indexs.length; j++) {
+                if (!data[indexs[j]].longitude || data[indexs[j]].longitude === 0 || !data[indexs[j]].latitude || data[indexs[j]].latitude === 0) {
+                  continue // 坐标数据不存在跳过
                 } else {
-                  gps.push([118.789582, 32.019405])
+                  gps.push(GPS.gcj_encrypt(data[indexs[j]].longitude, data[indexs[j]].latitude))  // 坐标在国外（[0,0]等数据）会返回默认值
                 }
               }
+            }
+            if (gps.length <= 0) { // 若全是[0,0]则此时gps中没有数据，添加一条默认数据
+              gps.push([118.789582, 32.019405])
             }
             var track = {
               name: '第' + trackNum + '条轨迹',
@@ -117,7 +121,7 @@ export function getlngLats(shipId, startTime, endTime) {
     }).catch(error => {
       loadingInstance.close() // 遮罩关闭
       Message({
-        message: '获取数据超时，请缩短查询时间。',
+        message: '处理数据错误！',
         duration: 3000,
         type: 'error',
         showClose: true
@@ -132,6 +136,9 @@ export function getlngLats(shipId, startTime, endTime) {
  * @param Array.<AMap.LngLat>||AMap.LngLat lngLats
  */
 export function initTrack(tracks) {
+  if (!tracks || tracks.length === 0) {
+    return
+  }
   AMapUI.load(['ui/misc/PathSimplifier', 'lib/$', 'lib/utils'], function(PathSimplifier, $, utils) {
     if (!PathSimplifier.supportCanvas) {
       alert('当前环境不支持 Canvas！')
@@ -182,7 +189,7 @@ export function initTrack(tracks) {
           return pathData.name + '，当前点：' + pointIndex + '/' + pathData.path.length // 鼠标悬停在某个轨迹节点上
         }
         // 鼠标悬停在节点之间的连线上
-        return pathData.name + '，点数量：' + pathData.path.length + '，播放速度：300km/h'
+        return pathData.name + '，点数量：' + pathData.path.length + '，播放速度：100km/h'
       },
       renderOptions: defaultRenderOptions,
       // 设置数据
@@ -193,7 +200,7 @@ export function initTrack(tracks) {
     for (let i = 0; i < tracks.length; i++) {
       var navg = pathSimplifierIns.createPathNavigator(i, {
         loop: false, // 循环播放
-        speed: 300 // 巡航速度，单位千米/小时
+        speed: 100 // 巡航速度，单位千米/小时
       })
       navg.start()
     }
@@ -208,7 +215,7 @@ export function initTrack(tracks) {
  */
 export function trackInfo() {
   const allSelctTime = selectEndTime.getTime() - selectStartTime.getTime() // 选择的总时间毫秒
-  const runInfo = countRunTime(runPoints, selectStartTime, selectEndTime)
+  const runInfo = countRunTime(dealPoints, selectStartTime, selectEndTime)
   // 实例化轨迹弹出信息窗口
   const htmlMSG = '<p>运行次数：' + (runInfo.count + runInfo.halfCount) + '次</p><p>运行总时间：' + timestampsToTime(runInfo.runTime) + '</p><p>停止总时间：' + timestampsToTime(runInfo.stopTime) + '</p>'
   // if (runInfo.count !== 0) {
@@ -249,6 +256,12 @@ export function clearTrack() {
     pathSimplifierIns.setData(null)
     pathSimplifierIns = null
   }
+  if (runPoints.length > 0) {
+    runPoints = []
+  }
+  if (dealPoints.length > 0) {
+    dealPoints = []
+  }
 }
 /**
  * 计算运行次数 runPoints集合的长度即代表运行次数
@@ -264,19 +277,17 @@ function countRunNums(list, sd, ed) {
   } // 结束运行条件
   let nsd = sd // 下一次查询的起始位置
   // console.log('countRunNums++' + sd + '|' + ed)
-  const runPoint = {
+  var runPoint = {
     flag: null, // 标志位表明是否运行完: 0:没有 1:完成
     startPoint: null, // 本次运行时间段的起始时间点
     endPoint: null,
-    startID: null, // 本次运行时间段在总数据集合中的位置(索引)
-    endID: null
+    indexs: [] // 本次运行时间段内包含的坐标数据在数据列表中的索引集合
   } // 运行时间节点对象
-  let startRunTimes = '' // 本趟运行起始时间
   // 起始点数据显示正在运行中
   if (list[sd].endRunTime === '0') {
-    startRunTimes = list[sd].startRunTime // 初始化该趟运行的起始时间
+    let startRunTimes = list[sd].startRunTime // 初始化该趟运行的起始时间
     runPoint.startPoint = new Date(startRunTimes)
-    runPoint.startID = sd
+    runPoint.indexs.push(sd)
     // 该点数据的gps时间与开始时间差在10秒内认为该点是本趟运行起始点，否则认为是运行的中间点
     if (intToDate(list[sd].gpsTime).getTime() - new Date(startRunTimes).getTime() < 10000) {
       runPoint.flag = 1
@@ -286,21 +297,20 @@ function countRunNums(list, sd, ed) {
     // 寻找本趟运行的结束时间点
     for (let i = sd - 1; i >= ed; i--) {
       // 首先确定该条数据是否为本趟运行内数据（依靠startRunTime来判断，startRunTime与本趟运行起始时间相同则为该趟内数据）
-      if (list[i].startRunTime == startRunTimes) {
+      if (list[i].startRunTime + '' === startRunTimes + '') {
+        runPoint.indexs.push(i)
         if (list[i].endRunTime !== '0') { // 使用endRunTime !== 0 表示运行停止
           runPoint.endPoint = new Date(list[i].endRunTime) // 获取运行的结束时间点
-          runPoint.endID = i // 设置位于集合内的索引
           runPoints.push(runPoint) // 收录运行节点
           nsd = i - 1 // 设置下一此查找的起始点
           break
-        } else {
+        } else { // list[i].endRunTime === '0'
           if (i === ed) { // 遍历完数据集合仍没有结束运行
             runPoint.endPoint = intToDate(list[i].gpsTime) // 用该条（最后一条）数据的gps时间代替;注意转换数据格式
-            runPoint.endID = i
             runPoint.flag = 0
             runPoints.push(runPoint) // 收录运行节点
             nsd = ed
-            break
+            return
           }
         }
       } else {
@@ -308,7 +318,6 @@ function countRunNums(list, sd, ed) {
         // 此情况只会存在于两条包含不同的startRunTime数据之间没有endRunTime（结束运行时间）的情况，若之间存在endRunTime则会归属于上面的情况中
         // 因此使用该条数据索引的上一条数据的gpsTime作为该趟运行的endRunTime
         runPoint.endPoint = intToDate(list[i + 1].gpsTime) // 获取运行的结束时间点;注意转换数据格式
-        runPoint.endID = i + 1 // 由于倒序查询，所以上一条数据索引为当前索引+1
         runPoint.flag = 0
         runPoints.push(runPoint) // 收录运行节点
         nsd = i // 设置下一此查找的起始点
@@ -321,20 +330,20 @@ function countRunNums(list, sd, ed) {
     }
   } else { // 起始点数据显示未运行
     let tempsd = null
+    let startRunTimes = ''
     // 寻找开始运行的第一条数据
     for (let i = sd - 1; i >= ed; i--) {
       if (list[i].endRunTime === '0') { // endRunTime===‘0’表示运行中
         startRunTimes = list[i].startRunTime
         runPoint.startPoint = new Date(startRunTimes)
-        runPoint.startID = i
+        runPoint.indexs.push(i)
         runPoint.flag = 1
         tempsd = i - 1
         break
-      } else {
-        if (i === ed) { // 遍历完数据仍没有开始运行 即该段数据全是未运行
-          tempsd = ed
-          return
-        }
+      }
+      if (i === ed && list[i].endRunTime === '0') { // 遍历完数据仍没有开始运行 即该段数据全是未运行
+        tempsd = ed
+        return
       }
     }
     if (tempsd <= ed) { // 最后一条数据为开始点则不收录不再寻找结束点
@@ -343,26 +352,24 @@ function countRunNums(list, sd, ed) {
     }
     // 寻找运行的结束时间点
     for (let i = tempsd; i >= ed; i--) {
-      if (list[i].startRunTime == startRunTimes) {
+      if (list[i].startRunTime + '' === startRunTimes + '') {
+        runPoint.indexs.push(i)
         if (list[i].endRunTime !== '0') {
           runPoint.endPoint = new Date(list[i].endRunTime)
-          runPoint.endID = i
           runPoints.push(runPoint)
           nsd = i - 1
           break
-        } else {
+        } else { // list[i].endRunTime === '0'
           if (i === ed) {
             runPoint.endPoint = intToDate(list[i].gpsTime)
-            runPoint.endID = i
             runPoint.flag = 0
             runPoints.push(runPoint)
             nsd = ed
-            break
+            return
           }
         }
       } else {
         runPoint.endPoint = intToDate(list[i + 1].gpsTime)
-        runPoint.endID = i + 1
         runPoint.flag = 0
         runPoints.push(runPoint)
         nsd = i
@@ -376,26 +383,25 @@ function countRunNums(list, sd, ed) {
 }
 /**
  * 运行趟数数据处理函数，主要是处理时间错位问题，并返回处理之后的运行趟数对象集合
- * @param {List[runPoint{}]} runPoints
+ * @param {List[runPoint{}]} points
  * @returns {List[runPoint{}]} dealPoints
  */
-function dealRunNums(runPoints) {
+function dealRunNums(points) {
   // console.log('dealRunNums')
-  let points = runPoints // 拷贝后做处理对象
-  const dealPoints = [] // 处理后的数组
   const length = points.length
   // 参数内容为空；则返回空集合
   if (length === 0) {
     return []
   }
-  // 第一遍清洗，将时间差小于4秒（误操作产生的碎片数据）的对象标记删除‘x’
+  let tempPoints = [] // 处理后的运行趟数对象集合
+  // 第1遍清洗，将时间差小于4秒（误操作产生的碎片数据）的对象标记删除‘x’
   for (let i = 0; i < length; i++) {
     if (points[i] === 'x') { continue }
-    if (points[i].endPoint.getTime() - points[i].startPoint.getTime() <= 4000) { // 小于4秒的轨迹舍去
+    if (points[i].endPoint.getTime() - points[i].startPoint.getTime() <= 3000) { // 小于3秒的轨迹舍去
       points[i] = 'x'
     }
   }
-  // 第二遍清洗，将起（止）时间相同、止（起）时间错位的数据做相应延拓和标记，将相互完全嵌套数据做删除标记
+  // 第2遍清洗，将开始(结束)时间相同、结束(开始)时间错位的数据做相应延拓和标记
   for (let i = 0; i < length; i++) {
     if (points[i] === 'x') { continue }
     for (let j = 0; j < length; j++) {
@@ -403,57 +409,56 @@ function dealRunNums(runPoints) {
       if (points[j] === 'x') { continue }
       if (points[j].startPoint.getTime() === points[i].startPoint.getTime()) { // 起始时间相同保留停止时间大的
         if (points[j].endPoint.getTime() <= points[i].endPoint.getTime()) {
+          points[i].indexs.push(...points[j].indexs)
+          points[i].flag = points[j].flag
           points[j] = 'x'
         } else {
-          points[i] = 'x'
-        }
-      }
-      if (points[j].endPoint.getTime() === points[i].endPoint.getTime()) { // 停止时间相同保留起始时间小的
-        if (points[j].startPoint.getTime() <= points[i].startPoint.getTime()) {
-          points[i] = 'x'
-        } else {
-          points[j] = 'x'
-        }
-      }
-      if (points[i].startPoint.getTime() < points[j].startPoint.getTime() && points[j].endPoint.getTime() < points[i].endPoint.getTime()) {
-        points[j] = 'x'
-      } // 将相互完全嵌套的内数据打删除标记
-    }
-  }
-  // 第三编清洗，处理相互不完全嵌套的数据
-  for (let i = 0; i < length; i++) {
-    if (points[i] === 'x') { continue }
-    for (let j = i + 1; j < length; j++) {
-      if (points[j] === 'x') { continue }
-      if (points[j].startPoint.getTime() < points[i].startPoint.getTime()) {
-        if (points[j].endPoint.getTime() <= points[i].startPoint.getTime()) { // 相互没有粘连
-          continue
-        } else { // 数据存在粘连，调整起止时间并将提供调整数据的对象打删除标记，保留被调整对象
-          points[j].endPoint = points[i].endPoint
-          points[j].endID = points[i].endID
-          points[j].flag = points[i].flag
-          points[i] = 'x'
-        }
-      }
-      if (points[j].endPoint.getTime() > points[i].endPoint.getTime()) {
-        if (points[j].startPoint.getTime() >= points[i].endPoint.getTime()) { // 相互没有粘连
-          continue
-        } else { // 数据存在粘连，调整起止时间并将提供调整数据的对象打删除标记，保留被调整对象
           points[i].endPoint = points[j].endPoint
-          points[i].endID = points[j].endID
+          points[i].indexs.push(...points[j].indexs)
           points[i].flag = points[j].flag
           points[j] = 'x'
         }
       }
     }
   }
-  // 遍历趟数对象集合，将打删除标记的对象清除，并更新处理后的趟数对象集合
-  for (let i = 1; i < length; i++) {
-    if (points[i] !== 'x') {
-      dealPoints.push(points[i])
+
+  // 第3编清洗，处理相互不完全嵌套的数据
+  for (let i = 0; i < length; i++) {
+    if (points[i] === 'x') { continue }
+    for (let j = 0; j < length; j++) {
+      if (j === i) { continue }
+      if (points[j] === 'x') { continue }
+      if (points[j].startPoint.getTime() >= points[i].startPoint.getTime()) {
+        if (points[j].startPoint.getTime() < points[i].endPoint.getTime()) {
+          // 数据存在粘连，调整起止时间并将提供调整数据的对象打删除标记，保留被调整对象
+          if (points[j].endPoint.getTime() > points[i].endPoint.getTime()) {
+            points[i].indexs.push(...points[j].indexs)
+            points[i].endPoint = points[j].endPoint
+            points[i].flag = points[j].flag
+            points[j] = 'x'
+          } else { // 数据嵌套删除嵌套内数据
+            points[i].indexs.push(...points[j].indexs)
+            points[i].flag = points[j].flag
+            points[j] = 'x'
+          }
+        }
+      }
     }
   }
-  return dealPoints
+  // 遍历趟数对象集合，将打删除标记的对象清除，并更新处理后的趟数对象集合
+  for (let i = 0; i < length; i++) {
+    if (points[i] === 'x') { continue}
+    tempPoints.push(points[i])
+  }
+  function sortFun (a,b) { // 反向比较
+    // console.log(a,b)
+    return b-a
+  }
+  // 将indexs反向排序
+  for (let i = 0; i < tempPoints.length; i++) {
+    tempPoints[i].indexs.sort(sortFun)
+  }
+  return tempPoints
 }
 /**
  * 计算运行时间
@@ -461,10 +466,10 @@ function dealRunNums(runPoints) {
  * @param {timestamps} seletTime 用户选择的时间长度时间长度毫秒
  * @returns {runInfo} runInfo 运行信息对象{次数，半次数，运行时间，停止时间}
  */
-function countRunTime(runPoints, selectStartTime, selectEndTime) {
+function countRunTime(dealPoints, selectStartTime, selectEndTime) {
   const StartTime = selectStartTime.getTime()
   const EndTime = selectEndTime.getTime()
-  const length = runPoints.length
+  const length = dealPoints.length
   // 返回的运行信息对象
   const runInfo = {
     halfCount: 0,
@@ -477,7 +482,7 @@ function countRunTime(runPoints, selectStartTime, selectEndTime) {
     return runInfo
   }
   for (let i = 0; i < length; i++) {
-    const runPoint = runPoints[i]
+    const runPoint = dealPoints[i]
     var strT, endT
     if (runPoint.startPoint === null || runPoint.endPoint === null) {
       continue
@@ -490,9 +495,8 @@ function countRunTime(runPoints, selectStartTime, selectEndTime) {
     if (endT > EndTime) {
       endT = EndTime
     }
-    let timediff = endT - strT
-    runInfo.runTime = runInfo.runTime + timediff
-    if (timediff > 120000) { // 时间间隔超过两分钟才算次数，但是运行时间要给算上
+    runInfo.runTime = runInfo.runTime + (endT - strT)
+    if (runPoint.indexs.length > 30) { // 坐标数据少的不算轨迹次数
       if (runPoint.flag === 1) {
         runInfo.count++
       } else {

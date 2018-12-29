@@ -20,8 +20,10 @@ var GPS = {
   gcj_encrypt: function(wgsLon, wgsLat) {
     if (this.outOfChina(wgsLon, wgsLat)) {
       console.log('outOfChina')
+      console.log(wgsLon + wgsLat)
       // return {'lat': wgsLat, 'lon': wgsLon }
-      return [wgsLon, wgsLat]
+      // return [wgsLon, wgsLat]
+      return [118.789582, 32.019405]
     }
     var d = this.delta(wgsLon, wgsLat)
     // return { 'lat': wgsLat + d.lat, 'lon': wgsLon + d.lon }

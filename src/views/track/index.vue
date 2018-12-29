@@ -8,7 +8,7 @@
       </el-col>
       <el-col :xs="12" :sm="12" :md="6">
         <el-date-picker type="datetime" clearable size="mini" placeholder="结束时间(默认当前)" format="yyyyMMddHHmmss"
-          v-model="endDT" default-time="16:00:00">
+          v-model="endDT" default-time="19:00:00">
         </el-date-picker>
       </el-col>
       <el-col :xs=12 :sm="12" :md="6">
